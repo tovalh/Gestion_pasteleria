@@ -24,4 +24,9 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
+
+Route::get('{any}', function () {
+    return view('app'); // 'app' será la vista que cargará tu aplicación React
+})->where('any', '.*');
+
 require __DIR__.'/auth.php';
