@@ -1,6 +1,9 @@
 <?php
 
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\ClienteController;
+use App\Http\Controllers\IngredienteController;
+use App\Http\Controllers\ProductoController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -30,3 +33,7 @@ Route::get('{any}', function () {
 })->where('any', '.*');
 
 require __DIR__.'/auth.php';
+
+Route::resource('clientes', ClienteController::class);
+Route::resource('ingredientes', IngredienteController::class);
+Route::resource('productos', ProductoController::class);
