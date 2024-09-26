@@ -11,12 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('ventas', function (Blueprint $table) {
-            $table->integer('idVentas')->primary();
-            $table->string('NumeroTransaccionVenta', 45);
-            $table->string('totalVenta', 45);
+        Schema::create('venta', function (Blueprint $table) {
+            $table->integer('idVenta')->primary();
+            $table->integer('NumeroTransaccionVenta');
+            $table->integer('totalVenta');
             $table->string('metodoDePagoVenta', 45);
-            $table->integer('Cientes_idCientes')->index('fk_ventas_cientes1');
+            $table->integer('Clientes_idCliente')->index('fk_ventas_cientes1');
         });
     }
 
@@ -25,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('ventas');
+        Schema::dropIfExists('venta');
     }
 };

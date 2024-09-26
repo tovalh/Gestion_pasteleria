@@ -11,8 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('ventas', function (Blueprint $table) {
-            $table->foreign(['Cientes_idCientes'], 'fk_Ventas_Cientes1')->references(['idCientes'])->on('cientes')->onUpdate('no action')->onDelete('no action');
+        Schema::create('administrador', function (Blueprint $table) {
+            $table->integer('idAdministrador')->primary();
+            $table->string('NombreUsuario', 15);
+            $table->string('ClaveUsuario', 15);
         });
     }
 
@@ -21,8 +23,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('ventas', function (Blueprint $table) {
-            $table->dropForeign('fk_Ventas_Cientes1');
-        });
+        Schema::dropIfExists('administrador');
     }
 };

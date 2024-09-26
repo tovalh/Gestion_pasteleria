@@ -11,9 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('ventas', function (Blueprint $table) {
-            $table->id();
-            $table->timestamps();
+        Schema::create('producto_has_venta', function (Blueprint $table) {
+            $table->integer('Productos_idProducto');
+            $table->integer('Venta_idVenta')->index('fk_prodcutos_has_ventas_ventas1');
+
+            $table->primary(['Productos_idProducto', 'Venta_idVenta']);
         });
     }
 
@@ -22,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('ventas');
+        Schema::dropIfExists('producto_has_venta');
     }
 };

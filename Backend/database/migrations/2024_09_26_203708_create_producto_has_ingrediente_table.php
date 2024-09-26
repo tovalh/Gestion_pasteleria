@@ -11,12 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('prodcutos_has_ingredientes', function (Blueprint $table) {
-            $table->integer('Prodcutos_idProdcutos');
-            $table->integer('Ingredientes_idIngredientes')->index('fk_prodcutos_has_ingredientes_ingredientes1');
+        Schema::create('producto_has_ingrediente', function (Blueprint $table) {
+            $table->integer('Prodcuto_idProducto');
+            $table->integer('Ingrediente_idIngrediente')->index('fk_prodcutos_has_ingredientes_ingredientes1');
             $table->integer('cantidad');
 
-            $table->primary(['Prodcutos_idProdcutos', 'Ingredientes_idIngredientes']);
+            $table->primary(['Prodcuto_idProducto', 'Ingrediente_idIngrediente']);
         });
     }
 
@@ -25,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('prodcutos_has_ingredientes');
+        Schema::dropIfExists('producto_has_ingrediente');
     }
 };

@@ -11,9 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('prodcutos_has_ventas', function (Blueprint $table) {
-            $table->foreign(['Prodcutos_idProdcutos'], 'fk_Prodcutos_has_Ventas_Prodcutos1')->references(['idProdcutos'])->on('prodcutos')->onUpdate('no action')->onDelete('no action');
-            $table->foreign(['Ventas_idVentas'], 'fk_Prodcutos_has_Ventas_Ventas1')->references(['idVentas'])->on('ventas')->onUpdate('no action')->onDelete('no action');
+        Schema::table('producto_has_venta', function (Blueprint $table) {
+            $table->foreign(['Productos_idProducto'], 'fk_Prodcutos_has_Ventas_Prodcutos1')->references(['idProducto'])->on('producto')->onUpdate('restrict')->onDelete('restrict');
+            $table->foreign(['Venta_idVenta'], 'fk_Prodcutos_has_Ventas_Ventas1')->references(['idVenta'])->on('venta')->onUpdate('restrict')->onDelete('restrict');
         });
     }
 
@@ -22,7 +22,7 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('prodcutos_has_ventas', function (Blueprint $table) {
+        Schema::table('producto_has_venta', function (Blueprint $table) {
             $table->dropForeign('fk_Prodcutos_has_Ventas_Prodcutos1');
             $table->dropForeign('fk_Prodcutos_has_Ventas_Ventas1');
         });

@@ -11,8 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('prodcutos', function (Blueprint $table) {
-            $table->foreign(['Seccion_idSecciones'], 'fk_Prodcutos_Seccion1')->references(['idSecciones'])->on('seccion')->onUpdate('no action')->onDelete('no action');
+        Schema::table('venta', function (Blueprint $table) {
+            $table->foreign(['Clientes_idCliente'], 'fk_Ventas_Cientes1')->references(['idCliente'])->on('cliente')->onUpdate('restrict')->onDelete('restrict');
         });
     }
 
@@ -21,8 +21,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('prodcutos', function (Blueprint $table) {
-            $table->dropForeign('fk_Prodcutos_Seccion1');
+        Schema::table('venta', function (Blueprint $table) {
+            $table->dropForeign('fk_Ventas_Cientes1');
         });
     }
 };

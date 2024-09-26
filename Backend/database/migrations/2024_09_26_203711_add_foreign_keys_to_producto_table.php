@@ -11,11 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('prodcutos_has_ventas', function (Blueprint $table) {
-            $table->integer('Prodcutos_idProdcutos');
-            $table->integer('Ventas_idVentas')->index('fk_prodcutos_has_ventas_ventas1');
-
-            $table->primary(['Prodcutos_idProdcutos', 'Ventas_idVentas']);
+        Schema::table('producto', function (Blueprint $table) {
+            $table->foreign(['Seccion_idSeccion'], 'fk_Prodcutos_Seccion1')->references(['idSeccion'])->on('seccion')->onUpdate('restrict')->onDelete('restrict');
         });
     }
 
@@ -24,6 +21,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('prodcutos_has_ventas');
+        Schema::table('producto', function (Blueprint $table) {
+            $table->dropForeign('fk_Prodcutos_Seccion1');
+        });
     }
 };
