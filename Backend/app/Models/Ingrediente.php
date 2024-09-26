@@ -8,12 +8,12 @@ use Illuminate\Database\Eloquent\Model;
 class Ingrediente extends Model
 {
     use HasFactory;
-    protected $table = "ingredientes";
-    protected $primaryKey = "idIngredientes";
+    protected $table = "ingrediente";
+    protected $primaryKey = "idIngrediente";
     protected $fillable = [
       'NombreIngrediente',
       'StockIngrediente',
-      'AlertaStockIngrediente',
+      'StockMinimoIngrediente',
       'UnidadDeMedidaIngrediente',
     ];
 }
