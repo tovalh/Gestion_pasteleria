@@ -9,7 +9,8 @@ class IngredienteController extends Controller
     public function index()
     {
         $ingredientes = Ingrediente::all();
-        return view('ingredientes.index', compact('ingredientes'));
+        return response()->json($ingredientes);
+
     }
     public function show($id) {
         $ingrediente = Ingrediente::findOrFail($id);
