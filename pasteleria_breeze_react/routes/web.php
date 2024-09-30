@@ -8,6 +8,10 @@ use App\Http\Controllers\HomeController;
 
 Route::get('/inicio', [HomeController::class, 'index'])->name('inicio');
 
+Route::get('/Productos', [\App\Http\Controllers\ProductoController::class, 'index']);
+
+Route::get('/Ingredientes', [\App\Http\Controllers\IngredienteController::class, 'index']);
+
 Route::get('/', function () {
     return Inertia::render('Welcome', [
         'canLogin' => Route::has('login'),
