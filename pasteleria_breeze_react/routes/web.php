@@ -8,7 +8,9 @@ use App\Http\Controllers\HomeController;
 
 Route::get('/inicio', [HomeController::class, 'index'])->name('inicio');
 
-Route::get('/Productos', [\App\Http\Controllers\ProductoController::class, 'index']);
+Route::get('/productos', function () {
+    return Inertia::render('Productos');
+})->name('productos');
 
 Route::get('/Ingredientes', [\App\Http\Controllers\IngredienteController::class, 'index']);
 

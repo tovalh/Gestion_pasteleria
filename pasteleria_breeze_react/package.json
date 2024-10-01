@@ -20,6 +20,10 @@
         "vite": "^5.0"
     },
     "dependencies": {
-        "lucide-react": "^0.446.0"
+        "class-variance-authority": "^0.7.0",
+        "clsx": "^2.1.1",
+        "lucide-react": "^0.446.0",
+        "tailwind-merge": "^2.5.2",
+        "tailwindcss-animate": "^1.0.7"
     }
 }
