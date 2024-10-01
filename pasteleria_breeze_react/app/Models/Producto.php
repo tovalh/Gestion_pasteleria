@@ -14,5 +14,6 @@ class Producto extends Model
         'NombreProducto',
         'DescripcionProducto',
         'PrecioProducto',
+        'IdSeccion',
     ];
 }

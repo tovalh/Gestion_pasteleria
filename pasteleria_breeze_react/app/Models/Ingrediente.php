@@ -10,6 +10,7 @@ class Ingrediente extends Model
     use HasFactory;
     protected $table = "ingrediente";
     protected $primaryKey = "idIngrediente";
+
     protected $fillable = [
         'NombreIngrediente',
         'StockIngrediente',
