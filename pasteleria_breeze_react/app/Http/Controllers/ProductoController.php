@@ -20,22 +20,22 @@ class ProductoController extends Controller
 
     public function store(Request $request) {
         $validatedData = $request->validate([
-            'NombreIngrediente' => 'required|max:255',
-            'StockIngrediente' => 'required|numeric',
-            'StockMinimoIngrediente' => 'required|numeric',
-            'UnidadMedidaIngrediente' => 'required|max:50',
+            'NombreProducto' => 'required|max:35',
+            'DescripcionProducto' => 'required',
+            'PrecioProducto' => 'required|max:12',
+            'Seccion_idSeccion' => 'required|integer|exists:seccion,idSeccion',
         ]);
-        $producto = Producto::create($validatedData);
 
+        $producto = Producto::create($validatedData);
         return response()->json($producto,201);
     }
 
     public function update(Request $request, $id) {
         $validatedData = $request->validate([
-            'NombreIngrediente' => 'required|max:255',
-            'StockIngrediente' => 'required|numeric',
-            'StockMinimoIngrediente' => 'required|numeric',
-            'UnidadMedidaIngrediente' => 'required|max:50',
+            'NombreProducto' => 'required|max:35',
+            'DescripcionProducto' => 'required',
+            'PrecioProducto' => 'required|max:12',
+            'Seccion_idSeccion' => 'required|integer|exists:seccion,idSeccion',
         ]);
 
         $producto = Producto::findOrFail($id);
