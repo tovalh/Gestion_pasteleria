@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Producto;
 use Illuminate\Http\Request;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class ProductoController extends Controller
 {
@@ -48,5 +49,38 @@ class ProductoController extends Controller
         $producto->delete();
 
         return response()->json(null,204);
+    }
+
+    public function filtro(Request $request)
+    {
+        $query = Producto::query();
+
+        // Filtro por nombre
+        if ($request->has('nombre')) {
+            $query->where('NombreProducto', 'like', '%' . $request->nombre . '%');
+        }
+
+        // Filtro por precio mínimo
+        if ($request->has('precio_min')) {
+            $query->where('PrecioProducto', '>=', $request->precio_min);
+        }
+
+        // Filtro por precio máximo
+        if ($request->has('precio_max')) {
+            $query->where('PrecioProducto', '<=', $request->precio_max);
+        }
+
+        // Ordenar por precio (ascendente o descendente)
+        if ($request->has('orden_precio')) {
+            $query->orderBy('PrecioProducto', $request->orden_precio === 'asc' ? 'asc' : 'desc');
+        }
+
+        $productos = $query->get();
+
+        return response()->json($productos);
+    }
+
+    public function softDelete(){
+
     }
 }

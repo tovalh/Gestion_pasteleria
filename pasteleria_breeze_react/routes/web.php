@@ -1,6 +1,10 @@
 <?php
 
+use App\Http\Controllers\IngredienteController;
+use App\Http\Controllers\ProductoController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\SeccionController;
+use App\Http\Controllers\VentaController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -12,7 +16,18 @@ Route::get('/productos', function () {
     return Inertia::render('Productos');
 })->name('productos');
 
-Route::get('/Ingredientes', [\App\Http\Controllers\IngredienteController::class, 'index']);
+//Route::get('/seccion', [SeccionController::class, 'index'])->name('seccion.index');
+//Route::post('/seccion', [SeccionController::class, 'store'])->name('seccion.store');
+//Route::put('/seccion/{id}', [SeccionController::class, 'update'])->name('seccion.update');
+//Route::delete('/seccion/{id}', [SeccionController::class, 'destroy'])->name('seccion.destroy');
+//Route::get('/seccion/token', [SeccionController::class, 'token'])->name('seccion.token');
+
+// Esta es la forma correcta de hacer las rutas!!! No la de arriba (Hace automaticamente GET, POST, PUT, DELETE)
+Route::resource('seccion', SeccionController::class);
+Route::resource('productos', ProductoController::class);
+Route::resource('ingredientes', IngredienteController::class);
+Route::resource('venta', VentaController::class);
+
 
 Route::get('/', function () {
     return Inertia::render('Welcome', [
