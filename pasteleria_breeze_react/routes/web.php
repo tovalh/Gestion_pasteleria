@@ -5,6 +5,7 @@ use App\Http\Controllers\ProductoController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SeccionController;
 use App\Http\Controllers\VentaController;
+use App\Http\Controllers\WebpayController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -24,7 +25,6 @@ Route::get('/seccion/token', [SeccionController::class, 'token'])->name('seccion
 
 // Esta es la forma correcta de hacer las rutas!!! No la de arriba (Hace automaticamente GET, POST, PUT, DELETE)
 Route::resource('seccion', SeccionController::class);
-
 Route::resource('ingredientes', IngredienteController::class);
 Route::resource('venta', VentaController::class);
 
@@ -41,7 +41,17 @@ Route::resource('productos', ProductoController::class);
 
 //Venta
 
+//WebPay
 
+Route::post('/webpay/init', [WebpayController::class, 'initTransaction'])->name('webpay.init');
+Route::get('/webpay/return', [WebpayController::class, 'returnUrl'])->name('webpay.return');
+
+Route::get('/checkout', function () {
+    return Inertia::render('Checkout');
+})->name('checkout');
+
+
+// DEFAULT
 Route::get('/', function () {
     return Inertia::render('Welcome', [
         'canLogin' => Route::has('login'),
