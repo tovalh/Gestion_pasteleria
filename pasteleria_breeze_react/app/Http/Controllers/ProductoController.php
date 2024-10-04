@@ -44,6 +44,7 @@ class ProductoController extends Controller
 
         return response()->json($producto);
     }
+    //Borrado Logico
     public function destroy($id) {
         $producto = Producto::findOrFail($id);
         $producto->delete();
@@ -80,7 +81,17 @@ class ProductoController extends Controller
         return response()->json($productos);
     }
 
-    public function softDelete(){
+    public function hardDelete($id){
+        $producto = Producto::findOrFail($id);
+        $producto->forceDelete();
 
+        return response()->json(null,204);
+    }
+
+    public function restore($id){
+        $producto = Producto::withTrashed()->findOrFail($id);
+        $producto->restore();
+
+        return response()->json(null,204);
     }
 }

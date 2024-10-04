@@ -48,4 +48,28 @@ class IngredienteController extends Controller
 
         return response()->json(null,204);
     }
+
+    public function verificarNivelesStock()
+    {
+        $ingredientesBajoStock = Ingrediente::where('StockIngrediente', '<', DB::raw('StockMinimoIngrediente'))
+            ->get();
+
+        foreach ($ingredientesBajoStock as $ingrediente) {
+            $this->enviarAlerta($ingrediente);
+        }
+
+        return $ingredientesBajoStock;
+    }
+
+    private function enviarAlerta(Ingrediente $ingrediente)
+    {
+        // Enviar notificación a los usuarios relevantes
+        $usuarios = User::where('role', 'admin')->get();
+
+        Notification::send($usuarios, new BajoStockNotification([
+            'ingrediente' => $ingrediente->nombre,
+            'stock_actual' => $ingrediente->StockIngrediente,
+            'stock_minimo' => $ingrediente->StockMinimoIngrediente,
+        ]));
+    }
 }

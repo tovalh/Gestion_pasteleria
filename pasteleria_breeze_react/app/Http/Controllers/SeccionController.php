@@ -93,4 +93,18 @@ class SeccionController extends Controller
             ], 400);
         }
     }
+
+    public function hardDelete($id){
+        $seccion = Seccion::findOrFail($id);
+        $seccion->forceDelete();
+
+        return response()->json(null,204);
+    }
+
+    public function restore($id){
+        $seccion = Seccion::withTrashed()->findOrFail($id);
+        $seccion->restore();
+
+        return response()->json(null,204);
+    }
 }

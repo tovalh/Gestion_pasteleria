@@ -49,5 +49,18 @@ class VentaController extends Controller
 
         return response()->json(null,204);
     }
+    public function hardDelete($id){
+        $venta = Venta::findOrFail($id);
+        $venta->forceDelete();
+
+        return response()->json(null,204);
+    }
+
+    public function restore($id){
+        $venta = Venta::withTrashed()->findOrFail($id);
+        $venta->restore();
+
+        return response()->json(null,204);
+    }
 }
 
