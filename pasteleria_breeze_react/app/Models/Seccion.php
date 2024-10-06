@@ -6,15 +6,13 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class Venta extends Model
+class Seccion extends Model
 {
     use HasFactory, SoftDeletes;
     public $timestamps = false;
-    protected $table = 'venta';
-    protected $primaryKey = 'idVenta';
+    protected $table = 'seccion';
+    protected $primaryKey = 'idSeccion';
     protected $fillable = [
-        'NumeroTransaccionVenta',
-        'totalVenta',
-        'metodoDePagoVenta',
+        'NombreSeccion',
     ];
 }

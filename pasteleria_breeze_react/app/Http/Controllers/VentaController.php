@@ -20,10 +20,10 @@ class VentaController extends Controller
 
     public function store(Request $request) {
         $validatedData = $request->validate([
-            'NombreIngrediente' => 'required|max:255',
-            'StockIngrediente' => 'required|numeric',
-            'StockMinimoIngrediente' => 'required|numeric',
-            'UnidadMedidaIngrediente' => 'required|max:50',
+            'NumeroTransaccionVenta' => 'required|numeric',
+            'totalVenta' => 'required|numeric',
+            'metodoDePagoVenta' => 'required|max:45',
+            'Clientes_idCliente' => 'required|integer|exists:clientes,idCliente',
         ]);
         $venta = Venta::create($validatedData);
 
@@ -32,10 +32,10 @@ class VentaController extends Controller
 
     public function update(Request $request, $id) {
         $validatedData = $request->validate([
-            'NombreIngrediente' => 'required|max:255',
-            'StockIngrediente' => 'required|numeric',
-            'StockMinimoIngrediente' => 'required|numeric',
-            'UnidadMedidaIngrediente' => 'required|max:50',
+            'NumeroTransaccionVenta' => 'required|numeric',
+            'totalVenta' => 'required|numeric',
+            'metodoDePagoVenta' => 'required|max:45',
+            'Clientes_idCliente' => 'required|integer|exists:clientes,idCliente',
         ]);
 
         $venta = Venta::findOrFail($id);
@@ -46,6 +46,19 @@ class VentaController extends Controller
     public function destroy($id) {
         $venta = Venta::findOrFail($id);
         $venta->delete();
+
+        return response()->json(null,204);
+    }
+    public function hardDelete($id){
+        $venta = Venta::findOrFail($id);
+        $venta->forceDelete();
+
+        return response()->json(null,204);
+    }
+
+    public function restore($id){
+        $venta = Venta::withTrashed()->findOrFail($id);
+        $venta->restore();
 
         return response()->json(null,204);
     }

@@ -17,6 +17,7 @@ return new class extends Migration
             $table->integer('StockIngrediente');
             $table->integer('StockMinimoIngrediente');
             $table->string('UnidadDeMedidaIngrediente', 5);
+            $table->softDeletes();
         });
     }
 

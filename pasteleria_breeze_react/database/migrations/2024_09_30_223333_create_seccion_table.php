@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('seccion', function (Blueprint $table) {
             $table->integer('idSeccion', true);
             $table->string('NombreSeccion', 30);
+            $table->softDeletes();
         });
     }
 

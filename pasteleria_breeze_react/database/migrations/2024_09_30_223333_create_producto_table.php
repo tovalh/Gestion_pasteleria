@@ -15,7 +15,8 @@ return new class extends Migration
             $table->integer('idProducto', true);
             $table->string('NombreProducto', 35);
             $table->mediumText('DescripcionProducto');
-            $table->string('PrecioProducto', 12);
+            $table->integer('PrecioProducto');
+            $table->softDeletes();
             $table->integer('Seccion_idSeccion')->index('fk_productos_seccion1');
 
             $table->primary(['idProducto', 'Seccion_idSeccion']);
