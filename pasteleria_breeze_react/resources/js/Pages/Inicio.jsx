@@ -14,10 +14,10 @@ export default function Component() {
                 <div className="container mx-auto flex justify-between items-center">
                     <h1 className="text-2xl font-bold">Sweet Delights Bakery</h1>
                     <nav className="hidden md:flex space-x-4">
-                        <a href="#" className="hover:text-pink-200">Home</a>
-                        <a href="#" className="hover:text-pink-200">Menu</a>
-                        <a href="#" className="hover:text-pink-200">About</a>
-                        <a href="#" className="hover:text-pink-200">Contact</a>
+                        <a href="\inicio" className="hover:text-pink-200">Home</a>
+                        <a href="\productos" className="hover:text-pink-200">Menu</a>
+                        <a href="\AboutUs" className="hover:text-pink-200">About</a>
+
                     </nav>
                     <button className="md:hidden" onClick={toggleMenu}>
                         {isMenuOpen ? <X /> : <Menu />}
@@ -29,10 +29,10 @@ export default function Component() {
             {isMenuOpen && (
                 <div className="md:hidden bg-pink-600 text-pink-50 p-4">
                     <nav className="flex flex-col space-y-2">
-                        <a href="#" className="hover:text-pink-200">Home</a>
-                        <a href="#" className="hover:text-pink-200">Menu</a>
-                        <a href="#" className="hover:text-pink-200">About</a>
-                        <a href="#" className="hover:text-pink-200">Contact</a>
+                        <a href="\inicio" className="hover:text-pink-200">Home</a>
+                        <a href="\productos" className="hover:text-pink-200">Menu</a>
+                        <a href="\AboutUs" className="hover:text-pink-200">About</a>
+
                     </nav>
                 </div>
             )}

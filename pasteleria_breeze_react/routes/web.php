@@ -12,6 +12,11 @@ Route::get('/productos', function () {
     return Inertia::render('Productos');
 })->name('productos');
 
+Route::get('/AboutUs', function () {
+    return Inertia::render('AboutUs');
+})->name('AboutUs');
+
+
 Route::get('/Ingredientes', [\App\Http\Controllers\IngredienteController::class, 'index']);
 
 Route::get('/', function () {

@@ -1,5 +1,8 @@
 import React, { useState } from 'react'
 
+// Import icons for the header
+import { ShoppingCart, Menu, X } from 'lucide-react'
+
 const products = [
     { id: 1, name: 'Strawberry Cupcake', category: 'Cupcakes', price: 3.99 },
     { id: 2, name: 'Chocolate Croissant', category: 'Pastries', price: 2.99 },
@@ -16,6 +19,13 @@ export default function ProductsSection() {
     const [selectedCategory, setSelectedCategory] = useState('All')
     const [showVegan, setShowVegan] = useState(false)
     const [sortBy, setSortBy] = useState('name')
+    const [isMenuOpen, setIsMenuOpen] = useState(false)
+
+    const toggleMenu = () => {
+
+
+        setIsMenuOpen(!isMenuOpen)
+    }
 
     const filteredProducts = products
         .filter(product =>
@@ -30,8 +40,35 @@ export default function ProductsSection() {
         })
 
     return (
-        <div className="bg-pink-50 min-h-screen p-6">
-            <div className="container mx-auto">
+        <div className="bg-pink-50 min-h-screen">
+            <header className="bg-pink-700 text-pink-50 p-4">
+                <div className="container mx-auto flex justify-between items-center">
+                    <h1 className="text-2xl font-bold">Sweet Delights Bakery</h1>
+                    <nav className="hidden md:flex space-x-4">
+                        <a href="\inicio" className="hover:text-pink-200">Home</a>
+                        <a href="\productos" className="hover:text-pink-200">Menu</a>
+                        <a href="\AboutUs" className="hover:text-pink-200">About</a>
+
+                    </nav>
+                    <button className="md:hidden" onClick={toggleMenu}>
+                        {isMenuOpen ? <X size={24}/> : <Menu size={24}/>}
+                    </button>
+                    <ShoppingCart className="hidden md:block" size={24}/>
+                </div>
+            </header>
+
+            {isMenuOpen && (
+                <div className="md:hidden bg-pink-600 text-pink-50 p-4">
+                    <nav className="flex flex-col space-y-2">
+                        <a href="\inicio" className="hover:text-pink-200">Home</a>
+                        <a href="\productos" className="hover:text-pink-200">Menu</a>
+                        <a href="\AboutUs" className="hover:text-pink-200">About</a>
+
+                    </nav>
+                </div>
+            )}
+
+            <div className="container mx-auto p-6">
                 <h1 className="text-3xl font-bold text-pink-800 mb-6">Our Products</h1>
 
                 <div className="flex flex-col md:flex-row gap-4 mb-6">
@@ -85,7 +122,8 @@ export default function ProductsSection() {
                                 <p className="text-pink-600 mb-2">{product.category}</p>
                                 <div className="flex justify-between items-center">
                                     <span className="text-lg font-bold text-pink-700">${product.price.toFixed(2)}</span>
-                                    <button className="bg-pink-500 hover:bg-pink-600 text-white font-bold py-2 px-4 rounded">
+                                    <button
+                                        className="bg-pink-500 hover:bg-pink-600 text-white font-bold py-2 px-4 rounded">
                                         Add to Cart
                                     </button>
                                 </div>
@@ -94,8 +132,15 @@ export default function ProductsSection() {
                     ))}
                 </div>
             </div>
+            <footer className="bg-pink-700 text-pink-50 py-8">
+                <div className="container mx-auto text-center">
+                    <p>&copy; 2023 Sweet Delights Bakery. All rights reserved.</p>
+                    <div className="mt-4">
+                        <a href="#" className="text-pink-200 hover:text-white mx-2">Privacy Policy</a>
+                        <a href="#" className="text-pink-200 hover:text-white mx-2">Terms of Service</a>
+                    </div>
+                </div>
+            </footer>
         </div>
     )
 }
-
-
