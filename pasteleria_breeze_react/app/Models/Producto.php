@@ -18,4 +18,18 @@ class Producto extends Model
         'PrecioProducto',
         'Seccion_idSeccion',
     ];
+
+    public function ingredientes()
+    {
+        return $this->belongsToMany(Ingrediente::class, 'producto_has_ingrediente',
+            'Producto_idProducto', 'Ingrediente_idIngrediente')
+            ->withPivot('cantidad');
+    }
+
+    public function ventas()
+    {
+        return $this->belongsToMany(Venta::class, 'producto_has_venta',
+            'Productos_idProducto', 'Venta_idVenta');
+    }
+
 }

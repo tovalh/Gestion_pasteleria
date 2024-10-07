@@ -20,4 +20,12 @@ class Ingrediente extends Model
         'StockMinimoIngrediente',
         'UnidadDeMedidaIngrediente',
     ];
+
+    public function productos()
+    {
+        return $this->belongsToMany(Producto::class, 'producto_has_ingrediente',
+            'Ingrediente_idIngrediente', 'Producto_idProducto')
+            ->withPivot('cantidad');
+    }
+
 }
