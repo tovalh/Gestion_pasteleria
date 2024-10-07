@@ -16,5 +16,21 @@ class Venta extends Model
         'NumeroTransaccionVenta',
         'totalVenta',
         'metodoDePagoVenta',
+        'estadoPedido'
     ];
+
+    public function productos()
+    {
+        return $this->belongsToMany(
+            Producto::class,
+            'producto_has_venta',
+            'Venta_idVenta',
+            'Productos_idProducto'
+        );
+    }
+
+    public function cliente()
+    {
+        return $this->belongsTo(Cliente::class, 'Clientes_idCliente', 'idCliente');
+    }
 }
