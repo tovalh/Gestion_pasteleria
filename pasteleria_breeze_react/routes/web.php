@@ -35,6 +35,8 @@ Route::put('/productos/restaurar/{id}', [ProductoController::class, 'restore'])-
 Route::resource('productos', ProductoController::class);
 Route::get('/Menu', [ProductoController::class, 'index']);
 
+Route::get('/prueba', [ProductoController::class, 'index']);
+
 //Ingredientes
 
 //Seccion

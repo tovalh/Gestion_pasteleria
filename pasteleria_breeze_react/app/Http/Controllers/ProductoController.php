@@ -5,14 +5,15 @@ namespace App\Http\Controllers;
 use App\Models\Producto;
 use Illuminate\Http\Request;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Inertia\Inertia;
+
 
 class ProductoController extends Controller
 {
     public function index()
     {
         $productos = Producto::all();
-        return Inertia::render('Productos/Index', ['productos' => $productos]);
-
+        return Inertia::render('Menu', ['productos' => $productos]);
     }
     public function show($id) {
         $producto = Producto::findOrFail($id);

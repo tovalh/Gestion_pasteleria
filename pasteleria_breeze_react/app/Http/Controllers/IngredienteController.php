@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Ingrediente;
+use Inertia\Inertia;
 class IngredienteController extends Controller
 {
     public function index()

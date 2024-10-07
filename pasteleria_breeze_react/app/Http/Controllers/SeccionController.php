@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Seccion;
 use Illuminate\Http\Request;
+use Inertia\Inertia;
 
 class SeccionController extends Controller
 {
