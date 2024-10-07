@@ -10,7 +10,7 @@ class IngredienteController extends Controller
     public function index()
     {
         $ingredientes = Ingrediente::all();
-        return response()->json($ingredientes);
+        return Inertia::render('Ingredientes', ['ingredientes' => $ingredientes]);
 
     }
     public function show($id) {
@@ -41,13 +41,13 @@ class IngredienteController extends Controller
         $ingrediente = Ingrediente::findOrFail($id);
         $ingrediente->update($validatedData);
 
-        return response()->json($ingrediente);
+        return redirect()->back();
     }
     public function destroy($id) {
         $ingrediente = Ingrediente::findOrFail($id);
         $ingrediente->delete();
 
-        return response()->json(null,204);
+        return redirect()->back();
     }
 
     public function verificarNivelesStock()

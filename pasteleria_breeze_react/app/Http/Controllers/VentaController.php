@@ -11,7 +11,7 @@ class VentaController extends Controller
     public function index()
     {
         $ventas = Venta::all();
-        return response()->json($ventas);
+        return Inertia::render('Checkout', ['ventas' => $ventas]);
 
     }
     public function show($id) {
@@ -42,26 +42,26 @@ class VentaController extends Controller
         $venta = Venta::findOrFail($id);
         $venta->update($validatedData);
 
-        return response()->json($venta);
+        return redirect()->back();
     }
     public function destroy($id) {
         $venta = Venta::findOrFail($id);
         $venta->delete();
 
-        return response()->json(null,204);
+        return redirect()->back();
     }
     public function hardDelete($id){
         $venta = Venta::findOrFail($id);
         $venta->forceDelete();
 
-        return response()->json(null,204);
+        return redirect()->back();
     }
 
     public function restore($id){
         $venta = Venta::withTrashed()->findOrFail($id);
         $venta->restore();
 
-        return response()->json(null,204);
+        return redirect()->back();
     }
 }
 

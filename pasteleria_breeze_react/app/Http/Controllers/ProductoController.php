@@ -43,14 +43,14 @@ class ProductoController extends Controller
         $producto = Producto::findOrFail($id);
         $producto->update($validatedData);
 
-        return response()->json($producto);
+        return redirect()->back();
     }
     //Borrado Logico
     public function destroy($id) {
         $producto = Producto::findOrFail($id);
         $producto->delete();
 
-        return response()->json(null,204);
+        return redirect()->back();
     }
 
     public function filtro(Request $request)
@@ -86,13 +86,13 @@ class ProductoController extends Controller
         $producto = Producto::findOrFail($id);
         $producto->forceDelete();
 
-        return response()->json(null,204);
+        return redirect()->back();
     }
 
     public function restore($id){
         $producto = Producto::withTrashed()->findOrFail($id);
         $producto->restore();
 
-        return response()->json(null,204);
+        return redirect()->back();
     }
 }

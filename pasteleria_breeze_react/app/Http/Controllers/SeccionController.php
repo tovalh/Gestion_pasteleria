@@ -12,100 +12,59 @@ class SeccionController extends Controller
     {
         return csrf_token();
     }
-    public function index()
-    {
-        try {
-            $secciones = Seccion::all();
-            return response()->json($secciones);
-        } catch (\Exception $e) {
-            return response()->json([
-                'message' => 'Error al obtener las secciones',
-                'error' => $e->getMessage()
-            ], 500);
-        }
+    public function index(){
+        $secciones = Seccion::all();
+        return Inertia::render('Menu', ['seccion' => $secciones]);
     }
-    public function show($id)
-    {
-        try {
-            $seccion = Seccion::findOrFail($id);
-            return response()->json($seccion);
-        } catch (\Exception $e) {
-            return response()->json([
-                'message' => 'Sección no encontrada',
-                'error' => $e->getMessage()
-            ], 404);
-        }
+    public function show($id){
+        $seccion = Seccion::findOrFail($id);
+        return response()->json($seccion);
     }
 
-    public function store(Request $request)
-    {
-        try {
-            $validatedData = $request->validate([
-                'NombreSeccion' => 'required|string|max:255|unique:seccion',
-            ]);
+    public function store(Request $request){
+        $validatedData = $request->validate([
+            'NombreSeccion' => 'required|string|max:255|unique:seccion',
+        ]);
+        $seccion = Seccion::create($validatedData);
 
-            $seccion = Seccion::create($validatedData);
-            return response()->json($seccion, 201);
-        } catch (\Exception $e) {
-            return response()->json([
-                'message' => 'Error al crear la sección',
-                'error' => $e->getMessage()
-            ], 400);
-        }
+        return response()->json($seccion, 201);
     }
 
     /**
      * Actualizar una sección existente
      */
-    public function update(Request $request, $id)
-    {
-        try {
-            $seccion = Seccion::findOrFail($id);
+    public function update(Request $request, $id){
+        $validatedData = $request->validate([
+            'NombreSeccion' => 'required|string|max:255|unique:seccion,NombreSeccion,' . $id . ',idSeccion',
+        ]);
 
-            $validatedData = $request->validate([
-                'NombreSeccion' => 'required|string|max:255|unique:seccion,NombreSeccion,' . $id . ',idSeccion',
-            ]);
+        $seccion = Seccion::findOrFail($id);
+        $seccion->update($validatedData);
 
-            $seccion->update($validatedData);
-            return response()->json($seccion);
-        } catch (\Exception $e) {
-            return response()->json([
-                'message' => 'Error al actualizar la sección',
-                'error' => $e->getMessage()
-            ], 400);
-        }
+        return redirect()->back();
     }
 
     /**
      * Eliminar una sección
      */
-    public function destroy($id)
-    {
-        try {
-            $seccion = Seccion::findOrFail($id);
-            $seccion->delete();
-            return response()->json([
-                'message' => 'Sección eliminada correctamente'
-            ], 200);
-        } catch (\Exception $e) {
-            return response()->json([
-                'message' => 'Error al eliminar la sección',
-                'error' => $e->getMessage()
-            ], 400);
-        }
+    public function destroy($id){
+        $seccion = Seccion::findOrFail($id);
+        $seccion->delete();
+
+        return redirect()->back();
     }
 
     public function hardDelete($id){
         $seccion = Seccion::findOrFail($id);
         $seccion->forceDelete();
 
-        return response()->json(null,204);
+        return redirect()->back();
     }
 
     public function restore($id){
         $seccion = Seccion::withTrashed()->findOrFail($id);
         $seccion->restore();
 
-        return response()->json(null,204);
+        return redirect()->back();
     }
 }
