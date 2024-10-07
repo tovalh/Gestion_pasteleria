@@ -11,7 +11,7 @@ class ProductoController extends Controller
     public function index()
     {
         $productos = Producto::all();
-        return response()->json($productos);
+        return Inertia::render('Productos/Index', ['productos' => $productos]);
 
     }
     public function show($id) {

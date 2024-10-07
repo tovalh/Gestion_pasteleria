@@ -33,7 +33,7 @@ Route::get('/productos/filtro', [ProductoController::class, 'filtro'])->name('pr
 Route::delete('/productos/deleteo/{id}', [ProductoController::class, 'hardDelete'])->name('productos.hardDelete');
 Route::put('/productos/restaurar/{id}', [ProductoController::class, 'restore'])->name('productos.restore');
 Route::resource('productos', ProductoController::class);
-
+Route::get('/Menu', [ProductoController::class, 'index']);
 
 //Ingredientes
 
@@ -50,6 +50,13 @@ Route::get('/checkout', function () {
     return Inertia::render('Checkout');
 })->name('checkout');
 
+Route::get('/menu', function () {
+    return Inertia::render('Menu');
+})->name('menu');
+
+Route::get('/AboutUs', function () {
+    return Inertia::render('AboutUs');
+})->name('AboutUs');
 
 // DEFAULT
 Route::get('/', function () {

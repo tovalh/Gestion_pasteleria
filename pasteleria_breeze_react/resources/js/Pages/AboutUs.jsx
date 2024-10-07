@@ -15,7 +15,7 @@ export default function AboutUs() {
                     <h1 className="text-2xl font-bold">Sweet Delights Bakery</h1>
                     <nav className="hidden md:flex space-x-4">
                         <a href="\inicio" className="hover:text-pink-200">Home</a>
-                        <a href="\productos" className="hover:text-pink-200">Menu</a>
+                        <a href="\menu" className="hover:text-pink-200">Menu</a>
                         <a href="\AboutUs" className="hover:text-pink-200">About</a>
 
                     </nav>
@@ -30,7 +30,7 @@ export default function AboutUs() {
                 <div className="md:hidden bg-pink-600 text-pink-50 p-4">
                     <nav className="flex flex-col space-y-2">
                         <a href="\inicio" className="hover:text-pink-200">Home</a>
-                        <a href="\productos" className="hover:text-pink-200">Menu</a>
+                        <a href="\menu" className="hover:text-pink-200">Menu</a>
                         <a href="\AboutUs" className="hover:text-pink-200">About</a>
 
                     </nav>
