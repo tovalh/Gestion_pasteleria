@@ -16,7 +16,10 @@ return new class extends Migration
             $table->integer('NumeroTransaccionVenta');
             $table->integer('totalVenta');
             $table->string('metodoDePagoVenta', 45);
+            $table->string('estadoPedido', 45)->default('En Proceso');
+            $table->string('Comentario', 500);
             $table->integer('Clientes_idCliente')->index('fk_ventas_clientes1');
+            $table->timestamps();
         });
     }
 

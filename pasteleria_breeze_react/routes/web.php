@@ -13,17 +13,8 @@ use App\Http\Controllers\HomeController;
 
 Route::get('/inicio', [HomeController::class, 'index'])->name('inicio');
 
-//Route::get('/productos', function () {
-//    return Inertia::render('Productos');
-//})->name('productos');
-
-//Route::get('/seccion', [SeccionController::class, 'index'])->name('seccion.index');
-//Route::post('/seccion', [SeccionController::class, 'store'])->name('seccion.store');
-//Route::put('/seccion/{id}', [SeccionController::class, 'update'])->name('seccion.update');
-//Route::delete('/seccion/{id}', [SeccionController::class, 'destroy'])->name('seccion.destroy');
 Route::get('/seccion/token', [SeccionController::class, 'token'])->name('seccion.token');
 
-// Esta es la forma correcta de hacer las rutas!!! No la de arriba (Hace automaticamente GET, POST, PUT, DELETE)
 Route::resource('seccion', SeccionController::class);
 Route::resource('ingredientes', IngredienteController::class);
 Route::resource('venta', VentaController::class);
@@ -33,7 +24,8 @@ Route::get('/productos/filtro', [ProductoController::class, 'filtro'])->name('pr
 Route::delete('/productos/deleteo/{id}', [ProductoController::class, 'hardDelete'])->name('productos.hardDelete');
 Route::put('/productos/restaurar/{id}', [ProductoController::class, 'restore'])->name('productos.restore');
 Route::resource('productos', ProductoController::class);
-Route::get('/Menu', [ProductoController::class, 'index']);
+
+Route::get('/prueba', [ProductoController::class, 'index']);
 
 //Ingredientes
 
@@ -57,7 +49,7 @@ Route::get('/menu', function () {
     return Inertia::render('Menu');
 })->name('menu');
 
-Route::get('/AboutUs', function () {
+Route::get('/aboutUs', function () {
     return Inertia::render('AboutUs');
 })->name('AboutUs');
 

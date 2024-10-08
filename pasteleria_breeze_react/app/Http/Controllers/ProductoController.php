@@ -5,14 +5,15 @@ namespace App\Http\Controllers;
 use App\Models\Producto;
 use Illuminate\Http\Request;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Inertia\Inertia;
+
 
 class ProductoController extends Controller
 {
     public function index()
     {
         $productos = Producto::all();
-        return Inertia::render('Productos/Index', ['productos' => $productos]);
-
+        return Inertia::render('Menu', ['productos' => $productos]);
     }
     public function show($id) {
         $producto = Producto::findOrFail($id);
@@ -42,14 +43,14 @@ class ProductoController extends Controller
         $producto = Producto::findOrFail($id);
         $producto->update($validatedData);
 
-        return response()->json($producto);
+        return redirect()->back();
     }
     //Borrado Logico
     public function destroy($id) {
         $producto = Producto::findOrFail($id);
         $producto->delete();
 
-        return response()->json(null,204);
+        return redirect()->back();
     }
 
     public function filtro(Request $request)
@@ -85,13 +86,13 @@ class ProductoController extends Controller
         $producto = Producto::findOrFail($id);
         $producto->forceDelete();
 
-        return response()->json(null,204);
+        return redirect()->back();
     }
 
     public function restore($id){
         $producto = Producto::withTrashed()->findOrFail($id);
         $producto->restore();
 
-        return response()->json(null,204);
+        return redirect()->back();
     }
 }
