@@ -1,11 +1,19 @@
 import { useState } from 'react'
-import { ShoppingCart, Menu, X } from 'lucide-react'
+import { ShoppingCart, Menu as MenuIcon, X } from 'lucide-react'
+import { useCart } from '../Context/CartContext'
+import CartComponent from '../Components/CartComponent'
 
-export default function Component() {
+export default function Inicio() {
     const [isMenuOpen, setIsMenuOpen] = useState(false)
+    const [isCartOpen, setIsCartOpen] = useState(false)
+    const { cartItemsCount } = useCart()
 
     const toggleMenu = () => {
         setIsMenuOpen(!isMenuOpen)
+    }
+
+    const toggleCart = () => {
+        setIsCartOpen(!isCartOpen)
     }
 
     return (
@@ -20,15 +28,15 @@ export default function Component() {
 
                     </nav>
                     <button className="md:hidden" onClick={toggleMenu}>
-                        {isMenuOpen ? <X /> : <Menu />}
+                        {isMenuOpen ? <X/> : <MenuIcon/>}
                     </button>
-                    <ShoppingCart className="hidden md:block" />
+                    <ShoppingCart className="hidden md:block" onClick={toggleCart}/>
                 </div>
             </header>
 
             {isMenuOpen && (
                 <div className="md:hidden bg-pink-600 text-pink-50 p-4">
-                    <nav className="flex flex-col space-y-2">
+                <nav className="flex flex-col space-y-2">
                         <a href="\inicio" className="hover:text-pink-200">Home</a>
                         <a href="\menu" className="hover:text-pink-200">Menu</a>
                         <a href="\AboutUs" className="hover:text-pink-200">About</a>
@@ -80,6 +88,18 @@ export default function Component() {
                     </div>
                 </div>
             </footer>
+            {isCartOpen && (
+                <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex justify-end">
+                    <div className="bg-white w-full max-w-md h-full overflow-y-auto">
+                        <div className="p-4">
+                            <button onClick={toggleCart} className="mb-4">
+                                <X />
+                            </button>
+                            <CartComponent />
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     )
 }

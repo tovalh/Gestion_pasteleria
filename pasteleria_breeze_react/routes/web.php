@@ -50,6 +50,9 @@ Route::get('/checkout', function () {
     return Inertia::render('Checkout');
 })->name('checkout');
 
+
+//VISTAS, Sin Controlador//
+
 Route::get('/menu', function () {
     return Inertia::render('Menu');
 })->name('menu');
@@ -57,6 +60,7 @@ Route::get('/menu', function () {
 Route::get('/AboutUs', function () {
     return Inertia::render('AboutUs');
 })->name('AboutUs');
+
 
 // DEFAULT
 Route::get('/', function () {

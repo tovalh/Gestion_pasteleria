@@ -1,7 +1,11 @@
 import React, { useState } from 'react'
+import { ShoppingCart, Menu as MenuIcon, X } from 'lucide-react'
+import { useCart } from '../Context/CartContext'
+import CartComponent from '../Components/CartComponent'
 
 // Import icons for the header
-import { ShoppingCart, Menu, X } from 'lucide-react'
+
+
 
 const products = [
     { id: 1, name: 'Strawberry Cupcake', category: 'Cupcakes', price: 3.99 },
@@ -20,11 +24,16 @@ export default function ProductsSection() {
     const [showVegan, setShowVegan] = useState(false)
     const [sortBy, setSortBy] = useState('name')
     const [isMenuOpen, setIsMenuOpen] = useState(false)
+    const [isCartOpen, setIsCartOpen] = useState(false)
+    const { cartItemsCount } = useCart()
 
     const toggleMenu = () => {
 
 
         setIsMenuOpen(!isMenuOpen)
+    }
+    const toggleCart = () => {
+        setIsCartOpen(!isCartOpen)
     }
 
     const filteredProducts = products
@@ -45,15 +54,21 @@ export default function ProductsSection() {
                 <div className="container mx-auto flex justify-between items-center">
                     <h1 className="text-2xl font-bold">Sweet Delights Bakery</h1>
                     <nav className="hidden md:flex space-x-4">
-                        <a href="\inicio" className="hover:text-pink-200">Home</a>
-                        <a href="\menu" className="hover:text-pink-200">Menu</a>
-                        <a href="\AboutUs" className="hover:text-pink-200">About</a>
-
+                        <a href="/inicio" className="hover:text-pink-200">Home</a>
+                        <a href="/menu" className="hover:text-pink-200">Menu</a>
+                        <a href="/AboutUs" className="hover:text-pink-200">About</a>
                     </nav>
                     <button className="md:hidden" onClick={toggleMenu}>
-                        {isMenuOpen ? <X size={24}/> : <Menu size={24}/>}
+                        {isMenuOpen ? <X/> : <MenuIcon/>}
                     </button>
-                    <ShoppingCart className="hidden md:block" size={24}/>
+                    <button onClick={toggleCart} className="relative">
+                        <ShoppingCart className="text-pink-50" size={24}/>
+                        {cartItemsCount > 0 && (
+                            <span className="absolute -top-2 -right-2 bg-pink-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs">
+                                {cartItemsCount}
+                            </span>
+                        )}
+                    </button>
                 </div>
             </header>
 
@@ -131,6 +146,18 @@ export default function ProductsSection() {
                         </div>
                     ))}
                 </div>
+                {isCartOpen && (
+                    <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex justify-end">
+                        <div className="bg-white w-full max-w-md h-full overflow-y-auto">
+                            <div className="p-4">
+                                <button onClick={toggleCart} className="mb-4">
+                                    <X />
+                                </button>
+                                <CartComponent />
+                            </div>
+                        </div>
+                    </div>
+                )}
             </div>
             <footer className="bg-pink-700 text-pink-50 py-8">
                 <div className="container mx-auto text-center">
