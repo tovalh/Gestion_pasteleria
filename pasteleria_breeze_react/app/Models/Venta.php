@@ -16,7 +16,8 @@ class Venta extends Model
         'NumeroTransaccionVenta',
         'totalVenta',
         'metodoDePagoVenta',
-        'estadoPedido'
+        'estadoPedido',
+        'Comentario'
     ];
 
     public function productos()

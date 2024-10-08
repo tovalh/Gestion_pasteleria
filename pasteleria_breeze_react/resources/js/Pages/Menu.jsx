@@ -1,20 +1,10 @@
 import React, { useState } from 'react'
+import { Head } from '@inertiajs/react';
 
 // Import icons for the header
 import { ShoppingCart, Menu, X } from 'lucide-react'
 
-const products = [
-    { id: 1, name: 'Strawberry Cupcake', category: 'Cupcakes', price: 3.99 },
-    { id: 2, name: 'Chocolate Croissant', category: 'Pastries', price: 2.99 },
-    { id: 3, name: 'Blueberry Muffin', category: 'Muffins', price: 2.49 },
-    { id: 4, name: 'Sourdough Bread', category: 'Breads', price: 5.99 },
-    { id: 5, name: 'Cherry Blossom Cake', category: 'Cakes', price: 24.99 },
-    { id: 6, name: 'Rose Macarons', category: 'Cookies', price: 1.99 },
-]
-
-const categories = ['All', 'Cupcakes', 'Pastries', 'Muffins', 'Breads', 'Cakes', 'Cookies']
-
-export default function ProductsSection() {
+export default function ProductsSection({productos}) {
     const [searchTerm, setSearchTerm] = useState('')
     const [selectedCategory, setSelectedCategory] = useState('All')
     const [showVegan, setShowVegan] = useState(false)

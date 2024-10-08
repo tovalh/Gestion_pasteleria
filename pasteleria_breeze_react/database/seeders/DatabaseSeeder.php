@@ -160,17 +160,18 @@ class DatabaseSeeder extends Seeder
                 'NumeroTransaccionVenta' => 1001,
                 'totalVenta' => 15000,
                 'metodoDePagoVenta' => 'efectivo',
-                'Clientes_idCliente' => 1
+                'Clientes_idCliente' => 1,
+                'Comentario' => 'Venta realizada sin problemas'
             ],
             [
                 'idVenta' => 2,
                 'NumeroTransaccionVenta' => 1002,
                 'totalVenta' => 20000,
                 'metodoDePagoVenta' => 'tarjeta',
-                'Clientes_idCliente' => 2
+                'Clientes_idCliente' => 2,
+                'Comentario' => 'Cliente solicitó entrega a domicilio'
             ]
         ]);
-
         // Producto_has_venta
         DB::table('producto_has_venta')->insert([
             [
