@@ -17,14 +17,14 @@ export default function Inicio() {
     }
 
     return (
-        <div className="bg-pink-50 min-h-screen">
+        <div className="bg-p ink-50 min-h-screen">
             <header className="bg-pink-700 text-pink-50 p-4">
                 <div className="container mx-auto flex justify-between items-center">
                     <h1 className="text-2xl font-bold">Sweet Delights Bakery</h1>
                     <nav className="hidden md:flex space-x-4">
                         <a href="\inicio" className="hover:text-pink-200">Home</a>
                         <a href="\menu" className="hover:text-pink-200">Menu</a>
-                        <a href="\AboutUs" className="hover:text-pink-200">About</a>
+                        <a href="\aboutUs" className="hover:text-pink-200">About</a>
 
                     </nav>
                     <button className="md:hidden" onClick={toggleMenu}>
@@ -39,7 +39,7 @@ export default function Inicio() {
                 <nav className="flex flex-col space-y-2">
                         <a href="\inicio" className="hover:text-pink-200">Home</a>
                         <a href="\menu" className="hover:text-pink-200">Menu</a>
-                        <a href="\AboutUs" className="hover:text-pink-200">About</a>
+                        <a href="\aboutUs" className="hover:text-pink-200">About</a>
 
                     </nav>
                 </div>

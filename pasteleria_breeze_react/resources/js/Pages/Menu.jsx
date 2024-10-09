@@ -1,7 +1,9 @@
 import React, { useState } from 'react'
 
 // Import icons for the header
-import { ShoppingCart, Menu, X } from 'lucide-react'
+import {ShoppingCart, Menu, X, Menu as MenuIcon} from 'lucide-react'
+import { useCart } from '../Context/CartContext'
+import CartComponent from '../Components/CartComponent'
 
 const products = [
     { id: 1, name: 'Strawberry Cupcake', category: 'Cupcakes', price: 3.99 },
@@ -20,11 +22,15 @@ export default function ProductsSection() {
     const [showVegan, setShowVegan] = useState(false)
     const [sortBy, setSortBy] = useState('name')
     const [isMenuOpen, setIsMenuOpen] = useState(false)
+    const [isCartOpen, setIsCartOpen] = useState(false)
 
     const toggleMenu = () => {
 
 
         setIsMenuOpen(!isMenuOpen)
+    }
+    const toggleCart = () => {
+        setIsCartOpen(!isCartOpen)
     }
 
     const filteredProducts = products
@@ -47,13 +53,13 @@ export default function ProductsSection() {
                     <nav className="hidden md:flex space-x-4">
                         <a href="\inicio" className="hover:text-pink-200">Home</a>
                         <a href="\menu" className="hover:text-pink-200">Menu</a>
-                        <a href="\AboutUs" className="hover:text-pink-200">About</a>
+                        <a href="\aboutUs" className="hover:text-pink-200">About</a>
 
                     </nav>
                     <button className="md:hidden" onClick={toggleMenu}>
-                        {isMenuOpen ? <X size={24}/> : <Menu size={24}/>}
+                        {isMenuOpen ? <X/> : <MenuIcon/>}
                     </button>
-                    <ShoppingCart className="hidden md:block" size={24}/>
+                    <ShoppingCart className="hidden md:block" onClick={toggleCart}/>
                 </div>
             </header>
 
@@ -62,7 +68,7 @@ export default function ProductsSection() {
                     <nav className="flex flex-col space-y-2">
                         <a href="\inicio" className="hover:text-pink-200">Home</a>
                         <a href="\menu" className="hover:text-pink-200">Menu</a>
-                        <a href="\AboutUs" className="hover:text-pink-200">About</a>
+                        <a href="\aboutUs" className="hover:text-pink-200">About</a>
 
                     </nav>
                 </div>
@@ -141,6 +147,18 @@ export default function ProductsSection() {
                     </div>
                 </div>
             </footer>
+            {isCartOpen && (
+                <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex justify-end">
+                    <div className="bg-white w-full max-w-md h-full overflow-y-auto">
+                        <div className="p-4">
+                            <button onClick={toggleCart} className="mb-4">
+                                <X />
+                            </button>
+                            <CartComponent />
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     )
 }

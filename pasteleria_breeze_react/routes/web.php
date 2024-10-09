@@ -51,7 +51,11 @@ Route::get('/menu', function () {
 
 Route::get('/aboutUs', function () {
     return Inertia::render('AboutUs');
-})->name('AboutUs');
+})->name('aboutUs');
+
+Route::get('/administracion', function () {
+    return Inertia::render('Administracion');
+})->name('administracion');
 
 
 // DEFAULT
