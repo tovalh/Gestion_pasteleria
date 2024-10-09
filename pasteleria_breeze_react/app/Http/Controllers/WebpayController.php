@@ -57,10 +57,9 @@ class WebpayController extends Controller
 
             if ($response->isApproved()) {
                 // Transacción exitosa
-                return Inertia::render('PaymentSuccess', [
-                    'response' => $response
-                ]);
-            } else {
+                return app(VentaController::class)->confirmarVenta($request);
+            }
+            else {
                 // Transacción rechazada
                 return Inertia::render('PaymentRejected', [
                     'response' => $response

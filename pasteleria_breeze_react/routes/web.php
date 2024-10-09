@@ -32,9 +32,16 @@ Route::get('/prueba', [ProductoController::class, 'index']);
 //Seccion
 
 //Venta
+Route::get('/ventas/test-page', function () {
+    return Inertia::render('Ventas/Test');
+});
+Route::post('/ventas/test', [VentaController::class, 'store']);
+Route::get('/ventas-por-periodo', [VentaController::class, 'obtenerVentasPorPeriodo'])->name('ventas.periodo');
+Route::resource('ventas', VentaController::class);
 
 //WebPay
 
+Route::post('/venta/preparar-checkout', [VentaController::class, 'prepararCheckout'])->name('venta.prepararCheckout');
 Route::post('/webpay/init', [WebpayController::class, 'initTransaction'])->name('webpay.init');
 Route::get('/webpay/return', [WebpayController::class, 'returnUrl'])->name('webpay.return');
 
