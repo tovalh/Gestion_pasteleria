@@ -13,7 +13,7 @@ class ProductoController extends Controller
     public function index()
     {
         $productos = Producto::all();
-        return Inertia::render('Menu', ['productos' => $productos]);
+        return Inertia::render('Productos/all', ['productos' => $productos]);
     }
     public function show($id) {
         $producto = Producto::findOrFail($id);

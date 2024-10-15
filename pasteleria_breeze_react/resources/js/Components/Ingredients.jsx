@@ -16,7 +16,7 @@ const Ingredients = ({ ingredients }) => {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        post('/admin/ingredients', {
+        post('/ingredientes', {
             preserveState: true,
             onSuccess: () => {
                 closeModal();
