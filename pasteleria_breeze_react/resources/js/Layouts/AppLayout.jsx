@@ -22,6 +22,7 @@ export default function AppLayout({ children }) {
                                 </Link>
                                 {/* Agrega más enlaces de navegación aquí según sea necesario */}
                             </div>
+
                         </div>
                     </div>
                 </div>

@@ -15,9 +15,14 @@ class ProductoController extends Controller
         $productos = Producto::all();
         return Inertia::render('Productos/all', ['productos' => $productos]);
     }
+    public function create()
+    {
+        return Inertia::render('Productos/Create');
+    }
+
     public function show($id) {
         $producto = Producto::findOrFail($id);
-        return response()->json($producto);
+        return Inertia::render('Productos/Show', ['producto' => $producto]);
     }
 
     public function store(Request $request) {
@@ -27,11 +32,18 @@ class ProductoController extends Controller
             'PrecioProducto' => 'required|max:12',
             'Seccion_idSeccion' => 'required|integer|exists:seccion,idSeccion',
         ]);
-
         $producto = Producto::create($validatedData);
-        return response()->json($producto,201);
-    }
 
+        return Inertia::render('Productos/Index', [
+            'productos' => Producto::all(),
+            'message' => 'Producto creado con éxito'
+        ]);
+    }
+    public function edit($id)
+    {
+        $ingrediente = Ingrediente::findOrFail($id);
+        return Inertia::render('Ingredientes/Edit', ['ingrediente' => $ingrediente]);
+    }
     public function update(Request $request, $id) {
         $validatedData = $request->validate([
             'NombreProducto' => 'required|max:35',
