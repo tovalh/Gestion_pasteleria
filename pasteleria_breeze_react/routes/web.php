@@ -16,14 +16,24 @@ Route::get('/inicio', [HomeController::class, 'index'])->name('inicio');
 Route::get('/seccion/token', [SeccionController::class, 'token'])->name('seccion.token');
 
 Route::resource('seccion', SeccionController::class);
-Route::resource('ingredientes', IngredienteController::class);
+//Route::resource('ingredientes', IngredienteController::class);
 Route::resource('venta', VentaController::class);
 
+//Ingredientes
+Route::resource('ingredientes', IngredienteController::class);
+
 //Productos (PRIMERO LAS RUTAS ESPECIFICAS AL FINAL RESOURCE)
-Route::get('/productos/filtro', [ProductoController::class, 'filtro'])->name('productos.filtro');
-Route::delete('/productos/deleteo/{id}', [ProductoController::class, 'hardDelete'])->name('productos.hardDelete');
-Route::put('/productos/restaurar/{id}', [ProductoController::class, 'restore'])->name('productos.restore');
-Route::resource('productos', ProductoController::class);
+//Route::get('/productos/filtro', [ProductoController::class, 'filtro'])->name('productos.filtro');
+//Route::delete('/productos/deleteo/{id}', [ProductoController::class, 'hardDelete'])->name('productos.hardDelete');
+//Route::put('/productos/restaurar/{id}', [ProductoController::class, 'restore'])->name('productos.restore');
+//Route::resource('productos', ProductoController::class);
+
+//productos
+Route::resource('/productosCrud', ProductoController::class);
+
+Route::get('/productos', [ProductoController::class, 'index'])->name('productos.index');
+
+
 
 Route::get('/prueba', [ProductoController::class, 'index']);
 
@@ -85,4 +95,7 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
+Route::get('/componentePrueba', [ProductoController::class, 'index'])->name('componentePrueba');
+
 require __DIR__.'/auth.php';
+
