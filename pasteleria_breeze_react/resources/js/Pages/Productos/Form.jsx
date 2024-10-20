@@ -1,33 +1,38 @@
 import React, { useEffect } from 'react';
 import { useForm } from '@inertiajs/react';
 
-const Form = ({ productos = null, isEditing = false }) => {
+const Form = ({ producto = null, isEditing = false }) => {
     const { data, setData, post, put, processing, errors, reset } = useForm({
-        NombreProducto: ''
+        NombreProducto: '',
+        DescripcionProducto: '',
+        PrecioProducto: '',
+        Seccion_idSeccion: ''
     });
 
-    // Establecer los valores iniciales cuando el componente se monta
     useEffect(() => {
-        if (isEditing && productos) {
+        if (isEditing && producto) {
             reset({
-                NombreProducto: ''
+                NombreProducto: producto.NombreProducto,
+                DescripcionProducto: producto.DescripcionProducto,
+                PrecioProducto: producto.PrecioProducto,
+                Seccion_idSeccion: producto.Seccion_idSeccion
             });
         }
-    }, [productos]);
+    }, [producto]);
 
     const handleSubmit = (e) => {
         e.preventDefault();
         if (isEditing) {
-            put(`/productos/${productos.idProducto}`);
+            put(`/productos/${producto.idProducto}`);
         } else {
-            post('/productosCrud');
+            post('/productos');
         }
     };
 
     return (
         <div className="max-w-2xl mx-auto p-4">
             <h1 className="text-2xl font-bold mb-6">
-                {isEditing ? 'Editar productos' : 'Nuevo productos'}
+                {isEditing ? 'Editar Producto' : 'Nuevo Producto'}
             </h1>
 
             <form onSubmit={handleSubmit} className="space-y-4">
@@ -45,6 +50,47 @@ const Form = ({ productos = null, isEditing = false }) => {
                     )}
                 </div>
 
+                <div>
+                    <label className="block mb-1">Descripción</label>
+                    <textarea
+                        value={data.DescripcionProducto}
+                        onChange={e => setData('DescripcionProducto', e.target.value)}
+                        className="w-full border rounded px-3 py-2"
+                        required
+                    />
+                    {errors.DescripcionProducto && (
+                        <div className="text-red-500 text-sm">{errors.DescripcionProducto}</div>
+                    )}
+                </div>
+
+                <div>
+                    <label className="block mb-1">Precio</label>
+                    <input
+                        type="number"
+                        step="0.01"
+                        value={data.PrecioProducto}
+                        onChange={e => setData('PrecioProducto', e.target.value)}
+                        className="w-full border rounded px-3 py-2"
+                        required
+                    />
+                    {errors.PrecioProducto && (
+                        <div className="text-red-500 text-sm">{errors.PrecioProducto}</div>
+                    )}
+                </div>
+
+                <div>
+                    <label className="block mb-1">Sección</label>
+                    <input
+                        type="number"
+                        value={data.Seccion_idSeccion}
+                        onChange={e => setData('Seccion_idSeccion', e.target.value)}
+                        className="w-full border rounded px-3 py-2"
+                        required
+                    />
+                    {errors.Seccion_idSeccion && (
+                        <div className="text-red-500 text-sm">{errors.Seccion_idSeccion}</div>
+                    )}
+                </div>
 
                 <div className="flex justify-end space-x-2">
                     <button
