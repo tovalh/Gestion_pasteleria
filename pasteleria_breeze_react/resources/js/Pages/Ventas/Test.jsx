@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+/**import React, { useState } from 'react';
 import axios from 'axios';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 
@@ -47,4 +47,4 @@ export default function TestVenta() {
             )}
         </div>
     );
-}
+}*/

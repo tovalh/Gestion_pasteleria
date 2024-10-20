@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+/**import React, { useState } from 'react';
 import { useForm } from '@inertiajs/react';
 import { Alert } from '@/Components/ui/alert';
 
@@ -108,4 +108,4 @@ export default function Create({ productos, clientes }) {
             </form>
         </div>
     );
-}
+}*/
