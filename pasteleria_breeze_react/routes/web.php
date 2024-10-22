@@ -9,6 +9,7 @@ use App\Http\Controllers\WebpayController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
+use App\Models\Producto;
 use App\Http\Controllers\HomeController;
 
 Route::get('/inicio', [HomeController::class, 'index'])->name('inicio');
@@ -58,7 +59,9 @@ Route::get('/checkout', function () {
 //VISTAS, Sin Controlador//
 
 Route::get('/menu', function () {
-    return Inertia::render('Menu');
+    return Inertia::render('Menu', [
+        'productos' => Producto::all()
+    ]);
 })->name('menu');
 
 Route::get('/aboutUs', function () {

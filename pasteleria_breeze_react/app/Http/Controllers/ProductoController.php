@@ -13,7 +13,7 @@ class ProductoController extends Controller
     public function index()
     {
         $productos = Producto::all();
-        return Inertia::render('Productos/Index', ['productos' => $productos]);
+        return Inertia::render('Productos/all', ['productos' => $productos]);
     }
     public function create()
     {
@@ -32,12 +32,11 @@ class ProductoController extends Controller
             'PrecioProducto' => 'required|max:12',
             'Seccion_idSeccion' => 'required|integer|exists:seccion,idSeccion',
         ]);
+
         $producto = Producto::create($validatedData);
 
-        return Inertia::render('Productos/Index', [
-            'productos' => Producto::all(),
-            'message' => 'Producto creado con éxito'
-        ]);
+        // Redirigir al dashboard con mensaje de éxito
+        return redirect()->route('dashboard')->with('message', 'Producto creado con éxito');
     }
     public function edit($id)
     {

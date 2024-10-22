@@ -17,26 +17,25 @@ export default function Inicio() {
     }
 
     return (
-        <div className="bg-p ink-50 min-h-screen">
-            <header className="bg-pink-700 text-pink-50 p-4">
+        <div className="bg-[#F7F0E9] min-h-screen">
+            <header className="bg-pink-500 text-pink-50 p-4">
                 <div className="container mx-auto flex justify-between items-center">
                     <h1 className="text-2xl font-bold">Sweet Delights Bakery</h1>
-                    <nav className="hidden md:flex space-x-4">
-                        <a href="\inicio" className="hover:text-pink-200">Home</a>
-                        <a href="\menu" className="hover:text-pink-200">Menu</a>
-                        <a href="\aboutUs" className="hover:text-pink-200">About</a>
-
+                    <nav className="hidden md:flex space-x-6">
+                        <a href="\inicio" className="hover:text-pink-200">Inicio</a>
+                        <a href="\menu" className="hover:text-pink-200">Productos</a>
+                        <a href="\aboutUs" className="hover:text-pink-200">Nosotros</a>
+                        <button className="md:hidden" onClick={toggleMenu}>
+                            {isMenuOpen ? <X/> : <MenuIcon/>}
+                        </button>
+                        <ShoppingCart className="hidden md:block" onClick={toggleCart}/>
                     </nav>
-                    <button className="md:hidden" onClick={toggleMenu}>
-                        {isMenuOpen ? <X/> : <MenuIcon/>}
-                    </button>
-                    <ShoppingCart className="hidden md:block" onClick={toggleCart}/>
                 </div>
             </header>
 
             {isMenuOpen && (
                 <div className="md:hidden bg-pink-600 text-pink-50 p-4">
-                <nav className="flex flex-col space-y-2">
+                    <nav className="flex flex-col space-y-2">
                         <a href="\inicio" className="hover:text-pink-200">Home</a>
                         <a href="\menu" className="hover:text-pink-200">Menu</a>
                         <a href="\aboutUs" className="hover:text-pink-200">About</a>
@@ -46,20 +45,31 @@ export default function Inicio() {
             )}
 
             <main>
-                <section className="bg-pink-200 py-20">
-                    <div className="container mx-auto text-center">
-                        <h2 className="text-4xl font-bold text-pink-800 mb-4">Welcome to Sweet Delights</h2>
-                        <p className="text-xl text-pink-700 mb-8">Indulge in our freshly baked goods made with love</p>
-                        <button className="bg-pink-500 text-white px-6 py-2 rounded-full hover:bg-pink-600 transition duration-300">
-                            Order Now
-                        </button>
-                    </div>
-                </section>
+                <section className="relative h-96">
+                    <div
+                        className="absolute inset-0 w-full h-full bg-cover bg-center bg-no-repeat"
+                        style={{
+                            backgroundImage: "url('/images/portada_cake.jpg')",
+                            // Opcionalmente agregar un overlay para mejorar la legibilidad
+                            backgroundColor: 'rgba(0,0,0,0.2)',
+                            backgroundBlendMode: 'overlay'
+                        }}
+                    />
+                    <div className="relative h-full flex items-center justify-center">
+                        <a href="\menu" className="hover:text-pink-200">
+                            <button
+                                className="bg-pink-500 text-white px-6 py-2 rounded-full hover:bg-pink-600 transition duration-300">
+                                Explora nuestros productos
+
+                    </button>
+                        </a>
+        </div>
+</section>
 
                 <section className="py-16">
                     <div className="container mx-auto">
-                        <h2 className="text-3xl font-bold text-pink-800 mb-8 text-center">Featured Products</h2>
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                        <h2 className="text-3xl font-bold text-pink-800 mb-8 text-center">Nuestros deliciosos productos</h2>
+                        <div className="grid grid-cols-2 md:grid-cols-3 gap-8 p-4">
                             {['Strawberry Cupcake', 'Rose Macarons', 'Cherry Blossom Cake'].map((product) => (
                                 <div key={product} className="bg-white p-6 rounded-lg shadow-md">
                                     <img
@@ -79,7 +89,7 @@ export default function Inicio() {
                 </section>
             </main>
 
-            <footer className="bg-pink-700 text-pink-50 py-8">
+            <footer className="bg-pink-500 text-pink-50 py-8">
                 <div className="container mx-auto text-center">
                     <p>&copy; 2023 Sweet Delights Bakery. All rights reserved.</p>
                     <div className="mt-4">

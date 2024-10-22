@@ -39,10 +39,8 @@ class IngredienteController extends Controller
         ]);
         $ingrediente = Ingrediente::create($validatedData);
 
-        return Inertia::render('Ingredientes/Index', [
-            'ingredientes' => Ingrediente::all(),
-            'message' => 'Ingrediente creado con éxito'
-        ]);
+        return redirect()->route('dashboard')->with('message', 'Producto creado con éxito');
+
     }
 
     public function edit($id)

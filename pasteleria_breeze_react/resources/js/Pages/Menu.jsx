@@ -1,47 +1,49 @@
 import React, { useState } from 'react'
-
-// Import icons for the header
-import {ShoppingCart, Menu, X, Menu as MenuIcon} from 'lucide-react'
+import { ShoppingCart, Menu, X, Menu as MenuIcon } from 'lucide-react'
 import { useCart } from '../Context/CartContext'
 import CartComponent from '../Components/CartComponent'
 
-const products = [
-    { id: 1, name: 'Strawberry Cupcake', category: 'Cupcakes', price: 3.99 },
-    { id: 2, name: 'Chocolate Croissant', category: 'Pastries', price: 2.99 },
-    { id: 3, name: 'Blueberry Muffin', category: 'Muffins', price: 2.49 },
-    { id: 4, name: 'Sourdough Bread', category: 'Breads', price: 5.99 },
-    { id: 5, name: 'Cherry Blossom Cake', category: 'Cakes', price: 24.99 },
-    { id: 6, name: 'Rose Macarons', category: 'Cookies', price: 1.99 },
-]
-
-const categories = ['All', 'Cupcakes', 'Pastries', 'Muffins', 'Breads', 'Cakes', 'Cookies']
-
-export default function ProductsSection() {
+// Ahora recibimos productos como prop
+export default function ProductsSection({ productos }) {
     const [searchTerm, setSearchTerm] = useState('')
     const [selectedCategory, setSelectedCategory] = useState('All')
     const [showVegan, setShowVegan] = useState(false)
     const [sortBy, setSortBy] = useState('name')
     const [isMenuOpen, setIsMenuOpen] = useState(false)
     const [isCartOpen, setIsCartOpen] = useState(false)
+    const { addToCart, cartItemsCount } = useCart()
+
+    // Obtenemos las categorías únicas de los productos
+    const categories = ['All', ...new Set(productos.map(product => product.Seccion_idSeccion))]
 
     const toggleMenu = () => {
-
-
         setIsMenuOpen(!isMenuOpen)
     }
+
     const toggleCart = () => {
         setIsCartOpen(!isCartOpen)
     }
 
-    const filteredProducts = products
+    const handleAddToCart = (product) => {
+        const cartItem = {
+            id: product.idProducto,
+            name: product.NombreProducto,
+            price: parseFloat(product.PrecioProducto),
+            description: product.DescripcionProducto,
+            image: product.imagen || `/placeholder.svg?height=200&width=300`
+        }
+        addToCart(cartItem)
+    }
+
+    const filteredProducts = productos
         .filter(product =>
-            product.name.toLowerCase().includes(searchTerm.toLowerCase()) &&
-            (selectedCategory === 'All' || product.category === selectedCategory)
+            product.NombreProducto.toLowerCase().includes(searchTerm.toLowerCase()) &&
+            (selectedCategory === 'All' || product.Seccion_idSeccion === selectedCategory)
         )
         .sort((a, b) => {
-            if (sortBy === 'name') return a.name.localeCompare(b.name)
-            if (sortBy === 'price-asc') return a.price - b.price
-            if (sortBy === 'price-desc') return b.price - a.price
+            if (sortBy === 'name') return a.NombreProducto.localeCompare(b.NombreProducto)
+            if (sortBy === 'price-asc') return a.PrecioProducto - b.PrecioProducto
+            if (sortBy === 'price-desc') return b.PrecioProducto - a.PrecioProducto
             return 0
         })
 
@@ -56,10 +58,20 @@ export default function ProductsSection() {
                         <a href="\aboutUs" className="hover:text-pink-200">About</a>
 
                     </nav>
-                    <button className="md:hidden" onClick={toggleMenu}>
-                        {isMenuOpen ? <X/> : <MenuIcon/>}
-                    </button>
-                    <ShoppingCart className="hidden md:block" onClick={toggleCart}/>
+                    <div className="flex items-center space-x-4">
+                        <button className="md:hidden" onClick={toggleMenu}>
+                            {isMenuOpen ? <X/> : <MenuIcon/>}
+                        </button>
+                        <button onClick={toggleCart} className="relative">
+                            <ShoppingCart className="text-pink-50"/>
+                            {cartItemsCount > 0 && (
+                                <span
+                                    className="absolute -top-2 -right-2 bg-pink-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs">
+                                    {cartItemsCount}
+                                </span>
+                            )}
+                        </button>
+                    </div>
                 </div>
             </header>
 
@@ -75,7 +87,7 @@ export default function ProductsSection() {
             )}
 
             <div className="container mx-auto p-6">
-                <h1 className="text-3xl font-bold text-pink-800 mb-6">Our Products</h1>
+                <h1 className="text-3xl font-bold text-pink-800 mb-6">Nuestros Productos</h1>
 
                 <div className="flex flex-col md:flex-row gap-4 mb-6">
                     <input
@@ -117,19 +129,24 @@ export default function ProductsSection() {
 
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     {filteredProducts.map(product => (
-                        <div key={product.id} className="bg-white rounded-lg shadow-md overflow-hidden">
+                        <div key={product.idProducto} className="bg-white rounded-lg shadow-md overflow-hidden">
                             <img
                                 src={`/placeholder.svg?height=200&width=300`}
-                                alt={product.name}
+                                alt={product.NombreProducto}
                                 className="w-full h-48 object-cover"
                             />
                             <div className="p-4">
-                                <h2 className="text-xl font-semibold text-pink-800 mb-2">{product.name}</h2>
-                                <p className="text-pink-600 mb-2">{product.category}</p>
+                                <h2 className="text-xl font-semibold text-pink-800 mb-2">
+                                    {product.NombreProducto}
+                                </h2>
+                                <p className="text-pink-600 mb-2">{product.DescripcionProducto}</p>
                                 <div className="flex justify-between items-center">
-                                    <span className="text-lg font-bold text-pink-700">${product.price.toFixed(2)}</span>
+                                    <span className="text-lg font-bold text-pink-700">
+                                        ${parseFloat(product.PrecioProducto).toFixed(2)}
+                                    </span>
                                     <button
-                                        className="bg-pink-500 hover:bg-pink-600 text-white font-bold py-2 px-4 rounded">
+                                        onClick={() => handleAddToCart(product)}
+                                        className="bg-pink-500 hover:bg-pink-600 text-white font-bold py-2 px-4 rounded transition duration-300">
                                         Add to Cart
                                     </button>
                                 </div>
@@ -152,9 +169,9 @@ export default function ProductsSection() {
                     <div className="bg-white w-full max-w-md h-full overflow-y-auto">
                         <div className="p-4">
                             <button onClick={toggleCart} className="mb-4">
-                                <X />
+                                <X/>
                             </button>
-                            <CartComponent />
+                            <CartComponent/>
                         </div>
                     </div>
                 </div>
