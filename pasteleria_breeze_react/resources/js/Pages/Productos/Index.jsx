@@ -32,25 +32,28 @@ const Index = ({ productos, message }) => {
                     <thead className="bg-gray-50">
                     <tr>
                         <th className="px-6 py-3 text-left">Nombre</th>
-                        <th className="px-6 py-3 text-left">Stock</th>
-                        <th className="px-6 py-3 text-left">Stock Mínimo</th>
-                        <th className="px-6 py-3 text-left">Unidad de Medida</th>
+                        <th className="px-6 py-3 text-left">Descripción</th>
+                        <th className="px-6 py-3 text-left">Precio</th>
+                        <th className="px-6 py-3 text-left">Sección</th>
                         <th className="px-6 py-3 text-left">Acciones</th>
                     </tr>
                     </thead>
                     <tbody className="divide-y divide-gray-200">
-                    {productos.map((productos) => (
-                        <tr key={productos.idProducto}>
-                            <td className="px-6 py-4">{productos.NombreProducto}</td>
+                    {productos.map((producto) => (
+                        <tr key={producto.idProducto}>
+                            <td className="px-6 py-4">{producto.NombreProducto}</td>
+                            <td className="px-6 py-4">{producto.DescripcionProducto}</td>
+                            <td className="px-6 py-4">${producto.PrecioProducto}</td>
+                            <td className="px-6 py-4">{producto.Seccion_idSeccion}</td>
                             <td className="px-6 py-4 space-x-2">
                                 <Link
-                                    href={`/productos/${productos.idProducto}/edit`}
+                                    href={`/productos/${producto.idProducto}/edit`}
                                     className="text-blue-600 hover:text-blue-800"
                                 >
                                     Editar
                                 </Link>
                                 <button
-                                    onClick={() => handleDelete(productos.idProducto)}
+                                    onClick={() => handleDelete(producto.idProducto)}
                                     className="text-red-600 hover:text-red-800"
                                 >
                                     Eliminar

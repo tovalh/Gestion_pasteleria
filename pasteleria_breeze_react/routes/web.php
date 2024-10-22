@@ -29,15 +29,10 @@ Route::resource('ingredientes', IngredienteController::class);
 //Route::resource('productos', ProductoController::class);
 
 //productos
-Route::resource('/productosCrud', ProductoController::class);
-
+Route::resource('/productos', ProductoController::class);
 Route::get('/productos', [ProductoController::class, 'index'])->name('productos.index');
-
-
-
 Route::get('/prueba', [ProductoController::class, 'index']);
 
-//Ingredientes
 
 //Seccion
 
@@ -74,6 +69,12 @@ Route::get('/administracion', function () {
     return Inertia::render('Administracion');
 })->name('administracion');
 
+// Ruta del Dashboard
+Route::get('/dashboard', [\App\Http\Controllers\DashboardController::class, 'index'])->name('dashboard');
+
+Route::get('/', function () {
+    return redirect('/dashboard');
+});
 
 // DEFAULT
 Route::get('/', function () {
@@ -84,10 +85,6 @@ Route::get('/', function () {
         'phpVersion' => PHP_VERSION,
     ]);
 });
-
-Route::get('/dashboard', function () {
-    return Inertia::render('Dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

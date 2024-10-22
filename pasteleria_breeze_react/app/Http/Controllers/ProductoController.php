@@ -41,8 +41,8 @@ class ProductoController extends Controller
     }
     public function edit($id)
     {
-        $ingrediente = Ingrediente::findOrFail($id);
-        return Inertia::render('Ingredientes/Edit', ['ingrediente' => $ingrediente]);
+        $producto = Producto::findOrFail($id);
+        return Inertia::render('Productos/Edit', ['productos' => $producto]);
     }
     public function update(Request $request, $id) {
         $validatedData = $request->validate([
