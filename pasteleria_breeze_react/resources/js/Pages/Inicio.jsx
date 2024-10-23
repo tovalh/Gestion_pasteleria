@@ -20,7 +20,7 @@ export default function Inicio() {
         <div className="bg-[#F7F0E9] min-h-screen">
             <header className="bg-pink-500 text-pink-50 p-4">
                 <div className="container mx-auto flex justify-between items-center">
-                    <h1 className="text-2xl font-bold">Sweet Delights Bakery</h1>
+                    <a href="\inicio" className="text-2xl font-bold">Dolci Mimi</a>
                     <nav className="hidden md:flex space-x-6">
                         <a href="\inicio" className="hover:text-pink-200">Inicio</a>
                         <a href="\menu" className="hover:text-pink-200">Productos</a>

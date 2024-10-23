@@ -48,17 +48,14 @@ export default function ProductsSection({ productos }) {
         })
 
     return (
-        <div className="bg-pink-50 min-h-screen">
-            <header className="bg-pink-700 text-pink-50 p-4">
+        <div className="bg-[#F7F0E9] min-h-screen">
+            <header className="bg-pink-500 text-pink-50 p-4">
                 <div className="container mx-auto flex justify-between items-center">
-                    <h1 className="text-2xl font-bold">Sweet Delights Bakery</h1>
-                    <nav className="hidden md:flex space-x-4">
-                        <a href="\inicio" className="hover:text-pink-200">Home</a>
-                        <a href="\menu" className="hover:text-pink-200">Menu</a>
-                        <a href="\aboutUs" className="hover:text-pink-200">About</a>
-
-                    </nav>
-                    <div className="flex items-center space-x-4">
+                    <a href="\inicio" className="text-2xl font-bold">Dolci Mimi</a>
+                    <nav className="hidden md:flex space-x-6">
+                        <a href="\inicio" className="hover:text-pink-200">Inicio</a>
+                        <a href="\menu" className="hover:text-pink-200">Productos</a>
+                        <a href="\aboutUs" className="hover:text-pink-200">Nosotros</a>
                         <button className="md:hidden" onClick={toggleMenu}>
                             {isMenuOpen ? <X/> : <MenuIcon/>}
                         </button>
@@ -71,16 +68,17 @@ export default function ProductsSection({ productos }) {
                                 </span>
                             )}
                         </button>
-                    </div>
+                    </nav>
+
                 </div>
             </header>
 
             {isMenuOpen && (
                 <div className="md:hidden bg-pink-600 text-pink-50 p-4">
                     <nav className="flex flex-col space-y-2">
-                        <a href="\inicio" className="hover:text-pink-200">Home</a>
-                        <a href="\menu" className="hover:text-pink-200">Menu</a>
-                        <a href="\aboutUs" className="hover:text-pink-200">About</a>
+                        <a href="\inicio" className="hover:text-pink-200">Inicio</a>
+                        <a href="\menu" className="hover:text-pink-200">Productos</a>
+                        <a href="\aboutUs" className="hover:text-pink-200">Nosotros</a>
 
                     </nav>
                 </div>
@@ -155,7 +153,7 @@ export default function ProductsSection({ productos }) {
                     ))}
                 </div>
             </div>
-            <footer className="bg-pink-700 text-pink-50 py-8">
+            <footer className="bg-pink-500 text-pink-50 py-8">
                 <div className="container mx-auto text-center">
                     <p>&copy; 2023 Sweet Delights Bakery. All rights reserved.</p>
                     <div className="mt-4">
