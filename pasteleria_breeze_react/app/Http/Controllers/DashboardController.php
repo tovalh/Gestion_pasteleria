@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Producto;
 use App\Models\Ingrediente;
+use App\Models\Seccion;
 use Inertia\Inertia;
 
 class DashboardController extends Controller
@@ -13,6 +14,7 @@ class DashboardController extends Controller
         return Inertia::render('Dashboard', [
             'productos' => Producto::all(),
             'ingredientes' => Ingrediente::all(),
+            'secciones' => Seccion::all(),
             'message' => session('message')
         ]);
     }

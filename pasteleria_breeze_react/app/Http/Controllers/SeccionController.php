@@ -14,11 +14,17 @@ class SeccionController extends Controller
     }
     public function index(){
         $secciones = Seccion::all();
-        return Inertia::render('Menu', ['seccion' => $secciones]);
+        return Inertia::render('Secciones/Index', ['secciones' => $secciones]);
     }
-    public function show($id){
+
+    public function create()
+    {
+        return inertia::render('Secciones/Create');
+    }
+    public function show($id)
+    {
         $seccion = Seccion::findOrFail($id);
-        return response()->json($seccion);
+        return Inertia::render('Secciones/Show', ['seccion' => $seccion]);
     }
 
     public function store(Request $request){
@@ -27,12 +33,14 @@ class SeccionController extends Controller
         ]);
         $seccion = Seccion::create($validatedData);
 
-        return response()->json($seccion, 201);
+        return redirect()->route('dashboard')->with('message', 'Sección creada con éxito');
     }
 
-    /**
-     * Actualizar una sección existente
-     */
+    public function edit($id)
+    {
+        $seccion = Seccion::findOrFail($id);
+        return Inertia::render('Secciones/Edit', ['seccion' => $seccion]);
+    }
     public function update(Request $request, $id){
         $validatedData = $request->validate([
             'NombreSeccion' => 'required|string|max:255|unique:seccion,NombreSeccion,' . $id . ',idSeccion',
@@ -41,30 +49,19 @@ class SeccionController extends Controller
         $seccion = Seccion::findOrFail($id);
         $seccion->update($validatedData);
 
-        return redirect()->back();
+        return inertia::render('Secciones/Index', [
+            'secciones' => Seccion::all(),
+            'message' => 'Sección actualizada con éxito'
+        ]);
     }
-
-    /**
-     * Eliminar una sección
-     */
-    public function destroy($id){
+    public function destroy($id)
+    {
         $seccion = Seccion::findOrFail($id);
         $seccion->delete();
 
-        return redirect()->back();
-    }
-
-    public function hardDelete($id){
-        $seccion = Seccion::findOrFail($id);
-        $seccion->forceDelete();
-
-        return redirect()->back();
-    }
-
-    public function restore($id){
-        $seccion = Seccion::withTrashed()->findOrFail($id);
-        $seccion->restore();
-
-        return redirect()->back();
+        return inertia::render('Secciones/Index', [
+            'secciones' => Seccion::all(),
+            'message' => 'Sección eliminado con éxito'
+        ]);
     }
 }

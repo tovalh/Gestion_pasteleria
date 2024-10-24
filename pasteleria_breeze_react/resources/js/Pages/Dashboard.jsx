@@ -2,7 +2,7 @@ import React from 'react';
 import { Link } from '@inertiajs/react';
 import { router } from '@inertiajs/react';
 
-const Dashboard = ({ productos, ingredientes, message }) => {
+const Dashboard = ({ productos, ingredientes, secciones, message }) => {
     const handleDeleteProducto = (id) => {
         if (confirm('¿Estás seguro de eliminar este producto?')) {
             router.delete(`/productos/${id}`);
@@ -12,6 +12,12 @@ const Dashboard = ({ productos, ingredientes, message }) => {
     const handleDeleteIngrediente = (id) => {
         if (confirm('¿Estás seguro de eliminar este ingrediente?')) {
             router.delete(`/ingredientes/${id}`);
+        }
+    };
+
+    const handleDeleteSeccion = (id) => {
+        if (confirm('¿Estás seguro de eliminar esta sección?')) {
+            router.delete(`/secciones/${id}`);
         }
     };
 
@@ -114,6 +120,50 @@ const Dashboard = ({ productos, ingredientes, message }) => {
                                         </Link>
                                         <button
                                             onClick={() => handleDeleteIngrediente(ingrediente.idIngrediente)}
+                                            className="text-red-600 hover:text-red-800"
+                                        >
+                                            Eliminar
+                                        </button>
+                                    </td>
+                                </tr>
+                            ))}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                {/* Sección de Secciones */}
+                <div className="bg-white shadow-md rounded-lg overflow-hidden">
+                    <div className="p-4 bg-gray-50 border-b flex justify-between items-center">
+                        <h2 className="text-xl font-semibold">Secciones</h2>
+                        <Link
+                            href="/secciones/create"
+                            className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+                        >
+                            Nueva Sección
+                        </Link>
+                    </div>
+                    <div className="overflow-x-auto">
+                        <table className="min-w-full">
+                            <thead className="bg-gray-50">
+                            <tr>
+                                <th className="px-6 py-3 text-left">Nombre</th>
+                                <th className="px-6 py-3 text-left">Acciones</th>
+                            </tr>
+                            </thead>
+                            <tbody className="divide-y divide-gray-200">
+                            {secciones.map((seccion) => (
+                                <tr key={seccion.idSeccion}>
+                                    <td className="px-6 py-4">{seccion.NombreSeccion}</td>
+                                    <td className="px-6 py-4 space-x-2">
+                                        <Link
+                                            href={`/secciones/${seccion.idSeccion}/edit`}
+                                            className="text-blue-600 hover:text-blue-800"
+                                        >
+                                            Editar
+                                        </Link>
+                                        <button
+                                            onClick={() => handleDeleteSeccion(seccion.idSeccion)}
                                             className="text-red-600 hover:text-red-800"
                                         >
                                             Eliminar
