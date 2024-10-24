@@ -36,7 +36,7 @@ Route::get('/prueba', [ProductoController::class, 'index']);
 
 
 //Seccion
-
+Route::resource('secciones', SeccionController::class);
 //Venta
 Route::get('/ventas/test-page', function () {
     return Inertia::render('Ventas/Test');
