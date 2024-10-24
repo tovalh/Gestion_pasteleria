@@ -68,6 +68,10 @@ Route::get('/aboutUs', function () {
     return Inertia::render('AboutUs');
 })->name('aboutUs');
 
+Route::get('/pago', function () {
+    return Inertia::render('Pago');
+})->name('pago');
+
 Route::get('/administracion', function () {
     return Inertia::render('Administracion');
 })->name('administracion');
