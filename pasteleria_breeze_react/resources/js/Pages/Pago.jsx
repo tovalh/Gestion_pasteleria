@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, Menu as MenuIcon, X } from 'lucide-react';
 import { useCart } from '../Context/CartContext';
 
 export default function Pago() {
     const { cart, clearCart } = useCart();
+    const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [formData, setFormData] = useState({
         firstName: '',
         lastName: '',
@@ -16,9 +17,9 @@ export default function Pago() {
         paymentMethod: 'credit'
     });
 
-    // Calcular el subtotal del carrito
+    // Calculate cart totals
     const subtotal = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
-    const deliveryFee = 2.50;
+    const deliveryFee = 2500;
     const total = subtotal + deliveryFee;
 
     const handleInputChange = (e) => {
@@ -31,7 +32,6 @@ export default function Pago() {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        // Aquí puedes enviar tanto la información del formulario como el carrito
         const orderData = {
             items: cart,
             subtotal,
@@ -41,14 +41,10 @@ export default function Pago() {
         };
 
         console.log('Order submitted:', orderData);
-        // Aquí iría tu lógica de procesamiento del pedido
-
-        // Limpiar el carrito después de procesar el pedido
         clearCart();
-        // Redireccionar a una página de confirmación o similar
     };
 
-    // Si el carrito está vacío, redirigir al menú
+    // Empty cart redirect
     if (cart.length === 0) {
         return (
             <div className="bg-white min-h-screen p-6 flex flex-col items-center justify-center">
@@ -62,11 +58,73 @@ export default function Pago() {
     }
 
     return (
-        <div className="bg-white min-h-screen p-6">
-            <div className="max-w-6xl mx-auto">
+        <div className="bg-white min-h-screen flex flex-col">
+            {/* Header */}
+            <header className="bg-pink-500 text-pink-50 shadow-md">
+                <div className="container mx-auto px-4">
+                    <div className="flex justify-between items-center h-16">
+                        {/* Logo */}
+                        <a href="/inicio" className="text-2xl font-bold tracking-tight">
+                            Dolci Mimi
+                        </a>
+
+                        {/* Desktop Navigation */}
+                        <nav className="hidden md:flex space-x-8">
+                            <a href="/inicio" className="text-pink-50 hover:text-white transition-colors">
+                                Inicio
+                            </a>
+                            <a href="/menu" className="text-pink-50 hover:text-white transition-colors">
+                                Productos
+                            </a>
+                            <a href="/aboutUs" className="text-pink-50 hover:text-white transition-colors">
+                                Nosotros
+                            </a>
+                        </nav>
+
+                        {/* Mobile Menu Button */}
+                        <button
+                            className="md:hidden p-2 rounded-lg hover:bg-pink-600 transition-colors"
+                            onClick={() => setIsMenuOpen(!isMenuOpen)}
+                            aria-label="Menu"
+                        >
+                            {isMenuOpen ? <X size={24} /> : <MenuIcon size={24} />}
+                        </button>
+                    </div>
+
+                    {/* Mobile Navigation */}
+                    {isMenuOpen && (
+                        <nav className="md:hidden py-4 space-y-2">
+                            <a
+                                href="/inicio"
+                                className="block py-2 text-pink-50 hover:text-white transition-colors"
+                                onClick={() => setIsMenuOpen(false)}
+                            >
+                                Inicio
+                            </a>
+                            <a
+                                href="/menu"
+                                className="block py-2 text-pink-50 hover:text-white transition-colors"
+                                onClick={() => setIsMenuOpen(false)}
+                            >
+                                Productos
+                            </a>
+                            <a
+                                href="/aboutUs"
+                                className="block py-2 text-pink-50 hover:text-white transition-colors"
+                                onClick={() => setIsMenuOpen(false)}
+                            >
+                                Nosotros
+                            </a>
+                        </nav>
+                    )}
+                </div>
+            </header>
+
+            {/* Main Content */}
+            <main className="flex-grow container mx-auto px-4 py-8">
                 <div className="flex items-center mb-6">
                     <a href="/menu" className="flex items-center text-gray-600 hover:text-gray-800">
-                        <ArrowLeft className="w-5 h-5 mr-2" />
+                        <ArrowLeft className="w-5 h-5 mr-2"/>
                         <span>Volver al menú</span>
                     </a>
                 </div>
@@ -272,7 +330,57 @@ export default function Pago() {
                         </div>
                     </div>
                 </div>
-            </div>
+            </main>
+
+            {/* Footer */}
+            <footer className="bg-pink-500 text-pink-50 mt-auto">
+                <div className="container mx-auto px-4 py-8">
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                        {/* Company Info */}
+                        <div className="text-center md:text-left">
+                            <h3 className="text-lg font-semibold mb-4">Dolci Mimi</h3>
+                            <p className="text-pink-100">
+                                Deliciosos postres artesanales hechos con amor
+                            </p>
+                        </div>
+
+                        {/* Quick Links */}
+                        <div className="text-center">   
+                            <h3 className="text-lg font-semibold mb-4">Enlaces Rápidos</h3>
+                            <div className="space-y-2">
+                                <a href="/inicio" className="block text-pink-100 hover:text-white transition-colors">
+                                    Inicio
+                                </a>
+                                <a href="/menu" className="block text-pink-100 hover:text-white transition-colors">
+                                    Productos
+                                </a>
+                                <a href="/aboutUs" className="block text-pink-100 hover:text-white transition-colors">
+                                    Nosotros
+                                </a>
+                            </div>
+                        </div>
+
+                        {/* Legal Links */}
+                        <div className="text-center md:text-right">
+                            <h3 className="text-lg font-semibold mb-4">Legal</h3>
+                            <div className="space-y-2">
+                                <a href="/privacy" className="block text-pink-100 hover:text-white transition-colors">
+                                    Política de Privacidad
+                                </a>
+                                <a href="/terms" className="block text-pink-100 hover:text-white transition-colors">
+                                    Términos de Servicio
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="mt-8 pt-8 border-t border-pink-400 text-center">
+                        <p className="text-pink-100">
+                            &copy; {new Date().getFullYear()} Dolci Mimi. Todos los derechos reservados.
+                        </p>
+                    </div>
+                </div>
+            </footer>
         </div>
     );
 }
