@@ -1,47 +1,81 @@
+// CartComponent.jsx
 import React from 'react';
 import { useCart } from '../Context/CartContext.jsx';
 import { router } from '@inertiajs/react';
-import { X } from 'lucide-react';
+import { X, Plus, Minus } from 'lucide-react';
 
 export default function CartComponent() {
-    const { cart, removeFromCart, clearCart } = useCart();
+    const { cart, removeFromCart, clearCart, updateQuantity, cartTotal } = useCart();
 
-    const total = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
+    const handleQuantityChange = (itemId, currentQuantity, increment) => {
+        const newQuantity = currentQuantity + (increment ? 1 : -1);
+        updateQuantity(itemId, newQuantity);
+    };
+
+    const handleCheckout = () => {
+        if (cart.length > 0) {
+            // Navegar a la página de pago
+            router.visit('/pago');
+        }
+    };
 
     return (
         <div className="bg-white p-4 rounded-lg shadow-md">
             <h2 className="text-2xl font-bold text-pink-800 mb-4">Tu carrito</h2>
             {cart.length === 0 ? (
-                <p className="text-pink-600">Tu carrito esta vacio</p>
+                <p className="text-pink-600">Tu carrito está vacío</p>
             ) : (
                 <>
-                {cart.map((item) => (
-                    <div key={item.id} className="flex justify-between items-center mb-2">
-                        <div>
-                            <h3 className="text-lg font-semibold text-pink-800">{item.name}</h3>
-                            <p className="text-pink-600">${item.price.toFixed(2)} x {item.quantity}</p>
+                    {cart.map((item) => (
+                        <div key={item.id} className="flex justify-between items-center mb-4 border-b border-pink-100 pb-4">
+                            <div className="flex-grow">
+                                <h3 className="text-lg font-semibold text-pink-800">{item.name}</h3>
+                                <p className="text-pink-600">${item.price.toFixed(2)} c/u</p>
+                            </div>
+                            <div className="flex items-center space-x-4">
+                                <div className="flex items-center space-x-2">
+                                    <button
+                                        onClick={() => handleQuantityChange(item.id, item.quantity, false)}
+                                        className="p-1 rounded-full hover:bg-pink-100 text-pink-500"
+                                    >
+                                        <Minus size={16} />
+                                    </button>
+                                    <span className="w-8 text-center">{item.quantity}</span>
+                                    <button
+                                        onClick={() => handleQuantityChange(item.id, item.quantity, true)}
+                                        className="p-1 rounded-full hover:bg-pink-100 text-pink-500"
+                                    >
+                                        <Plus size={16} />
+                                    </button>
+                                </div>
+                                <button
+                                    onClick={() => removeFromCart(item.id)}
+                                    className="text-pink-500 hover:text-pink-700"
+                                >
+                                    <X size={20} />
+                                </button>
+                            </div>
                         </div>
-                        <button onClick={() => removeFromCart(item.id)}
-                                className="text-pink-500 hover:text-pink-700">
-                            <X size={20}/>
+                    ))}
+                    <div className="mt-4 pt-4 border-t border-pink-200">
+                        <p className="text-xl font-bold text-pink-800">Total: ${cartTotal.toFixed(2)}</p>
+                    </div>
+                    <div className="container mx-auto flex justify-between items-center mt-4">
+                        <button
+                            onClick={handleCheckout}
+                            className="bg-pink-500 text-white px-4 py-2 rounded hover:bg-pink-600 transition duration-300"
+                        >
+                            Pagar
+                        </button>
+                        <button
+                            onClick={clearCart}
+                            className="bg-pink-500 text-white px-4 py-2 rounded hover:bg-pink-600 transition duration-300"
+                        >
+                            Limpiar carrito
                         </button>
                     </div>
-                ))}
-                <div className="mt-4 pt-4 border-t border-pink-200">
-                    <p className="text-xl font-bold text-pink-800">Total: ${total.toFixed(2)}</p>
-                </div>
-                <div className="container mx-auto flex justify-between items-center">
-                    <button onClick={() => router.visit('/checkout')}
-                            className="mt-4 bg-pink-500 text-white px-4 py-2 rounded hover:bg-pink-600 transition duration-300">
-                        Pagar
-                    </button>
-                    <button onClick={clearCart}
-                            className="mt-4 bg-pink-500 text-white px-4 py-2 rounded hover:bg-pink-600 transition duration-300">
-                        Limpiar carrito
-                    </button>
-                </div>
                 </>
-                )}
-                </div>
-            );
-            }
+            )}
+        </div>
+    );
+}
