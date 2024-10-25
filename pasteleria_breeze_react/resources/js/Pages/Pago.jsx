@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { ArrowLeft, Menu as MenuIcon, X } from 'lucide-react';
 import { useCart } from '../Context/CartContext';
+import WebPayButton from '../Components/WebPayButton.jsx';
 
 export default function Pago() {
     const { cart, clearCart } = useCart();
@@ -285,12 +286,10 @@ export default function Pago() {
                                 </div>
                             </div>
 
-                            <button
-                                type="submit"
+                            <WebPayButton
+                                total={total}
                                 className="w-full bg-pink-500 text-white py-3 rounded-md hover:bg-pink-600 transition-colors"
-                            >
-                                Realizar Pedido
-                            </button>
+                            />
                         </form>
                     </div>
 
@@ -345,7 +344,7 @@ export default function Pago() {
                         </div>
 
                         {/* Quick Links */}
-                        <div className="text-center">   
+                        <div className="text-center">
                             <h3 className="text-lg font-semibold mb-4">Enlaces Rápidos</h3>
                             <div className="space-y-2">
                                 <a href="/inicio" className="block text-pink-100 hover:text-white transition-colors">

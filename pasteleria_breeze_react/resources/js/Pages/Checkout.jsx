@@ -7,7 +7,7 @@ export default function Checkout() {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
     const [debugInfo, setDebugInfo] = useState(null);
-    const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+    //const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 
     const handlePayment = async () => {
         setLoading(true);
@@ -20,7 +20,7 @@ export default function Checkout() {
                 headers: {
                     'Content-Type': 'application/json',
                     'X-Requested-With': 'XMLHttpRequest',
-                    'X-CSRF-TOKEN': csrfToken,
+                    //'X-CSRF-TOKEN': csrfToken,
                 },
                 body: JSON.stringify({ amount: amount })
             });

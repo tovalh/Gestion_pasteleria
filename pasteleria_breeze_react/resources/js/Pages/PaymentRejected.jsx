@@ -1,33 +1,23 @@
-import React from 'react';
-import { Head } from '@inertiajs/react';
-
 export default function PaymentRejected({ response }) {
     return (
-        <>
-            <Head title="Pago Rechazado" />
-
-            <div className="py-12">
-                <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
-                    <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                        <div className="p-6">
-                            <div className="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 mb-4">
-                                <p className="font-bold">El pago ha sido rechazado</p>
-                            </div>
-
-                            <div className="mt-4">
-                                <p>Por favor, intente nuevamente o contacte a su banco.</p>
-
-                                <a
-                                    href="/checkout"
-                                    className="mt-4 inline-block bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-                                >
-                                    Volver a intentar
-                                </a>
-                            </div>
-                        </div>
-                    </div>
+        <div className="min-h-screen bg-white p-6 flex flex-col items-center justify-center">
+            <div className="bg-red-100 p-6 rounded-lg text-center max-w-md w-full">
+                <h1 className="text-2xl font-semibold text-red-700 mb-4">Pago Rechazado</h1>
+                <p className="text-red-600 mb-4">
+                    Lo sentimos, tu pago no pudo ser procesado.
+                </p>
+                <div className="bg-white p-4 rounded-lg mb-6">
+                    <p className="text-gray-600">Orden: {response.buyOrder}</p>
+                    <p className="text-gray-600">Estado: {response.status}</p>
                 </div>
+                <a
+                    href="/menu"
+                    className="inline-flex items-center text-red-600 hover:text-red-700"
+                >
+                    <ArrowLeft className="w-5 h-5 mr-2"/>
+                    Volver al menú
+                </a>
             </div>
-        </>
+        </div>
     );
 }
