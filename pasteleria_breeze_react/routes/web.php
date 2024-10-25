@@ -48,7 +48,7 @@ Route::resource('ventas', VentaController::class);
 //WebPay
 
 Route::post('/venta/preparar-checkout', [VentaController::class, 'prepararCheckout'])->name('venta.prepararCheckout');
-Route::post('/webpay/init', [WebpayController::class, 'initTransaction'])->name('webpay.init');
+Route::post('/webpay/create', [WebpayController::class, 'initTransaction'])->name('webpay.create');
 Route::get('/webpay/return', [WebpayController::class, 'returnUrl'])->name('webpay.return');
 
 Route::get('/checkout', function () {
