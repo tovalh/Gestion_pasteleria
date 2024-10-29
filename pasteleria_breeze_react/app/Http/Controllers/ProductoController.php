@@ -10,10 +10,15 @@ use Inertia\Inertia;
 
 class ProductoController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
         $productos = Producto::all();
-        return Inertia::render('Productos/all', ['productos' => $productos]);
+        // Determinar qué vista renderizar basado en la ruta actual
+        $view = $request->routeIs('inicio') ? 'Inicio' : 'Productos/all';
+
+        return Inertia::render($view, [
+            'productos' => $productos
+        ]);
     }
     public function create()
     {
@@ -22,6 +27,7 @@ class ProductoController extends Controller
 
     public function show($id) {
         $producto = Producto::findOrFail($id);
+
         return Inertia::render('Productos/Show', ['producto' => $producto]);
     }
 
@@ -32,6 +38,7 @@ class ProductoController extends Controller
             'PrecioProducto' => 'required|max:12',
             'Seccion_idSeccion' => 'required|integer|exists:seccion,idSeccion',
         ]);
+        $validatedData['RutaImagen'] = "";
 
         $producto = Producto::create($validatedData);
 

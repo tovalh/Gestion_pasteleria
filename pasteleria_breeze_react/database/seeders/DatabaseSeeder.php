@@ -19,17 +19,19 @@ class DatabaseSeeder extends Seeder
         // Productos
         DB::table('producto')->insert([
             [
-                'idProducto' => 1,
-                'NombreProducto' => 'Torta de Chocolate',
-                'DescripcionProducto' => 'Deliciosa torta de chocolate con cobertura',
-                'PrecioProducto' => 15000,
-                'Seccion_idSeccion' => 1,
-                'deleted_at' => null
-            ],
+            'idProducto' => 1,
+            'NombreProducto' => 'Torta de Chocolate',
+            'DescripcionProducto' => 'Deliciosa torta de chocolate con cobertura',
+            'RutaImagen' => '/images/chocolate-cake.jpg',
+            'PrecioProducto' => 15000,
+            'Seccion_idSeccion' => 1,
+            'deleted_at' => null
+        ],
             [
                 'idProducto' => 2,
                 'NombreProducto' => 'Pan Francés',
                 'DescripcionProducto' => 'Pan crujiente tradicional',
+                'RutaImagen' => '/images/pan.jpg',
                 'PrecioProducto' => 1500,
                 'Seccion_idSeccion' => 2,
                 'deleted_at' => null
@@ -38,6 +40,7 @@ class DatabaseSeeder extends Seeder
                 'idProducto' => 3,
                 'NombreProducto' => 'Galletas de Mantequilla',
                 'DescripcionProducto' => 'Galletas caseras de mantequilla',
+                'RutaImagen' => '/images/galletas.jpg',
                 'PrecioProducto' => 2500,
                 'Seccion_idSeccion' => 3,
                 'deleted_at' => null
@@ -46,8 +49,63 @@ class DatabaseSeeder extends Seeder
                 'idProducto' => 4,
                 'NombreProducto' => 'Torta Tres Leches',
                 'DescripcionProducto' => 'Torta húmeda de tres leches',
+                'RutaImagen' => '/images/cool-cake.jpg',
                 'PrecioProducto' => 18000,
                 'Seccion_idSeccion' => 1,
+                'deleted_at' => null
+            ],
+            [
+                'idProducto' => 5,
+                'NombreProducto' => 'Brownie de Chocolate',
+                'DescripcionProducto' => 'Brownie suave y lleno de sabor a chocolate',
+                'RutaImagen' => '/images/brownie.jpg',
+                'PrecioProducto' => 1200,
+                'Seccion_idSeccion' => 1,
+                'deleted_at' => null
+            ],
+            [
+                'idProducto' => 6,
+                'NombreProducto' => 'Croissant',
+                'DescripcionProducto' => 'Croissant clásico de mantequilla',
+                'RutaImagen' => '/images/croissant.jpg',
+                'PrecioProducto' => 1000,
+                'Seccion_idSeccion' => 2,
+                'deleted_at' => null
+            ],
+            [
+                'idProducto' => 7,
+                'NombreProducto' => 'Cupcake de Vainilla',
+                'DescripcionProducto' => 'Cupcake esponjoso con crema de vainilla',
+                'RutaImagen' => '/images/cupcake.jpg',
+                'PrecioProducto' => 2000,
+                'Seccion_idSeccion' => 1,
+                'deleted_at' => null
+            ],
+            [
+                'idProducto' => 8,
+                'NombreProducto' => 'Donuts Glaseadas',
+                'DescripcionProducto' => 'Donuts con glaseado dulce',
+                'RutaImagen' => '/images/donuts.jpg',
+                'PrecioProducto' => 800,
+                'Seccion_idSeccion' => 3,
+                'deleted_at' => null
+            ],
+            [
+                'idProducto' => 9,
+                'NombreProducto' => 'Pan Integral',
+                'DescripcionProducto' => 'Pan saludable de harina integral',
+                'RutaImagen' => '/images/integral.jpg',
+                'PrecioProducto' => 1300,
+                'Seccion_idSeccion' => 2,
+                'deleted_at' => null
+            ],
+            [
+                'idProducto' => 10,
+                'NombreProducto' => 'Empanadas de Queso',
+                'DescripcionProducto' => 'Empanadas crujientes rellenas de queso',
+                'RutaImagen' => '/images/empanadas.jpg',
+                'PrecioProducto' => 1500,
+                'Seccion_idSeccion' => 3,
                 'deleted_at' => null
             ]
         ]);

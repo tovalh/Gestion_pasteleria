@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('producto', function (Blueprint $table) {
             $table->integer('idProducto', true);
             $table->string('NombreProducto', 35);
+            $table->string('RutaImagen', 255);
             $table->mediumText('DescripcionProducto');
             $table->integer('PrecioProducto');
             $table->softDeletes();
