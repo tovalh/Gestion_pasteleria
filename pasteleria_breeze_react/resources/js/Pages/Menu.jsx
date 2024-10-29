@@ -129,7 +129,7 @@ export default function ProductsSection({ productos }) {
                     {filteredProducts.map(product => (
                         <div key={product.idProducto} className="bg-white rounded-lg shadow-md overflow-hidden">
                             <img
-                                src={`/placeholder.svg?height=200&width=300`}
+                                src={product.RutaImagen}
                                 alt={product.NombreProducto}
                                 className="w-full h-48 object-cover"
                             />

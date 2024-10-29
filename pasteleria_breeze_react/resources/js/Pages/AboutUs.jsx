@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import {ShoppingCart, Menu, X, Menu as MenuIcon} from 'lucide-react'
+import {Head} from "@inertiajs/react";
 
 export default function AboutUs() {
     const [isMenuOpen, setIsMenuOpen] = useState(false)
@@ -9,6 +10,11 @@ export default function AboutUs() {
     }
 
     return (
+        <>
+            <Head>
+                <title>About us</title>
+                <meta name="description" content="Bienvenidos a Dolci Mimi, tu pastelería artesanal" />
+            </Head>
         <div className="bg-[#F7F0E9] min-h-screen">
             <header className="bg-pink-500 text-pink-50 p-4">
                 <div className="container mx-auto flex justify-between items-center">
@@ -39,7 +45,7 @@ export default function AboutUs() {
                 <div className="grid md:grid-cols-2 gap-8 items-center mb-12">
                     <div>
                         <img
-                            src="/placeholder.svg?height=400&width=600"
+                            src="/images/local.jpg"
                             alt="Nuestra Pasteleria"
                             className="rounded-lg shadow-md w-full h-auto"
                         />
@@ -47,7 +53,8 @@ export default function AboutUs() {
                     <div>
                         <h2 className="text-2xl font-semibold text-pink-700 mb-4">Nuestra Historia</h2>
                         <p className="text-gray-700 mb-4">
-                            Dolce Mimi surgio por el amor que le tenemos a la pasteleria, queremos llegar a los estomagos de toda nuestra comunidad
+                            Dolce Mimi surgio por el amor que le tenemos a la pasteleria, queremos llegar a los
+                            estomagos de toda nuestra comunidad
                         </p>
                         <p className="text-gray-700 mb-4">
                             Nuestra mision es simple, Buenos precios, productos de calidad y que el cliente quede feliz.
@@ -60,15 +67,18 @@ export default function AboutUs() {
                     <div className="grid md:grid-cols-3 gap-6">
                         <div className="text-center">
                             <h3 className="text-xl font-semibold text-pink-600 mb-2">Calidad</h3>
-                            <p className="text-gray-700">Ocupamos los mejores productos de la zona para preparar cada una de nuestras preparaciones</p>
+                            <p className="text-gray-700">Ocupamos los mejores productos de la zona para preparar cada
+                                una de nuestras preparaciones</p>
                         </div>
                         <div className="text-center">
                             <h3 className="text-xl font-semibold text-pink-600 mb-2">Creatividad</h3>
-                            <p className="text-gray-700">Nos encanta traer a la comunidad productos nuevos y tendencias internacionales en el mundo de la pasteleria.</p>
+                            <p className="text-gray-700">Nos encanta traer a la comunidad productos nuevos y tendencias
+                                internacionales en el mundo de la pasteleria.</p>
                         </div>
                         <div className="text-center">
                             <h3 className="text-xl font-semibold text-pink-600 mb-2">Comunidad</h3>
-                            <p className="text-gray-700">Estamos orgullosos de pertenecer a nuestra comunidad y a entregarle la mejor calidad de productos a nuestros vecinos.</p>
+                            <p className="text-gray-700">Estamos orgullosos de pertenecer a nuestra comunidad y a
+                                entregarle la mejor calidad de productos a nuestros vecinos.</p>
                         </div>
                     </div>
                 </div>
@@ -76,15 +86,19 @@ export default function AboutUs() {
                 <div className="mb-12">
                     <h2 className="text-2xl font-semibold text-pink-700 mb-4 text-center">Conoce a nuestro equipo</h2>
                     <div className="grid md:grid-cols-3 gap-6">
-                        {['Grupo IT', 'Julieta Negrete', 'Ninoska Negrete'].map((name, index) => (
+                        {[
+                            {name: 'Grupo IT', imageUrl: '/images/it.jpg'},
+                            {name: 'Julieta Negrete', imageUrl: '/images/pastelera.jpg'},
+                            {name: 'Ninoska Negrete', imageUrl: '/images/pastelera2.jpg'}
+                        ].map((member, index) => (
                             <div key={index} className="bg-white rounded-lg shadow-md overflow-hidden">
                                 <img
-                                    src={`/placeholder.svg?height=300&width=300`}
-                                    alt={name}
+                                    src={member.imageUrl}
+                                    alt={member.name}
                                     className="w-full h-48 object-cover"
                                 />
                                 <div className="p-4">
-                                    <h3 className="text-xl font-semibold text-pink-700 mb-2">{name}</h3>
+                                    <h3 className="text-xl font-semibold text-pink-700 mb-2">{member.name}</h3>
                                 </div>
                             </div>
                         ))}
@@ -112,5 +126,6 @@ export default function AboutUs() {
                 </div>
             </footer>
         </div>
+            </>
     )
 }

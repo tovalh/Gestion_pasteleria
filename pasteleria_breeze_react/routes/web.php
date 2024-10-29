@@ -10,9 +10,9 @@ use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use App\Models\Producto;
-use App\Http\Controllers\HomeController;
 
-Route::get('/inicio', [HomeController::class, 'index'])->name('inicio');
+
+Route::get('/inicio', [ProductoController::class, 'index'])->name('inicio');
 
 Route::get('/seccion/token', [SeccionController::class, 'token'])->name('seccion.token');
 
@@ -30,9 +30,11 @@ Route::resource('ingredientes', IngredienteController::class);
 //Route::resource('productos', ProductoController::class);
 
 //productos
-Route::resource('/productos', ProductoController::class);
-Route::get('/productos', [ProductoController::class, 'index'])->name('productos.index');
-Route::get('/prueba', [ProductoController::class, 'index']);
+//Route::get('/Producto', [ProductoController::class, 'index']);
+// Ruta para la página de inicio
+Route::get('/producto/{id}', [ProductoController::class, 'mostrar']);
+
+
 
 
 //Seccion
