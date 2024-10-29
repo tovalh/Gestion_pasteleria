@@ -36,56 +36,47 @@ export default function AboutUs() {
             )}
 
             <main className="container mx-auto px-4 py-8">
-                <h1 className="text-4xl font-bold text-pink-800 mb-6 text-center">About Sweet Delights Bakery</h1>
-
                 <div className="grid md:grid-cols-2 gap-8 items-center mb-12">
                     <div>
                         <img
                             src="/placeholder.svg?height=400&width=600"
-                            alt="Our Bakery"
+                            alt="Nuestra Pasteleria"
                             className="rounded-lg shadow-md w-full h-auto"
                         />
                     </div>
                     <div>
-                        <h2 className="text-2xl font-semibold text-pink-700 mb-4">Our Story</h2>
+                        <h2 className="text-2xl font-semibold text-pink-700 mb-4">Nuestra Historia</h2>
                         <p className="text-gray-700 mb-4">
-                            Sweet Delights Bakery was founded in 2010 by passionate bakers, Maria and John Smith. What
-                            started as a small family-run shop has grown into a beloved local institution, known for our
-                            commitment to quality ingredients and mouthwatering creations.
+                            Dolce Mimi surgio por el amor que le tenemos a la pasteleria, queremos llegar a los estomagos de toda nuestra comunidad
                         </p>
                         <p className="text-gray-700 mb-4">
-                            Our mission is simple: to bring joy to our community through the art of baking. Every day,
-                            we strive to create delicious treats that not only satisfy your sweet tooth but also bring a
-                            smile to your face.
+                            Nuestra mision es simple, Buenos precios, productos de calidad y que el cliente quede feliz.
                         </p>
                     </div>
                 </div>
 
                 <div className="bg-white rounded-lg shadow-md p-8 mb-12">
-                    <h2 className="text-2xl font-semibold text-pink-700 mb-4 text-center">Our Values</h2>
+                    <h2 className="text-2xl font-semibold text-pink-700 mb-4 text-center">Nuestros Valores</h2>
                     <div className="grid md:grid-cols-3 gap-6">
                         <div className="text-center">
-                            <h3 className="text-xl font-semibold text-pink-600 mb-2">Quality</h3>
-                            <p className="text-gray-700">We use only the finest, locally-sourced ingredients in all our
-                                baked goods.</p>
+                            <h3 className="text-xl font-semibold text-pink-600 mb-2">Calidad</h3>
+                            <p className="text-gray-700">Ocupamos los mejores productos de la zona para preparar cada una de nuestras preparaciones</p>
                         </div>
                         <div className="text-center">
-                            <h3 className="text-xl font-semibold text-pink-600 mb-2">Creativity</h3>
-                            <p className="text-gray-700">We love experimenting with new flavors and designs to keep our
-                                offerings fresh and exciting.</p>
+                            <h3 className="text-xl font-semibold text-pink-600 mb-2">Creatividad</h3>
+                            <p className="text-gray-700">Nos encanta traer a la comunidad productos nuevos y tendencias internacionales en el mundo de la pasteleria.</p>
                         </div>
                         <div className="text-center">
-                            <h3 className="text-xl font-semibold text-pink-600 mb-2">Community</h3>
-                            <p className="text-gray-700">We're proud to be a part of this community and strive to give
-                                back whenever we can.</p>
+                            <h3 className="text-xl font-semibold text-pink-600 mb-2">Comunidad</h3>
+                            <p className="text-gray-700">Estamos orgullosos de pertenecer a nuestra comunidad y a entregarle la mejor calidad de productos a nuestros vecinos.</p>
                         </div>
                     </div>
                 </div>
 
                 <div className="mb-12">
-                    <h2 className="text-2xl font-semibold text-pink-700 mb-4 text-center">Meet Our Team</h2>
+                    <h2 className="text-2xl font-semibold text-pink-700 mb-4 text-center">Conoce a nuestro equipo</h2>
                     <div className="grid md:grid-cols-3 gap-6">
-                        {['Maria Smith', 'John Smith', 'Emily Johnson'].map((name, index) => (
+                        {['Grupo IT', 'Julieta Negrete', 'Ninoska Negrete'].map((name, index) => (
                             <div key={index} className="bg-white rounded-lg shadow-md overflow-hidden">
                                 <img
                                     src={`/placeholder.svg?height=300&width=300`}
@@ -94,7 +85,6 @@ export default function AboutUs() {
                                 />
                                 <div className="p-4">
                                     <h3 className="text-xl font-semibold text-pink-700 mb-2">{name}</h3>
-                                    <p className="text-gray-700">Master Baker</p>
                                 </div>
                             </div>
                         ))}
