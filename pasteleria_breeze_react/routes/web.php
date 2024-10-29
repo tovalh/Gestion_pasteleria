@@ -32,7 +32,7 @@ Route::resource('ingredientes', IngredienteController::class);
 //productos
 //Route::get('/Producto', [ProductoController::class, 'index']);
 // Ruta para la página de inicio
-Route::get('/producto/{id}', [ProductoController::class, 'mostrar']);
+Route::get('/producto/{id}', [ProductoController::class, 'index']);
 
 
 
@@ -100,6 +100,12 @@ Route::middleware('auth')->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
+Route::get('/productos/filtro', [ProductoController::class, 'filtro'])->name('productos.filtro');
+Route::delete('/productos/deleteo/{id}', [ProductoController::class, 'hardDelete'])->name('productos.hardDelete');
+Route::put('/productos/restaurar/{id}', [ProductoController::class, 'restore'])->name('productos.restore');
+
+// Rutas resource para productos (esto genera automáticamente todas las rutas CRUD)
+Route::resource('productos', ProductoController::class);
 
 Route::get('/componentePrueba', [ProductoController::class, 'index'])->name('componentePrueba');
 

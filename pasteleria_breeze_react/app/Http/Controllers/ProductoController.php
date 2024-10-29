@@ -31,14 +31,16 @@ class ProductoController extends Controller
         return Inertia::render('Productos/Show', ['producto' => $producto]);
     }
 
-    public function store(Request $request) {
+    public function store(Request $request)
+    {
         $validatedData = $request->validate([
             'NombreProducto' => 'required|max:35',
             'DescripcionProducto' => 'required',
             'PrecioProducto' => 'required|max:12',
             'Seccion_idSeccion' => 'required|integer|exists:seccion,idSeccion',
+            'RutaImagen' => 'nullable|string'  // Cambiado a nullable|string
         ]);
-        $validatedData['RutaImagen'] = "";
+
 
         $producto = Producto::create($validatedData);
 
@@ -50,18 +52,21 @@ class ProductoController extends Controller
         $producto = Producto::findOrFail($id);
         return Inertia::render('Productos/Edit', ['productos' => $producto]);
     }
-    public function update(Request $request, $id) {
+    public function update(Request $request, $id)
+    {
         $validatedData = $request->validate([
             'NombreProducto' => 'required|max:35',
             'DescripcionProducto' => 'required',
             'PrecioProducto' => 'required|max:12',
             'Seccion_idSeccion' => 'required|integer|exists:seccion,idSeccion',
+            'RutaImagen' => 'nullable|string'
         ]);
 
         $producto = Producto::findOrFail($id);
         $producto->update($validatedData);
 
-        return redirect()->back();
+        return redirect()->route('productos.index')
+            ->with('message', 'Producto actualizado exitosamente');
     }
     //Borrado Logico
     public function destroy($id) {

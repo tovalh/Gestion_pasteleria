@@ -6,7 +6,8 @@ const Form = ({ producto = null, isEditing = false }) => {
         NombreProducto: '',
         DescripcionProducto: '',
         PrecioProducto: '',
-        Seccion_idSeccion: ''
+        Seccion_idSeccion: '',
+        RutaImagen: ''
     });
 
     useEffect(() => {
@@ -15,7 +16,8 @@ const Form = ({ producto = null, isEditing = false }) => {
                 NombreProducto: producto.NombreProducto,
                 DescripcionProducto: producto.DescripcionProducto,
                 PrecioProducto: producto.PrecioProducto,
-                Seccion_idSeccion: producto.Seccion_idSeccion
+                Seccion_idSeccion: producto.Seccion_idSeccion,
+                RutaImagen: producto.RutaImagen || ''
             });
         }
     }, [producto]);
@@ -91,6 +93,36 @@ const Form = ({ producto = null, isEditing = false }) => {
                         <div className="text-red-500 text-sm">{errors.Seccion_idSeccion}</div>
                     )}
                 </div>
+
+                {/* Campo para la ruta de la imagen */}
+                <div>
+                    <label className="block mb-1">Ruta de la Imagen</label>
+                    <input
+                        type="text"
+                        value={data.RutaImagen}
+                        onChange={e => setData('RutaImagen', e.target.value)}
+                        className="w-full border rounded px-3 py-2"
+                        placeholder="Ingrese la ruta de la imagen"
+                    />
+                    {errors.RutaImagen && (
+                        <div className="text-red-500 text-sm">{errors.RutaImagen}</div>
+                    )}
+                </div>
+
+                {isEditing && data.RutaImagen && (
+                    <div className="mt-2">
+                        <p className="text-sm text-gray-600">Vista previa de la imagen:</p>
+                        <img
+                            src={data.RutaImagen}
+                            alt="Vista previa del producto"
+                            className="mt-1 max-w-xs rounded"
+                            onError={(e) => {
+                                e.target.onerror = null;
+                                e.target.src = 'ruta-a-imagen-por-defecto';
+                            }}
+                        />
+                    </div>
+                )}
 
                 <div className="flex justify-end space-x-2">
                     <button
