@@ -1,33 +1,80 @@
-import React from 'react';
+import React, { useState } from 'react';
 import axios from 'axios';
+import { useCart } from '../Context/CartContext';
 
 const WebPayButton = ({ total, className }) => {
+    const { cart } = useCart();
+    const [loading, setLoading] = useState(false);
+
     const handlePayment = async () => {
+        if (!cart || cart.length === 0) {
+            alert('El carrito está vacío');
+            return;
+        }
+
+        setLoading(true);
         try {
-            // Iniciamos la transacción con Webpay
-            const response = await axios.post('/webpay/create', {
-                amount: total
-            });
+            // Extraer solo los IDs de los productos
+            const productIds = cart.map(item => item.id);
 
-            // Redirigimos al usuario a la página de pago de Webpay
-            if (response.data.url && response.data.token) {
-                // Creamos un formulario oculto para enviar el token a Webpay
-                const form = document.createElement('form');
-                form.method = 'POST';
-                form.action = response.data.url;
+            // Primer paso: preparar el checkout
+            const response1 = await axios.post(
+                '/venta/preparar-checkout',
+                {
+                    productos: productIds,
+                    Clientes_idCliente: 1,
+                    comentario: 'Venta desde WebPay',
+                    total: total
+                },
+                {
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content')
+                    }
+                }
+            );
 
-                const tokenInput = document.createElement('input');
-                tokenInput.type = 'hidden';
-                tokenInput.name = 'token_ws';
-                tokenInput.value = response.data.token;
+            console.log('Respuesta preparar checkout:', response1.data);
 
-                form.appendChild(tokenInput);
-                document.body.appendChild(form);
-                form.submit();
+            if (response1.data.checkoutUrl) {
+                // Segundo paso: iniciar transacción WebPay
+                const response2 = await axios.post(response1.data.checkoutUrl);
+                console.log('Respuesta WebPay:', response2.data);
+
+                if (response2.data.url && response2.data.token) {
+                    // Tercer paso: redirigir a WebPay
+                    const form = document.createElement('form');
+                    form.method = 'POST';
+                    form.action = response2.data.url;
+
+                    const tokenInput = document.createElement('input');
+                    tokenInput.type = 'hidden';
+                    tokenInput.name = 'token_ws';
+                    tokenInput.value = response2.data.token;
+
+                    form.appendChild(tokenInput);
+                    document.body.appendChild(form);
+                    form.submit();
+                }
             }
         } catch (error) {
-            console.error('Error al iniciar el pago:', error);
-            alert('Hubo un error al procesar el pago. Por favor, intenta nuevamente.');
+            console.error('Error al procesar el pago:', error);
+            let errorMessage = 'Error al procesar el pago: ';
+
+            if (error.response?.data?.error) {
+                errorMessage += error.response.data.error;
+                if (error.response.data.details) {
+                    errorMessage += '\n' + Object.values(error.response.data.details).flat().join('\n');
+                }
+            } else if (error.message) {
+                errorMessage += error.message;
+            } else {
+                errorMessage += 'Error desconocido';
+            }
+
+            alert(errorMessage);
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -36,8 +83,9 @@ const WebPayButton = ({ total, className }) => {
             onClick={handlePayment}
             className={className}
             type="button"
+            disabled={loading || !cart || cart.length === 0}
         >
-            Pagar con Webpay
+            {loading ? 'Procesando...' : 'Pagar con Webpay'}
         </button>
     );
 };

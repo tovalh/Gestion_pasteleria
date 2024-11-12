@@ -17,8 +17,18 @@ class Venta extends Model
         'totalVenta',
         'metodoDePagoVenta',
         'estadoPedido',
-        'Comentario'
+        'Comentario',
+        'Clientes_idCliente'
     ];
+
+    // Constantes para los estados y métodos de pago
+    const ESTADO_EN_PREPARACION = 'En Preparacion';
+    const ESTADO_DISPONIBLE = 'Disponible';
+    const ESTADO_ENTREGADO = 'Entregado';
+    const ESTADO_CANCELADO = 'Cancelado';
+
+    const METODO_WEBPAY = 'WebPay';
+    const METODO_EFECTIVO = 'Efectivo';
 
     public function productos()
     {
