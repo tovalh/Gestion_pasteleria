@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Link } from '@inertiajs/react';
 import { router } from '@inertiajs/react';
+import StockAlert from '../Components/StockAlert.jsx';
 
 const Dashboard = ({ productos, ingredientes, secciones, message }) => {
     const [activeTab, setActiveTab] = useState('productos');
@@ -95,7 +96,15 @@ const Dashboard = ({ productos, ingredientes, secciones, message }) => {
                     </thead>
                     <tbody className="divide-y divide-gray-200">
                     {ingredientes.map((ingrediente) => (
-                        <tr key={ingrediente.idIngrediente}>
+                        //Resaltar Fila
+                        <tr
+                            key={ingrediente.idIngrediente}
+                            className={
+                                ingrediente.StockIngrediente <= ingrediente.StockMinimoIngrediente
+                                    ? 'bg-red-200'
+                                    : ''
+                            }
+                        >
                             <td className="px-6 py-4">{ingrediente.NombreIngrediente}</td>
                             <td className="px-6 py-4">
                                 {ingrediente.StockIngrediente} {ingrediente.UnidadDeMedidaIngrediente}
@@ -174,6 +183,9 @@ const Dashboard = ({ productos, ingredientes, secciones, message }) => {
         <div className="max-w-7xl mx-auto p-4">
             <h1 className="text-3xl font-bold mb-8">Dashboard</h1>
 
+            {/* Stock Alert */}
+            <StockAlert ingredientes={ingredientes} />
+
             {message && (
                 <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4">
                     {message}
@@ -201,6 +213,11 @@ const Dashboard = ({ productos, ingredientes, secciones, message }) => {
                     }`}
                 >
                     Ingredientes
+                    {ingredientes.filter(ing => ing.StockIngrediente <= ing.StockMinimoIngrediente).length > 0 && (
+                        <span className="ml-2 bg-red-500 text-white text-xs px-2 py-1 rounded-full">
+                            !
+                        </span>
+                    )}
                 </button>
                 <button
                     onClick={() => setActiveTab('secciones')}
