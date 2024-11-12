@@ -289,6 +289,7 @@ export default function Pago() {
                             <WebPayButton
                                 total={total}
                                 className="w-full bg-pink-500 text-white py-3 rounded-md hover:bg-pink-600 transition-colors"
+                                formData={formData}
                             />
                         </form>
                     </div>

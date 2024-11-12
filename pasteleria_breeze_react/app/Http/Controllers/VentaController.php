@@ -105,37 +105,33 @@ class VentaController extends Controller
     public function prepararCheckout(Request $request)
     {
         try {
-            // Log de los datos recibidos
             Log::info('Datos recibidos en prepararCheckout:', [
                 'request_all' => $request->all(),
                 'productos' => $request->input('productos'),
             ]);
 
-            // Validación más específica
             $validatedData = $request->validate([
                 'productos' => 'required|array|min:1',
                 'productos.*' => 'required|integer|exists:producto,idProducto',
                 'Clientes_idCliente' => 'required|integer|exists:cliente,idCliente',
                 'comentario' => 'nullable|string|max:500',
-                'total' => 'required|numeric|min:0'
+                'total' => 'required|numeric|min:0',
+                'metodoPago' => 'required|string',
+                'datosCliente' => 'required|array'
             ]);
-
-            // Verificar que tenemos productos
-            if (empty($validatedData['productos'])) {
-                throw new \Exception('No hay productos en el carrito');
-            }
 
             // Guardar datos en sesión para usar después del pago
             session(['venta_pendiente' => [
                 'productos' => $validatedData['productos'],
                 'Clientes_idCliente' => $validatedData['Clientes_idCliente'],
                 'comentario' => $validatedData['comentario'],
-                'total' => $validatedData['total']
+                'total' => $validatedData['total'],
+                'metodoDePagoVenta' => $validatedData['metodoPago'], // Asegurarse de guardar esto
+                'datosCliente' => $validatedData['datosCliente']
             ]]);
 
-            // Cambiar la ruta para que coincida con la definida
             return response()->json([
-                'checkoutUrl' => route('webpay.create')  // Cambiado de 'webpay.init' a 'webpay.create'
+                'checkoutUrl' => route('webpay.create')
             ]);
 
         } catch (\Illuminate\Validation\ValidationException $e) {
@@ -187,12 +183,14 @@ class VentaController extends Controller
             // Crear la venta
             $datosVenta = [
                 'totalVenta' => $ventaPendiente['total'],
-                'metodoDePagoVenta' => 'WebPay',
+                'metodoDePagoVenta' => $ventaPendiente['metodoDePagoVenta'], // Usar el valor guardado
                 'Comentario' => $ventaPendiente['comentario'],
                 'Clientes_idCliente' => $ventaPendiente['Clientes_idCliente'],
                 'estadoPedido' => 'En Preparacion',
                 'NumeroTransaccionVenta' => $nuevoNumero
             ];
+
+            Log::info('Intentando crear venta con datos:', $datosVenta);
 
             $venta = Venta::create($datosVenta);
 
@@ -203,10 +201,14 @@ class VentaController extends Controller
                     $venta->productos()->attach($productoId);
 
                     if (isset($this->stockService)) {
-                        // Solo actualizar stock si el producto tiene ingredientes
                         $tieneIngredientes = $producto->ingredientes()->count() > 0;
                         if ($tieneIngredientes) {
                             $this->stockService->actualizarStockPorVenta($producto);
+                        } else {
+                            Log::info('Producto sin ingredientes:', [
+                                'producto_id' => $productoId,
+                                'nombre_producto' => $producto->NombreProducto
+                            ]);
                         }
                     }
                 } catch (\Exception $e) {
@@ -221,7 +223,6 @@ class VentaController extends Controller
             DB::commit();
             session()->forget('venta_pendiente');
 
-            // Retornar el número de seguimiento
             return [
                 'success' => true,
                 'codigoSeguimiento' => $nuevoNumero

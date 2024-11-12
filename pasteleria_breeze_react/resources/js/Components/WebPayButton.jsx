@@ -2,9 +2,22 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import { useCart } from '../Context/CartContext';
 
-const WebPayButton = ({ total, className }) => {
+const WebPayButton = ({ total, className, formData }) => {
     const { cart } = useCart();
     const [loading, setLoading] = useState(false);
+
+    const getMetodoPago = (paymentMethod) => {
+        switch(paymentMethod) {
+            case 'credit':
+                return 'Tarjeta de Credito';
+            case 'debit':
+                return 'Tarjeta de Debito';
+            case 'cash':
+                return 'Efectivo';
+            default:
+                return 'Tarjeta de Credito';
+        }
+    };
 
     const handlePayment = async () => {
         if (!cart || cart.length === 0) {
@@ -17,15 +30,26 @@ const WebPayButton = ({ total, className }) => {
             // Extraer solo los IDs de los productos
             const productIds = cart.map(item => item.id);
 
-            // Primer paso: preparar el checkout
+            const payloadData = {
+                productos: productIds,
+                Clientes_idCliente: 1, // TODO: Obtener el ID real del cliente
+                comentario: formData.specialInstructions || 'Sin instrucciones especiales',
+                total: total,
+                metodoPago: getMetodoPago(formData.paymentMethod),
+                datosCliente: {
+                    nombre: formData.firstName,
+                    apellido: formData.lastName,
+                    email: formData.email,
+                    telefono: formData.phone,
+                    direccion: formData.address,
+                    ciudad: formData.city,
+                    opcionEntrega: formData.deliveryOption
+                }
+            };
+
             const response1 = await axios.post(
                 '/venta/preparar-checkout',
-                {
-                    productos: productIds,
-                    Clientes_idCliente: 1,
-                    comentario: 'Venta desde WebPay',
-                    total: total
-                },
+                payloadData,
                 {
                     headers: {
                         'Content-Type': 'application/json',
@@ -34,15 +58,14 @@ const WebPayButton = ({ total, className }) => {
                 }
             );
 
-            console.log('Respuesta preparar checkout:', response1.data);
+            console.log('Respuesta del servidor:', response1.data);
 
             if (response1.data.checkoutUrl) {
-                // Segundo paso: iniciar transacción WebPay
-                const response2 = await axios.post(response1.data.checkoutUrl);
-                console.log('Respuesta WebPay:', response2.data);
+                const response2 = await axios.post(response1.data.checkoutUrl, {
+                    amount: total
+                });
 
                 if (response2.data.url && response2.data.token) {
-                    // Tercer paso: redirigir a WebPay
                     const form = document.createElement('form');
                     form.method = 'POST';
                     form.action = response2.data.url;
@@ -61,11 +84,11 @@ const WebPayButton = ({ total, className }) => {
             console.error('Error al procesar el pago:', error);
             let errorMessage = 'Error al procesar el pago: ';
 
-            if (error.response?.data?.error) {
-                errorMessage += error.response.data.error;
-                if (error.response.data.details) {
-                    errorMessage += '\n' + Object.values(error.response.data.details).flat().join('\n');
-                }
+            if (error.response?.data?.errors) {
+                const errors = Object.values(error.response.data.errors).flat();
+                errorMessage += errors.join('\n');
+            } else if (error.response?.data?.message) {
+                errorMessage += error.response.data.message;
             } else if (error.message) {
                 errorMessage += error.message;
             } else {
