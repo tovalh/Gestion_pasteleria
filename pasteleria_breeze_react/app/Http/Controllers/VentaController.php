@@ -27,10 +27,42 @@ class VentaController extends Controller
 
     }
 
-    public function show($id)
-    {
-        $venta = Venta::findOrFail($id);
-        return response()->json($venta);
+    public function show($id) {
+        try {
+            $venta = Venta::with(['productos', 'cliente'])
+                ->findOrFail($id);
+
+            $ventaFormateada = [
+                'idVenta' => $venta->idVenta,
+                'NumeroTransaccionVenta' => $venta->NumeroTransaccionVenta,
+                'totalVenta' => $venta->totalVenta,
+                'metodoDePagoVenta' => $venta->metodoDePagoVenta,
+                'estadoPedido' => $venta->estadoPedido,
+                'Comentario' => $venta->Comentario,
+                'productos' => $venta->productos->map(function($producto) {
+                    return [
+                        'id' => $producto->id,
+                        'NombreProducto' => $producto->NombreProducto,
+                        'PrecioProducto' => $producto->PrecioProducto,
+                        'cantidad' => $producto->pivot->cantidad ?? 1
+                    ];
+                }),
+                'cliente' => $venta->cliente ? [
+                    'id' => $venta->cliente->idCliente,
+                    'nombre' => $venta->cliente->NombreCliente,
+                    'email' => $venta->cliente->EmailCliente
+                ] : null
+            ];
+
+            return Inertia::render('Pedidos/Show', [
+                'venta' => $ventaFormateada
+            ]);
+
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            return to_route('seguimiento')->withErrors([
+                'message' => 'No se encontró el pedido. Por favor verifique el número.'
+            ]);
+        }
     }
 
     public function store(Request $request)

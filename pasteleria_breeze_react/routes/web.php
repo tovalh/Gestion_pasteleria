@@ -28,6 +28,7 @@ Route::get('/producto/{id}', [ProductoController::class, 'mostrarProducto'])->na
 
 //Seccion
 Route::resource('secciones', SeccionController::class);
+
 //Venta
 Route::get('/ventas/test-page', function () {
     return Inertia::render('Ventas/Test');
@@ -35,6 +36,12 @@ Route::get('/ventas/test-page', function () {
 Route::post('/ventas/test', [VentaController::class, 'store']);
 Route::get('/ventas-por-periodo', [VentaController::class, 'obtenerVentasPorPeriodo'])->name('ventas.periodo');
 Route::resource('ventas', VentaController::class);
+Route::get('/seguimiento', function () {
+    return Inertia::render('Seguimiento');
+})->name('seguimiento');
+
+// Ruta para ver el pedido
+Route::get('/ventas/{id}', [VentaController::class, 'show'])->name('ventas.show');
 
 //WebPay
 
