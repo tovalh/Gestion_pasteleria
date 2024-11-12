@@ -92,12 +92,14 @@ export default function Inicio({ productos }) {
                             <div className="grid grid-cols-1 md:grid-cols-3 gap-8 p-4">
                                 {featuredProducts.map(product => (
                                     <div key={product.idProducto} className="bg-white rounded-lg shadow-md overflow-hidden">
-                                        <div className="">
-                                            <img
-                                                src={product.RutaImagen}
-                                                alt={product.NombreProducto}
-                                                className="w-full h-48 object-cover"
-                                            />
+                                           <div>
+                                            <a href={`/producto/${product.idProducto}`}>
+                                                <img
+                                                    src={product.RutaImagen}
+                                                    alt={product.NombreProducto}
+                                                    className="w-full h-48 object-cover hover:opacity-80 transition-opacity duration-300"
+                                                />
+                                            </a>
                                         </div>
                                         <div className="p-4">
                                             <h3 className="text-xl font-semibold text-pink-800 mb-2">
@@ -105,9 +107,9 @@ export default function Inicio({ productos }) {
                                             </h3>
                                             <p className="text-pink-600 mb-4">{product.DescripcionProducto}</p>
                                             <div className="flex justify-between items-center">
-                                <span className="text-lg font-bold text-pink-700">
-                                    ${parseFloat(product.PrecioProducto).toFixed(2)}
-                                </span>
+                                                 <span className="text-lg font-bold text-pink-700">
+                                                 ${parseFloat(product.PrecioProducto).toFixed(2)}
+                                                </span>
                                                 <button
                                                     onClick={() => handleAddToCart(product)}
                                                     className="bg-pink-500 hover:bg-pink-600 text-white font-bold py-2 px-4 rounded transition duration-300">
@@ -140,7 +142,7 @@ export default function Inicio({ productos }) {
                 {isCartOpen && (
                     <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex justify-end">
                         <div className="bg-white w-full max-w-md h-full overflow-y-auto">
-                            <div className="p-4">
+                        <div className="p-4">
                                 <button onClick={toggleCart} className="mb-4">
                                     <X/>
                                 </button>

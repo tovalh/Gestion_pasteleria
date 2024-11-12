@@ -32,7 +32,8 @@ Route::resource('ingredientes', IngredienteController::class);
 //productos
 //Route::get('/Producto', [ProductoController::class, 'index']);
 // Ruta para la página de inicio
-Route::get('/producto/{id}', [ProductoController::class, 'mostrar']);
+
+Route::get('/producto/{id}', [ProductoController::class, 'mostrarProducto'])->name('producto.detalle');
 
 
 

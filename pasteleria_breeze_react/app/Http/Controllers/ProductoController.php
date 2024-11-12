@@ -20,12 +20,37 @@ class ProductoController extends Controller
             'productos' => $productos
         ]);
     }
+
+    public function mostrarProducto($id)
+    {
+        try {
+            $producto = Producto::findOrFail($id);
+
+            // Asegúrate de que todos los campos necesarios estén presentes
+            $productoData = [
+                'idProducto' => $producto->idProducto,
+                'NombreProducto' => $producto->NombreProducto,
+                'DescripcionProducto' => $producto->DescripcionProducto,
+                'PrecioProducto' => $producto->PrecioProducto,
+                'RutaImagen' => $producto->RutaImagen,
+                // Agrega cualquier otro campo que necesites
+            ];
+
+            return Inertia::render('ProductoDetalle', [
+                'producto' => $productoData
+            ]);
+        } catch (\Exception $e) {
+            // En caso de error, redirige a la página de inicio
+            return redirect()->route('inicio')->with('error', 'Producto no encontrado');
+        }
+    }
+
     public function create()
     {
         return Inertia::render('Productos/Create');
     }
 
-    public function show($id) {
+        public function show($id) {
         $producto = Producto::findOrFail($id);
 
         return Inertia::render('Productos/Show', ['producto' => $producto]);

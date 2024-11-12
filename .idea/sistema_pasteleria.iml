@@ -133,6 +133,8 @@
       <excludeFolder url="file://$MODULE_DIR$/pasteleria_breeze_react/vendor/vlucas/phpdotenv" />
       <excludeFolder url="file://$MODULE_DIR$/pasteleria_breeze_react/vendor/voku/portable-ascii" />
       <excludeFolder url="file://$MODULE_DIR$/pasteleria_breeze_react/vendor/webmozart/assert" />
+      <excludeFolder url="file://$MODULE_DIR$/pasteleria_breeze_react/vendor/kitloong/laravel-migrations-generator" />
+      <excludeFolder url="file://$MODULE_DIR$/pasteleria_breeze_react/vendor/transbank/transbank-sdk" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />

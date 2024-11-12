@@ -3,7 +3,6 @@ import { ShoppingCart, Menu, X, Menu as MenuIcon } from 'lucide-react'
 import { useCart } from '../Context/CartContext'
 import CartComponent from '../Components/CartComponent'
 
-// Ahora recibimos productos como prop
 export default function ProductsSection({ productos }) {
     const [searchTerm, setSearchTerm] = useState('')
     const [selectedCategory, setSelectedCategory] = useState('All')
@@ -13,7 +12,6 @@ export default function ProductsSection({ productos }) {
     const [isCartOpen, setIsCartOpen] = useState(false)
     const { addToCart, cartItemsCount } = useCart()
 
-    // Obtenemos las categorías únicas de los productos
     const categories = ['All', ...new Set(productos.map(product => product.Seccion_idSeccion))]
 
     const toggleMenu = () => {
@@ -24,7 +22,8 @@ export default function ProductsSection({ productos }) {
         setIsCartOpen(!isCartOpen)
     }
 
-    const handleAddToCart = (product) => {
+    const handleAddToCart = (e, product) => {
+        e.preventDefault() // Previene la navegación al detalle cuando se hace clic en "Add to Cart"
         const cartItem = {
             id: product.idProducto,
             name: product.NombreProducto,
@@ -62,14 +61,12 @@ export default function ProductsSection({ productos }) {
                         <button onClick={toggleCart} className="relative">
                             <ShoppingCart className="text-pink-50"/>
                             {cartItemsCount > 0 && (
-                                <span
-                                    className="absolute -top-2 -right-2 bg-pink-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs">
+                                <span className="absolute -top-2 -right-2 bg-pink-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs">
                                     {cartItemsCount}
                                 </span>
                             )}
                         </button>
                     </nav>
-
                 </div>
             </header>
 
@@ -79,7 +76,6 @@ export default function ProductsSection({ productos }) {
                         <a href="\inicio" className="hover:text-pink-200">Inicio</a>
                         <a href="\menu" className="hover:text-pink-200">Productos</a>
                         <a href="\aboutUs" className="hover:text-pink-200">Nosotros</a>
-
                     </nav>
                 </div>
             )}
@@ -128,31 +124,35 @@ export default function ProductsSection({ productos }) {
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     {filteredProducts.map(product => (
                         <div key={product.idProducto} className="bg-white rounded-lg shadow-md overflow-hidden">
-                            <img
-                                src={product.RutaImagen}
-                                alt={product.NombreProducto}
-                                className="w-full h-48 object-cover"
-                            />
-                            <div className="p-4">
-                                <h2 className="text-xl font-semibold text-pink-800 mb-2">
-                                    {product.NombreProducto}
-                                </h2>
-                                <p className="text-pink-600 mb-2">{product.DescripcionProducto}</p>
-                                <div className="flex justify-between items-center">
-                                    <span className="text-lg font-bold text-pink-700">
-                                        ${parseFloat(product.PrecioProducto).toFixed(2)}
-                                    </span>
-                                    <button
-                                        onClick={() => handleAddToCart(product)}
-                                        className="bg-pink-500 hover:bg-pink-600 text-white font-bold py-2 px-4 rounded transition duration-300">
-                                        Add to Cart
-                                    </button>
+                            <a href={`/producto/${product.idProducto}`} className="block cursor-pointer">
+                                <img
+                                    src={product.RutaImagen}
+                                    alt={product.NombreProducto}
+                                    className="w-full h-48 object-cover transition-opacity duration-300 hover:opacity-80"
+                                />
+                                <div className="p-4">
+                                    <h2 className="text-xl font-semibold text-pink-800 mb-2 hover:text-pink-600 transition-colors duration-300">
+                                        {product.NombreProducto}
+                                    </h2>
+                                    <p className="text-pink-600 mb-2">{product.DescripcionProducto}</p>
+                                    <div className="flex justify-between items-center">
+                                        <span className="text-lg font-bold text-pink-700">
+                                            ${parseFloat(product.PrecioProducto).toFixed(2)}
+                                        </span>
+                                        <button
+                                            onClick={(e) => handleAddToCart(e, product)}
+                                            className="bg-pink-500 hover:bg-pink-600 text-white font-bold py-2 px-4 rounded transition duration-300"
+                                        >
+                                            Add to Cart
+                                        </button>
+                                    </div>
                                 </div>
-                            </div>
+                            </a>
                         </div>
                     ))}
                 </div>
             </div>
+
             <footer className="bg-pink-500 text-pink-50 py-8">
                 <div className="container mx-auto text-center">
                     <p>&copy; 2023 Sweet Delights Bakery. All rights reserved.</p>
@@ -162,6 +162,7 @@ export default function ProductsSection({ productos }) {
                     </div>
                 </div>
             </footer>
+
             {isCartOpen && (
                 <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex justify-end">
                     <div className="bg-white w-full max-w-md h-full overflow-y-auto">
