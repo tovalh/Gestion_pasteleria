@@ -23,20 +23,8 @@ Route::resource('venta', VentaController::class);
 //Ingredientes
 Route::resource('ingredientes', IngredienteController::class);
 
-//Productos (PRIMERO LAS RUTAS ESPECIFICAS AL FINAL RESOURCE)
-//Route::get('/productos/filtro', [ProductoController::class, 'filtro'])->name('productos.filtro');
-//Route::delete('/productos/deleteo/{id}', [ProductoController::class, 'hardDelete'])->name('productos.hardDelete');
-//Route::put('/productos/restaurar/{id}', [ProductoController::class, 'restore'])->name('productos.restore');
-//Route::resource('productos', ProductoController::class);
-
-//productos
-//Route::get('/Producto', [ProductoController::class, 'index']);
-// Ruta para la página de inicio
 
 Route::get('/producto/{id}', [ProductoController::class, 'mostrarProducto'])->name('producto.detalle');
-
-
-
 
 //Seccion
 Route::resource('secciones', SeccionController::class);
@@ -82,18 +70,11 @@ Route::get('/administracion', function () {
 // Ruta del Dashboard
 Route::get('/dashboard', [\App\Http\Controllers\DashboardController::class, 'index'])->name('dashboard');
 
-Route::get('/', function () {
-    return redirect('/dashboard');
-});
 
-// DEFAULT
+Route::get('/inicio', [ProductoController::class, 'index'])->name('inicio');
+
 Route::get('/', function () {
-    return Inertia::render('Welcome', [
-        'canLogin' => Route::has('login'),
-        'canRegister' => Route::has('register'),
-        'laravelVersion' => Application::VERSION,
-        'phpVersion' => PHP_VERSION,
-    ]);
+    return redirect()->route('inicio');
 });
 
 Route::middleware('auth')->group(function () {

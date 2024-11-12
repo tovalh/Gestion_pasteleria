@@ -54,16 +54,18 @@ export default function ProductsSection({ productos }) {
                     <nav className="hidden md:flex space-x-6">
                         <a href="\inicio" className="hover:text-pink-200">Inicio</a>
                         <a href="\menu" className="hover:text-pink-200">Productos</a>
+                        <a href="\seguimiento" className="hover:text-pink-200">Seguimiento</a>
                         <a href="\aboutUs" className="hover:text-pink-200">Nosotros</a>
                         <button className="md:hidden" onClick={toggleMenu}>
                             {isMenuOpen ? <X/> : <MenuIcon/>}
                         </button>
                         <button onClick={toggleCart} className="relative">
-                            <ShoppingCart className="text-pink-50"/>
+                            <ShoppingCart className="hidden md:block text-pink-50"/>
                             {cartItemsCount > 0 && (
-                                <span className="absolute -top-2 -right-2 bg-pink-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs">
-                                    {cartItemsCount}
-                                </span>
+                                <span
+                                    className="absolute -top-2 -right-2 bg-white text-pink-500 rounded-full w-5 h-5 flex items-center justify-center text-xs font-bold">
+                                        {cartItemsCount}
+                                    </span>
                             )}
                         </button>
                     </nav>
@@ -75,6 +77,7 @@ export default function ProductsSection({ productos }) {
                     <nav className="flex flex-col space-y-2">
                         <a href="\inicio" className="hover:text-pink-200">Inicio</a>
                         <a href="\menu" className="hover:text-pink-200">Productos</a>
+                        <a href="\seguimiento" className="hover:text-pink-200">Seguimiento</a>
                         <a href="\aboutUs" className="hover:text-pink-200">Nosotros</a>
                     </nav>
                 </div>

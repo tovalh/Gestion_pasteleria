@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import React, { useState } from 'react'
 import { ShoppingCart, Menu as MenuIcon, X } from 'lucide-react'
 import { useCart } from '../Context/CartContext'
 import CartComponent from '../Components/CartComponent'
@@ -7,7 +7,7 @@ import { Head } from "@inertiajs/react"
 export default function ProductoDetalle({ producto }) {
     const [isMenuOpen, setIsMenuOpen] = useState(false)
     const [isCartOpen, setIsCartOpen] = useState(false)
-    const { addToCart } = useCart()
+    const { addToCart, cartItemsCount } = useCart()
 
     const toggleMenu = () => {
         setIsMenuOpen(!isMenuOpen)
@@ -42,11 +42,20 @@ export default function ProductoDetalle({ producto }) {
                         <nav className="hidden md:flex space-x-6">
                             <a href="\inicio" className="hover:text-pink-200">Inicio</a>
                             <a href="\menu" className="hover:text-pink-200">Productos</a>
+                            <a href="\seguimiento" className="hover:text-pink-200">Seguimiento</a>
                             <a href="\aboutUs" className="hover:text-pink-200">Nosotros</a>
                             <button className="md:hidden" onClick={toggleMenu}>
                                 {isMenuOpen ? <X/> : <MenuIcon/>}
                             </button>
-                            <ShoppingCart className="hidden md:block cursor-pointer" onClick={toggleCart}/>
+                            <button onClick={toggleCart} className="relative">
+                                <ShoppingCart className="hidden md:block text-pink-50"/>
+                                {cartItemsCount > 0 && (
+                                    <span
+                                        className="absolute -top-2 -right-2 bg-white text-pink-500 rounded-full w-5 h-5 flex items-center justify-center text-xs font-bold">
+                                        {cartItemsCount}
+                                    </span>
+                                )}
+                            </button>
                         </nav>
                     </div>
                 </header>
@@ -55,8 +64,9 @@ export default function ProductoDetalle({ producto }) {
                 {isMenuOpen && (
                     <div className="md:hidden bg-pink-600 text-pink-50 p-4">
                         <nav className="flex flex-col space-y-2">
-                            <a href="\inicio" className="hover:text-pink-200">Home</a>
+                            <a href="\inicio" className="hover:text-pink-200">Inicio</a>
                             <a href="\menu" className="hover:text-pink-200">Menu</a>
+                            <a href="\seguimiento" className="hover:text-pink-200">Seguimiento</a>
                             <a href="\aboutUs" className="hover:text-pink-200">About</a>
                         </nav>
                     </div>
