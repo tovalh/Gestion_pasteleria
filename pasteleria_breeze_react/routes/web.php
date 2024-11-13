@@ -58,11 +58,7 @@ Route::get('/checkout', function () {
 
 //VISTAS, Sin Controlador//
 
-Route::get('/menu', function () {
-    return Inertia::render('Menu', [
-        'productos' => Producto::all()
-    ]);
-})->name('menu');
+Route::get('/menu', [ProductoController::class, 'menu'])->name('menu');
 
 Route::get('/aboutUs', function () {
     return Inertia::render('AboutUs');
