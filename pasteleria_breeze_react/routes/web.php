@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\IngredienteController;
 use App\Http\Controllers\ProductoController;
 use App\Http\Controllers\ProfileController;
@@ -75,7 +76,12 @@ Route::get('/administracion', function () {
 })->name('administracion');
 
 // Ruta del Dashboard
-Route::get('/dashboard', [\App\Http\Controllers\DashboardController::class, 'index'])->name('dashboard');
+
+Route::middleware(['auth', 'admin'])->group(function () {
+Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+});
+
+//Route::get('/dashboard', [\App\Http\Controllers\DashboardController::class, 'index'])->name('dashboard');
 
 
 Route::get('/inicio', [ProductoController::class, 'index'])->name('inicio');

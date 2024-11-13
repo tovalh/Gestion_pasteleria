@@ -32,8 +32,23 @@ class HandleInertiaRequests extends Middleware
         return [
             ...parent::share($request),
             'auth' => [
-                'user' => $request->user(),
+                'user' => $request->user() ? [
+                    'id' => $request->user()->id,
+                    'name' => $request->user()->name,
+                    'email' => $request->user()->email,
+                    'isAdmin' => $request->user()->isAdmin(), // Método que añadimos en User
+                ] : null,
             ],
+            // Flash messages para notificaciones
+            'flash' => [
+                'success' => fn() => $request->session()->get('success'),
+                'error' => fn() => $request->session()->get('error'),
+                'message' => fn() => $request->session()->get('message'),
+            ],
+            // Agregar variables globales que necesites
+            'appName' => 'Dolci Mimi',
+            'canAccessAdmin' => $request->user()?->isAdmin() ?? false,
         ];
     }
+
 }

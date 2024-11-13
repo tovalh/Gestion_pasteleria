@@ -2,8 +2,11 @@ import React, { useState } from 'react';
 import { Link } from '@inertiajs/react';
 import { router } from '@inertiajs/react';
 import StockAlert from '../Components/StockAlert.jsx';
+import Authenticated from "@/Layouts/AuthenticatedLayout.jsx";
 
-const Dashboard = ({ productos, ingredientes, secciones, message }) => {
+
+
+const Dashboard = ({ auth, productos, ingredientes, secciones, message }) => {
     const [activeTab, setActiveTab] = useState('productos');
 
     const handleDeleteProducto = (id) => {
@@ -239,6 +242,23 @@ const Dashboard = ({ productos, ingredientes, secciones, message }) => {
             </div>
         </div>
     );
+
+    return (
+        <AuthenticatedLayout
+            user={auth.user}
+        >
+            <Head title="Dashboard" />
+
+            <div className="max-w-7xl mx-auto p-4">
+                {/* Todo tu contenido actual del Dashboard */}
+                <h1 className="text-3xl font-bold mb-8">Dashboard</h1>
+                <StockAlert ingredientes={ingredientes} />
+                {/* etc... */}
+            </div>
+        </AuthenticatedLayout>
+    );
 };
+
+
 
 export default Dashboard;
