@@ -25,43 +25,36 @@ const WebPayButton = ({ total, className, formData }) => {
             return;
         }
 
+        if (!formData.rut) {
+            alert('El RUT es obligatorio');
+            return;
+        }
+
         setLoading(true);
         try {
-            // Extraer solo los IDs de los productos
             const productIds = cart.map(item => item.id);
 
             const payloadData = {
                 productos: productIds,
-                Clientes_idCliente: 1, // TODO: Obtener el ID real del cliente
                 comentario: formData.specialInstructions || 'Sin instrucciones especiales',
                 total: total,
                 metodoPago: getMetodoPago(formData.paymentMethod),
                 datosCliente: {
-                    nombre: formData.firstName,
-                    apellido: formData.lastName,
-                    email: formData.email,
-                    telefono: formData.phone,
-                    direccion: formData.address,
-                    ciudad: formData.city,
+                    NombreCliente: `${formData.firstName} ${formData.lastName}`.trim(),
+                    CorreoCliente: formData.email,
+                    RutCliente: formData.rut,
+                    NumeroCliente: formData.phone,
+                    DireccionCliente: `${formData.address}, ${formData.city}`.trim(),
                     opcionEntrega: formData.deliveryOption
                 }
             };
 
-            const response1 = await axios.post(
-                '/venta/preparar-checkout',
-                payloadData,
-                {
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content')
-                    }
-                }
-            );
+            console.log('Enviando datos:', payloadData); // Para debugging
 
-            console.log('Respuesta del servidor:', response1.data);
+            const response1 = await axios.post('/venta/preparar-checkout', payloadData);
 
             if (response1.data.checkoutUrl) {
-                const response2 = await axios.post(response1.data.checkoutUrl, {
+                const response2 = await axios.post('/webpay/create', {
                     amount: total
                 });
 
@@ -84,9 +77,8 @@ const WebPayButton = ({ total, className, formData }) => {
             console.error('Error al procesar el pago:', error);
             let errorMessage = 'Error al procesar el pago: ';
 
-            if (error.response?.data?.errors) {
-                const errors = Object.values(error.response.data.errors).flat();
-                errorMessage += errors.join('\n');
+            if (error.response?.data?.details) {
+                errorMessage += Object.values(error.response.data.details).flat().join('\n');
             } else if (error.response?.data?.message) {
                 errorMessage += error.response.data.message;
             } else if (error.message) {
