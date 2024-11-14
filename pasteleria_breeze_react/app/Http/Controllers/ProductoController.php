@@ -26,21 +26,27 @@ class ProductoController extends Controller
         try {
             $producto = Producto::findOrFail($id);
 
-            // Asegúrate de que todos los campos necesarios estén presentes
+            // Obtener productos relacionados de la misma sección
+            $relatedProducts = Producto::where('Seccion_idSeccion', $producto->Seccion_idSeccion)
+                ->where('idProducto', '!=', $id)
+                ->limit(3)
+                ->get();
+
+            // Preparar datos del producto
             $productoData = [
                 'idProducto' => $producto->idProducto,
                 'NombreProducto' => $producto->NombreProducto,
                 'DescripcionProducto' => $producto->DescripcionProducto,
                 'PrecioProducto' => $producto->PrecioProducto,
                 'RutaImagen' => $producto->RutaImagen,
-                // Agrega cualquier otro campo que necesites
+                'Seccion_idSeccion' => $producto->Seccion_idSeccion
             ];
 
             return Inertia::render('ProductoDetalle', [
-                'producto' => $productoData
+                'producto' => $productoData,
+                'relatedProducts' => $relatedProducts
             ]);
         } catch (\Exception $e) {
-            // En caso de error, redirige a la página de inicio
             return redirect()->route('inicio')->with('error', 'Producto no encontrado');
         }
     }

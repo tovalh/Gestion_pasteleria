@@ -9,6 +9,12 @@ export default function Inicio({ productos }) {
     const [isCartOpen, setIsCartOpen] = useState(false)
     const { cartItemsCount, addToCart } = useCart()
 
+    const formatPrice = (price) => {
+        return (parseFloat(price)).toLocaleString('es-CL', {
+            style: 'currency',
+            currency: 'CLP'
+        })
+    }
     const toggleMenu = () => {
         setIsMenuOpen(!isMenuOpen)
     }
@@ -129,13 +135,13 @@ export default function Inicio({ productos }) {
                                             </h3>
                                             <p className="text-pink-600 mb-4">{product.DescripcionProducto}</p>
                                             <div className="flex justify-between items-center">
-                                                <span className="text-lg font-bold text-pink-700">
-                                                    ${parseFloat(product.PrecioProducto).toFixed(2)}
-                                                </span>
+                                           <span className="text-lg font-bold text-pink-700">
+                                               {formatPrice(product.PrecioProducto)}
+                                           </span>
                                                 <button
                                                     onClick={() => handleAddToCart(product)}
                                                     className="bg-pink-500 hover:bg-pink-600 text-white font-bold py-2 px-4 rounded transition duration-300">
-                                                    Add to Cart
+                                                    Agregar al Carrito
                                                 </button>
                                             </div>
                                         </div>

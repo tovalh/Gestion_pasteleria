@@ -4,10 +4,17 @@ import { useCart } from '../Context/CartContext'
 import CartComponent from '../Components/CartComponent'
 import { Head } from "@inertiajs/react"
 
-export default function ProductoDetalle({ producto }) {
+export default function ProductoDetalle({ producto, relatedProducts = [] }) {
     const [isMenuOpen, setIsMenuOpen] = useState(false)
     const [isCartOpen, setIsCartOpen] = useState(false)
     const { addToCart, cartItemsCount } = useCart()
+
+    const formatPrice = (price) => {
+        return (parseFloat(price)).toLocaleString('es-CL', {
+            style: 'currency',
+            currency: 'CLP'
+        })
+    }
 
     const toggleMenu = () => {
         setIsMenuOpen(!isMenuOpen)
@@ -17,13 +24,13 @@ export default function ProductoDetalle({ producto }) {
         setIsCartOpen(!isCartOpen)
     }
 
-    const handleAddToCart = () => {
+    const handleAddToCart = (product) => {
         const cartItem = {
-            id: producto.idProducto,
-            name: producto.NombreProducto,
-            price: parseFloat(producto.PrecioProducto),
-            description: producto.DescripcionProducto,
-            image: producto.RutaImagen
+            id: product.idProducto,
+            name: product.NombreProducto,
+            price: parseFloat(product.PrecioProducto),
+            description: product.DescripcionProducto,
+            image: product.RutaImagen
         }
         addToCart(cartItem)
     }
@@ -50,10 +57,9 @@ export default function ProductoDetalle({ producto }) {
                             <button onClick={toggleCart} className="relative">
                                 <ShoppingCart className="hidden md:block text-pink-50"/>
                                 {cartItemsCount > 0 && (
-                                    <span
-                                        className="absolute -top-2 -right-2 bg-white text-pink-500 rounded-full w-5 h-5 flex items-center justify-center text-xs font-bold">
-                                        {cartItemsCount}
-                                    </span>
+                                    <span className="absolute -top-2 -right-2 bg-white text-pink-500 rounded-full w-5 h-5 flex items-center justify-center text-xs font-bold">
+                                       {cartItemsCount}
+                                   </span>
                                 )}
                             </button>
                         </nav>
@@ -98,13 +104,13 @@ export default function ProductoDetalle({ producto }) {
                                     </p>
 
                                     <div className="flex items-center justify-between mb-8">
-                                        <span className="text-2xl font-bold text-pink-700">
-                                            ${parseFloat(producto.PrecioProducto).toFixed(2)}
-                                        </span>
+                                       <span className="text-2xl font-bold text-pink-700">
+                                           {formatPrice(producto.PrecioProducto)}
+                                       </span>
                                     </div>
 
                                     <button
-                                        onClick={handleAddToCart}
+                                        onClick={() => handleAddToCart(producto)}
                                         className="w-full bg-pink-500 hover:bg-pink-600 text-white font-bold py-3 px-6 rounded-lg transition duration-300 flex items-center justify-center"
                                     >
                                         <ShoppingCart className="mr-2" />
@@ -115,6 +121,46 @@ export default function ProductoDetalle({ producto }) {
                         </div>
                     </div>
                 </main>
+
+                {/* Related Products Section */}
+                {relatedProducts.length > 0 && (
+                    <section className="py-12">
+                        <div className="container mx-auto px-4">
+                            <h2 className="text-2xl font-bold text-pink-800 mb-6">Productos Relacionados</h2>
+                            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                                {relatedProducts.map(product => (
+                                    <div key={product.idProducto} className="bg-white rounded-lg shadow-md overflow-hidden">
+                                        <div>
+                                            <a href={`/producto/${product.idProducto}`}>
+                                                <img
+                                                    src={product.RutaImagen}
+                                                    alt={product.NombreProducto}
+                                                    className="w-full h-48 object-cover hover:opacity-80 transition-opacity duration-300"
+                                                />
+                                            </a>
+                                        </div>
+                                        <div className="p-4">
+                                            <h3 className="text-xl font-semibold text-pink-800 mb-2">
+                                                {product.NombreProducto}
+                                            </h3>
+                                            <p className="text-pink-600 mb-4">{product.DescripcionProducto}</p>
+                                            <div className="flex justify-between items-center">
+                                               <span className="text-lg font-bold text-pink-700">
+                                                   {formatPrice(product.PrecioProducto)}
+                                               </span>
+                                                <button
+                                                    onClick={() => handleAddToCart(product)}
+                                                    className="bg-pink-500 hover:bg-pink-600 text-white font-bold py-2 px-4 rounded transition duration-300">
+                                                    Add to Cart
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    </section>
+                )}
 
                 {/* Footer */}
                 <footer className="bg-pink-500 text-pink-50 py-8 mt-auto">

@@ -1,4 +1,3 @@
-// CartComponent.jsx
 import React from 'react';
 import { useCart } from '../Context/CartContext.jsx';
 import { router } from '@inertiajs/react';
@@ -7,6 +6,13 @@ import { X, Plus, Minus } from 'lucide-react';
 export default function CartComponent() {
     const { cart, removeFromCart, clearCart, updateQuantity, cartTotal } = useCart();
 
+    const formatPrice = (price) => {
+        return (parseFloat(price)).toLocaleString('es-CL', {
+            style: 'currency',
+            currency: 'CLP'
+        })
+    };
+
     const handleQuantityChange = (itemId, currentQuantity, increment) => {
         const newQuantity = currentQuantity + (increment ? 1 : -1);
         updateQuantity(itemId, newQuantity);
@@ -14,7 +20,6 @@ export default function CartComponent() {
 
     const handleCheckout = () => {
         if (cart.length > 0) {
-            // Navegar a la página de pago
             router.visit('/pago');
         }
     };
@@ -30,7 +35,7 @@ export default function CartComponent() {
                         <div key={item.id} className="flex justify-between items-center mb-4 border-b border-pink-100 pb-4">
                             <div className="flex-grow">
                                 <h3 className="text-lg font-semibold text-pink-800">{item.name}</h3>
-                                <p className="text-pink-600">${item.price.toFixed(2)} c/u</p>
+                                <p className="text-pink-600">{formatPrice(item.price)} c/u</p>
                             </div>
                             <div className="flex items-center space-x-4">
                                 <div className="flex items-center space-x-2">
@@ -58,7 +63,7 @@ export default function CartComponent() {
                         </div>
                     ))}
                     <div className="mt-4 pt-4 border-t border-pink-200">
-                        <p className="text-xl font-bold text-pink-800">Total: ${cartTotal.toFixed(2)}</p>
+                        <p className="text-xl font-bold text-pink-800">Total: {formatPrice(cartTotal)}</p>
                     </div>
                     <div className="container mx-auto flex justify-between items-center mt-4">
                         <button
