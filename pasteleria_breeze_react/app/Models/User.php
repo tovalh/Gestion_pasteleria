@@ -57,4 +57,14 @@ class User extends Authenticatable
     {
         return $this->administrador()->exists();
     }
+
+    public function cliente()
+    {
+        return $this->hasOne(Cliente::class);
+    }
+
+    public function ventas()
+    {
+        return $this->hasMany(Venta::class, 'Clientes_idCliente', 'id');
+    }
 }

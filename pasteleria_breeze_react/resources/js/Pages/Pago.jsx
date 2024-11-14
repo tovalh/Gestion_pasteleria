@@ -13,6 +13,7 @@ export default function Pago() {
         email: '',
         address: '',
         city: '',
+        rut: '',
         specialInstructions: '',
         deliveryOption: 'asap',
         paymentMethod: 'credit'
@@ -166,6 +167,19 @@ export default function Pago() {
                                             type="text"
                                             name="lastName"
                                             value={formData.lastName}
+                                            onChange={handleInputChange}
+                                            required
+                                            className="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-pink-500"
+                                        />
+                                    </div>
+                                    <div>
+                                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                                            RUT
+                                        </label>
+                                        <input
+                                            type="text"
+                                            name="rut"
+                                            value={formData.rut}
                                             onChange={handleInputChange}
                                             required
                                             className="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-pink-500"

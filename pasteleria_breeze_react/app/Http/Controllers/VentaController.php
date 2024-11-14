@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Producto;
 use App\Models\Venta;
+use App\Models\Cliente;
 use App\Service\StockService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -24,9 +25,7 @@ class VentaController extends Controller
     {
         $ventas = Venta::all();
         return Inertia::render('Checkout', ['ventas' => $ventas]);
-
     }
-
     public function show($id) {
         try {
             $venta = Venta::with(['productos', 'cliente'])
@@ -78,17 +77,39 @@ class VentaController extends Controller
 
     public function update(Request $request, $id)
     {
-        $validatedData = $request->validate([
-            'NumeroTransaccionVenta' => 'required|numeric',
-            'totalVenta' => 'required|numeric',
-            'metodoDePagoVenta' => 'required|max:45',
-            'Clientes_idCliente' => 'required|integer|exists:cliente,idCliente',
-        ]);
+        try {
+            $venta = Venta::findOrFail($id);
 
-        $venta = Venta::findOrFail($id);
-        $venta->update($validatedData);
+            // Si estamos actualizando el estado del pedido
+            if ($request->has('estadoPedido')) {
+                $venta->estadoPedido = $request->estadoPedido;
+                $venta->save();
 
-        return redirect()->back();
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Estado actualizado correctamente',
+                    'venta' => $venta
+                ]);
+            }
+
+            // Para otras actualizaciones...
+            $validatedData = $request->validate([
+                'NumeroTransaccionVenta' => 'required|numeric',
+                'totalVenta' => 'required|numeric',
+                'metodoDePagoVenta' => 'required|max:45',
+                'Clientes_idCliente' => 'required|integer|exists:cliente,idCliente',
+            ]);
+
+            $venta->update($validatedData);
+
+            return redirect()->back();
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error al actualizar el estado del pedido',
+                'error' => $e->getMessage()
+            ], 500);
+        }
     }
 
     public function destroy($id)
@@ -137,52 +158,93 @@ class VentaController extends Controller
     public function prepararCheckout(Request $request)
     {
         try {
+            Log::info('Iniciando prepararCheckout');
+
+            // Verificar que la clase Cliente existe
+            if (!class_exists(\App\Models\Cliente::class)) {
+                Log::error('La clase Cliente no existe');
+                throw new \Exception('La clase Cliente no existe');
+            }
+
             Log::info('Datos recibidos en prepararCheckout:', [
-                'request_all' => $request->all(),
-                'productos' => $request->input('productos'),
+                'request_all' => $request->all()
             ]);
 
             $validatedData = $request->validate([
                 'productos' => 'required|array|min:1',
                 'productos.*' => 'required|integer|exists:producto,idProducto',
-                'Clientes_idCliente' => 'required|integer|exists:cliente,idCliente',
                 'comentario' => 'nullable|string|max:500',
                 'total' => 'required|numeric|min:0',
                 'metodoPago' => 'required|string',
-                'datosCliente' => 'required|array'
+                'datosCliente' => 'required|array',
+                'datosCliente.NombreCliente' => 'required|string|max:100',
+                'datosCliente.CorreoCliente' => 'required|email|max:100',
+                'datosCliente.RutCliente' => 'required|string|max:20',
+                'datosCliente.NumeroCliente' => 'required|string|max:20',
+                'datosCliente.DireccionCliente' => 'required|string|max:200',
+                'datosCliente.opcionEntrega' => 'nullable|string'
             ]);
 
-            // Guardar datos en sesión para usar después del pago
+            Log::info('Datos validados correctamente');
+
+            // Intentar usar la clase Cliente con namespace completo
+            Log::info('Intentando crear cliente');
+            try {
+                $cliente = Cliente::firstOrCreate(
+                    ['RutCliente' => $validatedData['datosCliente']['RutCliente']],
+                    [
+                        'NombreCliente' => $validatedData['datosCliente']['NombreCliente'],
+                        'CorreoCliente' => $validatedData['datosCliente']['CorreoCliente'],
+                        'NumeroCliente' => $validatedData['datosCliente']['NumeroCliente'],
+                        'DireccionCliente' => $validatedData['datosCliente']['DireccionCliente'],
+                        'user_id' => auth()->id() // Esto asociará el cliente con el usuario si está autenticado
+                    ]
+                );
+
+                if (auth()->check() && !$cliente->user_id) {
+                    $cliente->update(['user_id' => auth()->id()]);
+                }
+                Log::info('Cliente creado exitosamente', ['cliente_id' => $cliente->idCliente]);
+            } catch (\Exception $e) {
+                Log::error('Error al crear cliente:', [
+                    'error' => $e->getMessage(),
+                    'trace' => $e->getTraceAsString()
+                ]);
+                throw $e;
+            }
+
+            // Guardar datos en sesión
             session(['venta_pendiente' => [
                 'productos' => $validatedData['productos'],
-                'Clientes_idCliente' => $validatedData['Clientes_idCliente'],
+                'Clientes_idCliente' => $cliente->idCliente,
                 'comentario' => $validatedData['comentario'],
                 'total' => $validatedData['total'],
-                'metodoDePagoVenta' => $validatedData['metodoPago'], // Asegurarse de guardar esto
+                'metodoDePagoVenta' => $validatedData['metodoPago'],
                 'datosCliente' => $validatedData['datosCliente']
             ]]);
+
+            Log::info('Venta pendiente guardada en sesión');
 
             return response()->json([
                 'checkoutUrl' => route('webpay.create')
             ]);
 
-        } catch (\Illuminate\Validation\ValidationException $e) {
-            Log::error('Error de validación:', [
-                'errors' => $e->errors(),
-                'request_data' => $request->all()
-            ]);
-            return response()->json([
-                'error' => 'Error de validación',
-                'details' => $e->errors()
-            ], 422);
         } catch (\Exception $e) {
             Log::error('Error en prepararCheckout:', [
                 'message' => $e->getMessage(),
-                'request_data' => $request->all()
+                'class' => get_class($e),
+                'trace' => $e->getTraceAsString(),
+                'file' => $e->getFile(),
+                'line' => $e->getLine()
             ]);
+
             return response()->json([
                 'error' => 'Error al preparar la venta',
-                'message' => $e->getMessage()
+                'message' => $e->getMessage(),
+                'debug_info' => [
+                    'file' => $e->getFile(),
+                    'line' => $e->getLine()
+                ]
             ], 500);
         }
     }
@@ -218,7 +280,7 @@ class VentaController extends Controller
                 'metodoDePagoVenta' => $ventaPendiente['metodoDePagoVenta'], // Usar el valor guardado
                 'Comentario' => $ventaPendiente['comentario'],
                 'Clientes_idCliente' => $ventaPendiente['Clientes_idCliente'],
-                'estadoPedido' => 'En Preparacion',
+                'estadoPedido' => 'En Proceso',
                 'NumeroTransaccionVenta' => $nuevoNumero
             ];
 
@@ -271,4 +333,5 @@ class VentaController extends Controller
             throw $e;
         }
     }
+
 }

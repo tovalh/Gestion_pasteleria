@@ -21,6 +21,14 @@ class ProductoController extends Controller
         ]);
     }
 
+    public function menu()
+    {
+        $productos = Producto::with('seccion')->get();
+        return Inertia::render('Menu', [
+            'productos' => $productos
+        ]);
+    }
+
     public function mostrarProducto($id)
     {
         try {
