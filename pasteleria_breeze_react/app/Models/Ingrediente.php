@@ -28,4 +28,9 @@ class Ingrediente extends Model
             ->withPivot('cantidad');
     }
 
+    // Método para obtener el stock actual
+    public function stockActual()
+    {
+        return $this->StockIngrediente;
+    }
 }

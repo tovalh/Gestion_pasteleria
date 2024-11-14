@@ -33,4 +33,9 @@ class Producto extends Model
             'Productos_idProducto', 'Venta_idVenta');
     }
 
+    public function seccion()
+    {
+        return $this->belongsTo(Seccion::class, 'Seccion_idSeccion', 'idSeccion');
+    }
+
 }

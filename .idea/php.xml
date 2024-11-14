@@ -142,6 +142,8 @@
       <path value="$PROJECT_DIR$/pasteleria_breeze_react/vendor/pestphp/pest-plugin-laravel" />
       <path value="$PROJECT_DIR$/pasteleria_breeze_react/vendor/phar-io/manifest" />
       <path value="$PROJECT_DIR$/pasteleria_breeze_react/vendor/phar-io/version" />
+      <path value="$PROJECT_DIR$/pasteleria_breeze_react/vendor/kitloong/laravel-migrations-generator" />
+      <path value="$PROJECT_DIR$/pasteleria_breeze_react/vendor/transbank/transbank-sdk" />
     </include_path>
   </component>
   <component name="PhpProjectSharedConfiguration" php_language_level="8.2" />

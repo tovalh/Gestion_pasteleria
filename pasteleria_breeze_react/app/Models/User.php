@@ -46,4 +46,25 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+    // Agregar esta función para verificar si es admin
+    public function administrador()
+    {
+        return $this->hasOne(Administrador::class, 'email', 'email');
+    }
+
+    public function isAdmin()
+    {
+        return $this->administrador()->exists();
+    }
+
+    public function cliente()
+    {
+        return $this->hasOne(Cliente::class);
+    }
+
+    public function ventas()
+    {
+        return $this->hasMany(Venta::class, 'Clientes_idCliente', 'id');
+    }
 }

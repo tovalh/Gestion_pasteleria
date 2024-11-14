@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Cliente; // Añadir este import
 use Illuminate\Http\Request;
 use Transbank\Webpay\WebpayPlus;
 use Transbank\Webpay\WebpayPlus\Transaction;
@@ -23,17 +24,22 @@ class WebpayController extends Controller
 
     public function initTransaction(Request $request)
     {
+        // Validar que exista información de venta pendiente
+        $ventaPendiente = session('venta_pendiente');
+        if (!$ventaPendiente) {
+            return response()->json(['error' => 'No hay una venta pendiente'], 400);
+        }
+
         $transaction = new Transaction;
 
         try {
             $response = $transaction->create(
-                'ORDER-' . rand(1000, 9999), // Orden de compra
-                session()->getId(), // Sesión ID
-                $request->amount, // Monto
-                route('webpay.return') // URL de retorno
+                'ORDER-' . rand(1000, 9999),
+                session()->getId(),
+                $ventaPendiente['total'],
+                route('webpay.return')
             );
 
-            // Guardamos el token en la sesión
             session(['webpay_token' => $response->getToken()]);
 
             return response()->json([
@@ -50,25 +56,59 @@ class WebpayController extends Controller
     {
         $token = $request->input('token_ws');
 
+        if (!$token) {
+            return Inertia::render('Compra/Fallida', [
+                'error' => 'Transacción cancelada por el usuario'
+            ]);
+        }
+
         $transaction = new Transaction;
 
         try {
             $response = $transaction->commit($token);
 
+            \Log::info('Respuesta de WebPay:', [
+                'response' => [
+                    'amount' => $response->getAmount(),
+                    'status' => $response->getStatus(),
+                    'buyOrder' => $response->getBuyOrder(),
+                    'responseCode' => $response->getResponseCode(),
+                    'authorizationCode' => $response->getAuthorizationCode()
+                ]
+            ]);
+
             if ($response->isApproved()) {
-                // Transacción exitosa
-                return Inertia::render('PaymentSuccess', [
-                    'response' => $response
+                // Crear la venta y obtener el código de seguimiento
+                $resultadoVenta = app(VentaController::class)->confirmarVenta($request);
+
+                return Inertia::render('Compra/Exitosa', [
+                    'mensaje' => 'Pago realizado con éxito',
+                    'codigoSeguimiento' => $resultadoVenta['codigoSeguimiento'],
+                    'detalles' => [
+                        'monto' => $response->getAmount(),
+                        'estado' => $response->getStatus(),
+                        'ordenCompra' => $response->getBuyOrder(),
+                        'codigoAutorizacion' => $response->getAuthorizationCode()
+                    ]
                 ]);
             } else {
-                // Transacción rechazada
-                return Inertia::render('PaymentRejected', [
-                    'response' => $response
+                return Inertia::render('Compra/Fallida', [
+                    'error' => 'Transacción rechazada',
+                    'detalles' => [
+                        'estado' => $response->getStatus(),
+                        'ordenCompra' => $response->getBuyOrder(),
+                        'codigoRespuesta' => $response->getResponseCode()
+                    ]
                 ]);
             }
         } catch (\Exception $e) {
-            return Inertia::render('PaymentError', [
-                'error' => $e->getMessage()
+            \Log::error('Error en returnUrl de WebPay:', [
+                'message' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+
+            return Inertia::render('Compra/Fallida', [
+                'error' => 'Error al procesar el pago: ' . $e->getMessage()
             ]);
         }
     }

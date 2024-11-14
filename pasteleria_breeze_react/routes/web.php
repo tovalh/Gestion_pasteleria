@@ -1,6 +1,8 @@
 <?php
 
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\IngredienteController;
+use App\Http\Controllers\OrderHistoryController;
 use App\Http\Controllers\ProductoController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SeccionController;
@@ -23,22 +25,12 @@ Route::resource('venta', VentaController::class);
 //Ingredientes
 Route::resource('ingredientes', IngredienteController::class);
 
-//Productos (PRIMERO LAS RUTAS ESPECIFICAS AL FINAL RESOURCE)
-//Route::get('/productos/filtro', [ProductoController::class, 'filtro'])->name('productos.filtro');
-//Route::delete('/productos/deleteo/{id}', [ProductoController::class, 'hardDelete'])->name('productos.hardDelete');
-//Route::put('/productos/restaurar/{id}', [ProductoController::class, 'restore'])->name('productos.restore');
-//Route::resource('productos', ProductoController::class);
 
-//productos
-//Route::get('/Producto', [ProductoController::class, 'index']);
-// Ruta para la página de inicio
-Route::get('/producto/{id}', [ProductoController::class, 'index']);
-
-
-
+Route::get('/producto/{id}', [ProductoController::class, 'mostrarProducto'])->name('producto.detalle');
 
 //Seccion
 Route::resource('secciones', SeccionController::class);
+
 //Venta
 Route::get('/ventas/test-page', function () {
     return Inertia::render('Ventas/Test');
@@ -46,6 +38,13 @@ Route::get('/ventas/test-page', function () {
 Route::post('/ventas/test', [VentaController::class, 'store']);
 Route::get('/ventas-por-periodo', [VentaController::class, 'obtenerVentasPorPeriodo'])->name('ventas.periodo');
 Route::resource('ventas', VentaController::class);
+Route::get('/seguimiento', function () {
+    return Inertia::render('Seguimiento');
+})->name('seguimiento');
+Route::put('/ventas/{id}', [VentaController::class, 'update'])->name('ventas.update');
+
+// Ruta para ver el pedido
+Route::get('/ventas/{id}', [VentaController::class, 'show'])->name('ventas.show');
 
 //WebPay
 
@@ -60,11 +59,7 @@ Route::get('/checkout', function () {
 
 //VISTAS, Sin Controlador//
 
-Route::get('/menu', function () {
-    return Inertia::render('Menu', [
-        'productos' => Producto::all()
-    ]);
-})->name('menu');
+Route::get('/menu', [ProductoController::class, 'menu'])->name('menu');
 
 Route::get('/aboutUs', function () {
     return Inertia::render('AboutUs');
@@ -79,33 +74,26 @@ Route::get('/administracion', function () {
 })->name('administracion');
 
 // Ruta del Dashboard
-Route::get('/dashboard', [\App\Http\Controllers\DashboardController::class, 'index'])->name('dashboard');
 
-Route::get('/', function () {
-    return redirect('/dashboard');
+Route::middleware(['auth', 'admin'])->group(function () {
+Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 });
 
-// DEFAULT
+//Route::get('/dashboard', [\App\Http\Controllers\DashboardController::class, 'index'])->name('dashboard');
+
+
+Route::get('/inicio', [ProductoController::class, 'index'])->name('inicio');
+
 Route::get('/', function () {
-    return Inertia::render('Welcome', [
-        'canLogin' => Route::has('login'),
-        'canRegister' => Route::has('register'),
-        'laravelVersion' => Application::VERSION,
-        'phpVersion' => PHP_VERSION,
-    ]);
+    return redirect()->route('inicio');
 });
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+    Route::get('/mis_pedidos', [OrderHistoryController::class, 'index'])->name('order.history');
 });
-Route::get('/productos/filtro', [ProductoController::class, 'filtro'])->name('productos.filtro');
-Route::delete('/productos/deleteo/{id}', [ProductoController::class, 'hardDelete'])->name('productos.hardDelete');
-Route::put('/productos/restaurar/{id}', [ProductoController::class, 'restore'])->name('productos.restore');
-
-// Rutas resource para productos (esto genera automáticamente todas las rutas CRUD)
-Route::resource('productos', ProductoController::class);
 
 Route::get('/componentePrueba', [ProductoController::class, 'index'])->name('componentePrueba');
 
