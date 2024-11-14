@@ -1,13 +1,14 @@
 import React, { useState } from 'react';
+import { Head } from '@inertiajs/react';
 import { Link } from '@inertiajs/react';
 import { router } from '@inertiajs/react';
 import StockAlert from '../Components/StockAlert.jsx';
+import axios from 'axios';
 import Authenticated from "@/Layouts/AuthenticatedLayout.jsx";
 
-
-
-const Dashboard = ({ auth, productos, ingredientes, secciones, message }) => {
+const Dashboard = ({ auth, productos, ingredientes, secciones, ventas: initialVentas, message }) => {
     const [activeTab, setActiveTab] = useState('productos');
+    const [ventas, setVentas] = useState(initialVentas);
 
     const handleDeleteProducto = (id) => {
         if (confirm('¿Estás seguro de eliminar este producto?')) {
@@ -26,7 +27,38 @@ const Dashboard = ({ auth, productos, ingredientes, secciones, message }) => {
             router.delete(`/secciones/${id}`);
         }
     };
-
+    const handleUpdateEstadoPedido = async (idVenta, nuevoEstado) => {
+        try {
+            await axios.put(`/ventas/${idVenta}`, { estadoPedido: nuevoEstado });
+            // Actualizar el estado local inmediatamente
+            setVentas(prevVentas =>
+                prevVentas.map(venta =>
+                    venta.idVenta === idVenta
+                        ? { ...venta, estadoPedido: nuevoEstado }
+                        : venta
+                )
+            );
+        } catch (error) {
+            console.error('Error al actualizar el estado del pedido:', error);
+            // Opcional: Mostrar un mensaje de error al usuario
+        }
+    };
+    const handleVerDetalles = (idVenta) => {
+        router.visit(`/ventas/${idVenta}`, {
+            preserveState: true,
+            preserveScroll: true,
+            onError: (errors) => {
+                setError('No se encontró el pedido. Por favor verifique el número.');
+                setLoading(false);
+            },
+            onSuccess: () => {
+                setLoading(false);
+            },
+            onFinish: () => {
+                setLoading(false);
+            }
+        });
+    };
     const renderProductos = () => (
         <div className="bg-white shadow-md rounded-lg overflow-hidden">
             <div className="p-4 bg-gray-50 border-b flex justify-between items-center">
@@ -99,7 +131,6 @@ const Dashboard = ({ auth, productos, ingredientes, secciones, message }) => {
                     </thead>
                     <tbody className="divide-y divide-gray-200">
                     {ingredientes.map((ingrediente) => (
-                        //Resaltar Fila
                         <tr
                             key={ingrediente.idIngrediente}
                             className={
@@ -136,6 +167,58 @@ const Dashboard = ({ auth, productos, ingredientes, secciones, message }) => {
             </div>
         </div>
     );
+
+    const renderVentas = () => {
+        return (
+            <div className="bg-white shadow-md rounded-lg overflow-hidden">
+                <div className="p-4 bg-gray-50 border-b flex justify-between items-center">
+                    <h2 className="text-xl font-semibold">Ventas</h2>
+                </div>
+                <div className="overflow-x-auto">
+                    <table className="min-w-full">
+                        <thead className="bg-gray-50">
+                        <tr>
+                            <th className="px-6 py-3 text-left">ID Venta</th>
+                            <th className="px-6 py-3 text-left">Comentario</th>
+                            <th className="px-6 py-3 text-left">Total</th>
+                            <th className="px-6 py-3 text-left">Estado</th>
+                            <th className="px-6 py-3 text-left">Acciones</th>
+                        </tr>
+                        </thead>
+                        <tbody className="divide-y divide-gray-200">
+                        {ventas.map((venta) => (
+                            <tr key={venta.idVenta}>
+                                <td className="px-6 py-4">{venta.idVenta}</td>
+                                <td className="px-6 py-4">{venta.Comentario}</td>
+                                <td className="px-6 py-4">${venta.totalVenta}</td>
+                                <td className="px-6 py-4">
+                                    <select
+                                        value={venta.estadoPedido}
+                                        onChange={(e) => handleUpdateEstadoPedido(venta.idVenta, e.target.value)}
+                                        className="px-8 py-1 rounded bg-gray-200"
+                                    >
+                                        <option value={venta.ESTADO_EN_PROCESO}>En Proceso</option>
+                                        <option value={venta.ESTADO_DISPONIBLE}>Disponible</option>
+                                        <option value={venta.ESTADO_ENTREGADO}>Entregado</option>
+                                        <option value={venta.ESTADO_CANCELADO}>Cancelado</option>
+                                    </select>
+                                </td>
+                                <td className="px-10 py-4 space-x-2">
+                                    <button
+                                        onClick={() => handleVerDetalles(venta.idVenta)}
+                                        className="text-blue-600 hover:text-blue-800"
+                                    >
+                                        Ver Detalles
+                                    </button>
+                                </td>
+                            </tr>
+                        ))}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        );
+    };
 
     const renderSecciones = () => (
         <div className="bg-white shadow-md rounded-lg overflow-hidden">
@@ -223,6 +306,16 @@ const Dashboard = ({ auth, productos, ingredientes, secciones, message }) => {
                     )}
                 </button>
                 <button
+                    onClick={() => setActiveTab('ventas')}
+                    className={`flex-1 px-4 py-2 rounded-md transition-colors duration-200 ${
+                        activeTab === 'ventas'
+                            ? 'bg-blue-500 text-white'
+                            : 'hover:bg-gray-100'
+                    }`}
+                >
+                    Ventas
+                </button>
+                <button
                     onClick={() => setActiveTab('secciones')}
                     className={`flex-1 px-4 py-2 rounded-md transition-colors duration-200 ${
                         activeTab === 'secciones'
@@ -238,6 +331,7 @@ const Dashboard = ({ auth, productos, ingredientes, secciones, message }) => {
             <div>
                 {activeTab === 'productos' && renderProductos()}
                 {activeTab === 'ingredientes' && renderIngredientes()}
+                {activeTab === 'ventas' && renderVentas()}
                 {activeTab === 'secciones' && renderSecciones()}
             </div>
         </div>
