@@ -39,6 +39,7 @@ Route::resource('ventas', VentaController::class);
 Route::get('/seguimiento', function () {
     return Inertia::render('Seguimiento');
 })->name('seguimiento');
+Route::put('/ventas/{id}', [VentaController::class, 'update'])->name('ventas.update');
 
 // Ruta para ver el pedido
 Route::get('/ventas/{id}', [VentaController::class, 'show'])->name('ventas.show');

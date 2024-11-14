@@ -24,9 +24,7 @@ class VentaController extends Controller
     {
         $ventas = Venta::all();
         return Inertia::render('Checkout', ['ventas' => $ventas]);
-
     }
-
     public function show($id) {
         try {
             $venta = Venta::with(['productos', 'cliente'])
@@ -78,17 +76,39 @@ class VentaController extends Controller
 
     public function update(Request $request, $id)
     {
-        $validatedData = $request->validate([
-            'NumeroTransaccionVenta' => 'required|numeric',
-            'totalVenta' => 'required|numeric',
-            'metodoDePagoVenta' => 'required|max:45',
-            'Clientes_idCliente' => 'required|integer|exists:cliente,idCliente',
-        ]);
+        try {
+            $venta = Venta::findOrFail($id);
 
-        $venta = Venta::findOrFail($id);
-        $venta->update($validatedData);
+            // Si estamos actualizando el estado del pedido
+            if ($request->has('estadoPedido')) {
+                $venta->estadoPedido = $request->estadoPedido;
+                $venta->save();
 
-        return redirect()->back();
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Estado actualizado correctamente',
+                    'venta' => $venta
+                ]);
+            }
+
+            // Para otras actualizaciones...
+            $validatedData = $request->validate([
+                'NumeroTransaccionVenta' => 'required|numeric',
+                'totalVenta' => 'required|numeric',
+                'metodoDePagoVenta' => 'required|max:45',
+                'Clientes_idCliente' => 'required|integer|exists:cliente,idCliente',
+            ]);
+
+            $venta->update($validatedData);
+
+            return redirect()->back();
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error al actualizar el estado del pedido',
+                'error' => $e->getMessage()
+            ], 500);
+        }
     }
 
     public function destroy($id)
@@ -218,7 +238,7 @@ class VentaController extends Controller
                 'metodoDePagoVenta' => $ventaPendiente['metodoDePagoVenta'], // Usar el valor guardado
                 'Comentario' => $ventaPendiente['comentario'],
                 'Clientes_idCliente' => $ventaPendiente['Clientes_idCliente'],
-                'estadoPedido' => 'En Preparacion',
+                'estadoPedido' => 'En Proceso',
                 'NumeroTransaccionVenta' => $nuevoNumero
             ];
 

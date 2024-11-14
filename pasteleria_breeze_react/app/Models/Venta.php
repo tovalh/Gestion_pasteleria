@@ -22,7 +22,7 @@ class Venta extends Model
     ];
 
     // Constantes para los estados y métodos de pago
-    const ESTADO_EN_PREPARACION = 'En Preparacion';
+    const ESTADO_EN_PROCESO = 'En Proceso';
     const ESTADO_DISPONIBLE = 'Disponible';
     const ESTADO_ENTREGADO = 'Entregado';
     const ESTADO_CANCELADO = 'Cancelado';
