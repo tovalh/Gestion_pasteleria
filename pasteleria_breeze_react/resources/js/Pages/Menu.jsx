@@ -12,7 +12,14 @@ export default function ProductsSection({ productos }) {
     const [isCartOpen, setIsCartOpen] = useState(false)
     const { addToCart, cartItemsCount } = useCart()
 
-    const categories = ['All', ...new Set(productos.map(product => product.Seccion_idSeccion))]
+    const categories = [
+        'All',
+        ...new Set(
+            productos
+                .filter(product => product.seccion)
+                .map(product => product.seccion.NombreSeccion)
+        )
+    ];
 
     const toggleMenu = () => {
         setIsMenuOpen(!isMenuOpen)
@@ -37,7 +44,8 @@ export default function ProductsSection({ productos }) {
     const filteredProducts = productos
         .filter(product =>
             product.NombreProducto.toLowerCase().includes(searchTerm.toLowerCase()) &&
-            (selectedCategory === 'All' || product.Seccion_idSeccion === selectedCategory)
+            (selectedCategory === 'All' ||
+                (product.seccion && product.seccion.NombreSeccion === selectedCategory))
         )
         .sort((a, b) => {
             if (sortBy === 'name') return a.NombreProducto.localeCompare(b.NombreProducto)
@@ -45,8 +53,9 @@ export default function ProductsSection({ productos }) {
             if (sortBy === 'price-desc') return b.PrecioProducto - a.PrecioProducto
             return 0
         })
-
+    console.log('Productos recibidos:', productos);
     return (
+
         <div className="bg-[#F7F0E9] min-h-screen">
             <header className="bg-pink-500 text-pink-50 p-4">
                 <div className="container mx-auto flex justify-between items-center">

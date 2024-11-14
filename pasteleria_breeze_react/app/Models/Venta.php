@@ -44,4 +44,8 @@ class Venta extends Model
     {
         return $this->belongsTo(Cliente::class, 'Clientes_idCliente', 'idCliente');
     }
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'Clientes_idCliente', 'id');
+    }
 }

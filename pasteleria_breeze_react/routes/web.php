@@ -1,6 +1,8 @@
 <?php
 
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\IngredienteController;
+use App\Http\Controllers\OrderHistoryController;
 use App\Http\Controllers\ProductoController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SeccionController;
@@ -57,11 +59,7 @@ Route::get('/checkout', function () {
 
 //VISTAS, Sin Controlador//
 
-Route::get('/menu', function () {
-    return Inertia::render('Menu', [
-        'productos' => Producto::all()
-    ]);
-})->name('menu');
+Route::get('/menu', [ProductoController::class, 'menu'])->name('menu');
 
 Route::get('/aboutUs', function () {
     return Inertia::render('AboutUs');
@@ -76,7 +74,12 @@ Route::get('/administracion', function () {
 })->name('administracion');
 
 // Ruta del Dashboard
-Route::get('/dashboard', [\App\Http\Controllers\DashboardController::class, 'index'])->name('dashboard');
+
+Route::middleware(['auth', 'admin'])->group(function () {
+Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+});
+
+//Route::get('/dashboard', [\App\Http\Controllers\DashboardController::class, 'index'])->name('dashboard');
 
 
 Route::get('/inicio', [ProductoController::class, 'index'])->name('inicio');
@@ -89,6 +92,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+    Route::get('/mis_pedidos', [OrderHistoryController::class, 'index'])->name('order.history');
 });
 
 Route::get('/componentePrueba', [ProductoController::class, 'index'])->name('componentePrueba');

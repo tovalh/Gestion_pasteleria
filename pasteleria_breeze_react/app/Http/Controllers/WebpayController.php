@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Cliente; // Añadir este import
 use Illuminate\Http\Request;
 use Transbank\Webpay\WebpayPlus;
 use Transbank\Webpay\WebpayPlus\Transaction;
