@@ -1,16 +1,24 @@
 import React, { useState } from 'react'
-import { ShoppingCart, Menu, X, Menu as MenuIcon } from 'lucide-react'
+import { ShoppingCart, X } from 'lucide-react'
 import { useCart } from '../Context/CartContext'
 import CartComponent from '../Components/CartComponent'
+import Navbar from '../Components/Navbar'
+import Footer from '../Components/Footer'
 
 export default function ProductsSection({ productos }) {
     const [searchTerm, setSearchTerm] = useState('')
     const [selectedCategory, setSelectedCategory] = useState('All')
     const [showVegan, setShowVegan] = useState(false)
     const [sortBy, setSortBy] = useState('name')
-    const [isMenuOpen, setIsMenuOpen] = useState(false)
     const [isCartOpen, setIsCartOpen] = useState(false)
     const { addToCart, cartItemsCount } = useCart()
+
+    const formatPrice = (price) => {
+        return (parseFloat(price)).toLocaleString('es-CL', {
+            style: 'currency',
+            currency: 'CLP'
+        })
+    };
 
     const categories = [
         'All',
@@ -21,16 +29,12 @@ export default function ProductsSection({ productos }) {
         )
     ];
 
-    const toggleMenu = () => {
-        setIsMenuOpen(!isMenuOpen)
-    }
-
     const toggleCart = () => {
         setIsCartOpen(!isCartOpen)
     }
 
     const handleAddToCart = (e, product) => {
-        e.preventDefault() // Previene la navegación al detalle cuando se hace clic en "Add to Cart"
+        e.preventDefault()
         const cartItem = {
             id: product.idProducto,
             name: product.NombreProducto,
@@ -53,44 +57,10 @@ export default function ProductsSection({ productos }) {
             if (sortBy === 'price-desc') return b.PrecioProducto - a.PrecioProducto
             return 0
         })
-    console.log('Productos recibidos:', productos);
+
     return (
-
         <div className="bg-[#F7F0E9] min-h-screen">
-            <header className="bg-pink-500 text-pink-50 p-4">
-                <div className="container mx-auto flex justify-between items-center">
-                    <a href="\inicio" className="text-2xl font-bold">Dolci Mimi</a>
-                    <nav className="hidden md:flex space-x-6">
-                        <a href="\inicio" className="hover:text-pink-200">Inicio</a>
-                        <a href="\menu" className="hover:text-pink-200">Productos</a>
-                        <a href="\seguimiento" className="hover:text-pink-200">Seguimiento</a>
-                        <a href="\aboutUs" className="hover:text-pink-200">Nosotros</a>
-                        <button className="md:hidden" onClick={toggleMenu}>
-                            {isMenuOpen ? <X/> : <MenuIcon/>}
-                        </button>
-                        <button onClick={toggleCart} className="relative">
-                            <ShoppingCart className="hidden md:block text-pink-50"/>
-                            {cartItemsCount > 0 && (
-                                <span
-                                    className="absolute -top-2 -right-2 bg-white text-pink-500 rounded-full w-5 h-5 flex items-center justify-center text-xs font-bold">
-                                        {cartItemsCount}
-                                    </span>
-                            )}
-                        </button>
-                    </nav>
-                </div>
-            </header>
-
-            {isMenuOpen && (
-                <div className="md:hidden bg-pink-600 text-pink-50 p-4">
-                    <nav className="flex flex-col space-y-2">
-                        <a href="\inicio" className="hover:text-pink-200">Inicio</a>
-                        <a href="\menu" className="hover:text-pink-200">Productos</a>
-                        <a href="\seguimiento" className="hover:text-pink-200">Seguimiento</a>
-                        <a href="\aboutUs" className="hover:text-pink-200">Nosotros</a>
-                    </nav>
-                </div>
-            )}
+            <Navbar />
 
             <div className="container mx-auto p-6">
                 <h1 className="text-3xl font-bold text-pink-800 mb-6">Nuestros Productos</h1>
@@ -98,7 +68,7 @@ export default function ProductsSection({ productos }) {
                 <div className="flex flex-col md:flex-row gap-4 mb-6">
                     <input
                         type="text"
-                        placeholder="Search products..."
+                        placeholder="Buscar productos..."
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
                         className="flex-grow p-2 border border-pink-300 rounded focus:outline-none focus:ring-2 focus:ring-pink-500"
@@ -117,9 +87,9 @@ export default function ProductsSection({ productos }) {
                         onChange={(e) => setSortBy(e.target.value)}
                         className="p-2 border border-pink-300 rounded focus:outline-none focus:ring-2 focus:ring-pink-500"
                     >
-                        <option value="name">Name</option>
-                        <option value="price-asc">Price: Low to High</option>
-                        <option value="price-desc">Price: High to Low</option>
+                        <option value="name">Nombre</option>
+                        <option value="price-asc">Precio: Menor a Mayor</option>
+                        <option value="price-desc">Precio: Mayor a Menor</option>
                     </select>
                     <div className="flex items-center">
                         <input
@@ -129,7 +99,7 @@ export default function ProductsSection({ productos }) {
                             onChange={(e) => setShowVegan(e.target.checked)}
                             className="mr-2"
                         />
-                        <label htmlFor="vegan" className="text-pink-800">Vegan Options</label>
+                        <label htmlFor="vegan" className="text-pink-800">Opciones Veganas</label>
                     </div>
                 </div>
 
@@ -148,14 +118,14 @@ export default function ProductsSection({ productos }) {
                                     </h2>
                                     <p className="text-pink-600 mb-2">{product.DescripcionProducto}</p>
                                     <div className="flex justify-between items-center">
-                                        <span className="text-lg font-bold text-pink-700">
-                                            ${parseFloat(product.PrecioProducto).toFixed(2)}
-                                        </span>
+                                       <span className="text-lg font-bold text-pink-700">
+                                           {formatPrice(product.PrecioProducto)}
+                                       </span>
                                         <button
                                             onClick={(e) => handleAddToCart(e, product)}
                                             className="bg-pink-500 hover:bg-pink-600 text-white font-bold py-2 px-4 rounded transition duration-300"
                                         >
-                                            Add to Cart
+                                            Agregar al Carrito
                                         </button>
                                     </div>
                                 </div>
@@ -165,15 +135,7 @@ export default function ProductsSection({ productos }) {
                 </div>
             </div>
 
-            <footer className="bg-pink-500 text-pink-50 py-8">
-                <div className="container mx-auto text-center">
-                    <p>&copy; 2023 Sweet Delights Bakery. All rights reserved.</p>
-                    <div className="mt-4">
-                        <a href="#" className="text-pink-200 hover:text-white mx-2">Privacy Policy</a>
-                        <a href="#" className="text-pink-200 hover:text-white mx-2">Terms of Service</a>
-                    </div>
-                </div>
-            </footer>
+            <Footer />
 
             {isCartOpen && (
                 <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex justify-end">

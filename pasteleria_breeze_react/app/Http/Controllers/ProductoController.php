@@ -10,14 +10,13 @@ use Inertia\Inertia;
 
 class ProductoController extends Controller
 {
-    public function index(Request $request)
-    {
+    public function index(Request $request) {
         $productos = Producto::all();
-        // Determinar qué vista renderizar basado en la ruta actual
         $view = $request->routeIs('inicio') ? 'Inicio' : 'Productos/all';
 
         return Inertia::render($view, [
-            'productos' => $productos
+            'productos' => $productos,
+            'user' => auth()->user()
         ]);
     }
 
