@@ -26,6 +26,13 @@ class VentaController extends Controller
         $ventas = Venta::all();
         return Inertia::render('Checkout', ['ventas' => $ventas]);
     }
+    public function create()
+    {
+        $productos = Producto::all();
+        return Inertia::render('Ventas/ingresoVentaAdministrador', [
+            'productos' => $productos
+        ]);
+    }
     public function show($id) {
         try {
             $venta = Venta::with(['productos', 'cliente'])

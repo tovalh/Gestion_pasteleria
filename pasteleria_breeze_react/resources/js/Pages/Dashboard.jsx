@@ -173,6 +173,12 @@ const Dashboard = ({ auth, productos, ingredientes, secciones, ventas: initialVe
             <div className="bg-white shadow-md rounded-lg overflow-hidden">
                 <div className="p-4 bg-gray-50 border-b flex justify-between items-center">
                     <h2 className="text-xl font-semibold">Ventas</h2>
+                    <Link
+                        href="/ventaAdmin"
+                        className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+                    >
+                        Nueva Venta
+                    </Link>
                 </div>
                 <div className="overflow-x-auto">
                     <table className="min-w-full">
