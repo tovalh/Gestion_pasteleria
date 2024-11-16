@@ -1,10 +1,44 @@
 import React, { useState } from 'react';
-import { Head } from '@inertiajs/react';
-import { Link } from '@inertiajs/react';
+import { Head, Link } from '@inertiajs/react';
 import { router } from '@inertiajs/react';
 import StockAlert from '../Components/StockAlert.jsx';
 import axios from 'axios';
-import Authenticated from "@/Layouts/AuthenticatedLayout.jsx";
+
+// Componente Navbar para el Dashboard
+const DashboardNavbar = () => {
+    const handleLogout = () => {
+        router.post(route('logout'), null, {
+            onSuccess: () => router.visit(route('inicio'))
+        });
+    };
+
+    return (
+        <nav className="bg-pink-600 text-white p-4 shadow-md mb-6">
+            <div className="max-w-7xl mx-auto flex justify-between items-center">
+                <div className="flex items-center space-x-4">
+                    <Link
+                        href={route('dashboard')}
+                        className="text-xl font-bold hover:text-pink-200"
+                    >
+                        Dashboard
+                    </Link>
+                    <Link
+                        href={route('inicio')}
+                        className="hover:text-pink-200"
+                    >
+                        Ir al Inicio
+                    </Link>
+                </div>
+                <button
+                    onClick={handleLogout}
+                    className="bg-pink-700 px-4 py-2 rounded hover:bg-pink-800 transition-colors"
+                >
+                    Cerrar Sesión
+                </button>
+            </div>
+        </nav>
+    );
+};
 
 const Dashboard = ({ auth, productos, ingredientes, secciones, ventas: initialVentas, message }) => {
     const [activeTab, setActiveTab] = useState('productos');
@@ -29,15 +63,14 @@ const Dashboard = ({ auth, productos, ingredientes, secciones, ventas: initialVe
             router.delete(`/secciones/${id}`);
         }
     };
+
     const handleUpdateEstadoPedido = async (idVenta, nuevoEstado) => {
         try {
-            // Usar router.put de Inertia en lugar de axios
             await router.put(`/ventas/${idVenta}`, {
                 estadoPedido: nuevoEstado
             }, {
                 preserveScroll: true,
                 onSuccess: () => {
-                    // Actualizar el estado local
                     setVentas(prevVentas =>
                         prevVentas.map(venta =>
                             venta.idVenta === idVenta
@@ -50,12 +83,12 @@ const Dashboard = ({ auth, productos, ingredientes, secciones, ventas: initialVe
                     alert('Error al actualizar el estado del pedido');
                 }
             });
-
         } catch (error) {
             console.error('Error al actualizar el estado del pedido:', error);
             alert('Error al actualizar el estado del pedido');
         }
     };
+
     const handleVerDetalles = (idVenta) => {
         router.visit(route('ventas.showAdmin', idVenta), {
             preserveState: false,
@@ -72,6 +105,7 @@ const Dashboard = ({ auth, productos, ingredientes, secciones, ventas: initialVe
             }
         });
     };
+
     const renderProductos = () => (
         <div className="bg-white shadow-md rounded-lg overflow-hidden">
             <div className="p-4 bg-gray-50 border-b flex justify-between items-center">
@@ -285,90 +319,83 @@ const Dashboard = ({ auth, productos, ingredientes, secciones, ventas: initialVe
     );
 
     return (
-        <div className="max-w-7xl mx-auto p-4">
-            <h1 className="text-3xl font-bold mb-8">Dashboard</h1>
+        <div className="min-h-screen bg-gray-100">
+            <Head title="Dashboard" />
 
-            {/* Stock Alert */}
-            <StockAlert ingredientes={ingredientes} />
+            {/* Navbar */}
+            <DashboardNavbar />
 
-            {message && (
-                <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4">
-                    {message}
+            <div className="max-w-7xl mx-auto p-4">
+                <h1 className="text-3xl font-bold mb-8">Panel de Administración</h1>
+
+                {/* Stock Alert */}
+                <StockAlert ingredientes={ingredientes} />
+
+                {message && (
+                    <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4">
+                        {message}
+                    </div>
+                )}
+
+                {/* Navigation Bar */}
+                <div className="flex space-x-1 mb-6 bg-white shadow-md rounded-lg p-1">
+                    <button
+                        onClick={() => setActiveTab('productos')}
+                        className={`flex-1 px-4 py-2 rounded-md transition-colors duration-200 ${
+                            activeTab === 'productos'
+                                ? 'bg-blue-500 text-white'
+                                : 'hover:bg-gray-100'
+                        }`}
+                    >
+                        Productos
+                    </button>
+                    <button
+                        onClick={() => setActiveTab('ingredientes')}
+                        className={`flex-1 px-4 py-2 rounded-md transition-colors duration-200 ${
+                            activeTab === 'ingredientes'
+                                ? 'bg-blue-500 text-white'
+                                : 'hover:bg-gray-100'
+                        }`}
+                    >
+                        Ingredientes
+                        {ingredientes.filter(ing => ing.StockIngrediente <= ing.StockMinimoIngrediente).length > 0 && (
+                            <span className="ml-2 bg-red-500 text-white text-xs px-2 py-1 rounded-full">
+                                !
+                            </span>
+                        )}
+                    </button>
+                    <button
+                        onClick={() => setActiveTab('ventas')}
+                        className={`flex-1 px-4 py-2 rounded-md transition-colors duration-200 ${
+                            activeTab === 'ventas'
+                                ? 'bg-blue-500 text-white'
+                                : 'hover:bg-gray-100'
+                        }`}
+                    >
+                        Ventas
+                    </button>
+                    <button
+                        onClick={() => setActiveTab('secciones')}
+                        className={`flex-1 px-4 py-2 rounded-md transition-colors duration-200 ${
+                            activeTab === 'secciones'
+                                ? 'bg-blue-500 text-white'
+                                : 'hover:bg-gray-100'
+                        }`}
+                    >
+                        Secciones
+                    </button>
                 </div>
-            )}
 
-            {/* Navigation Bar */}
-            <div className="flex space-x-1 mb-6 bg-white shadow-md rounded-lg p-1">
-                <button
-                    onClick={() => setActiveTab('productos')}
-                    className={`flex-1 px-4 py-2 rounded-md transition-colors duration-200 ${
-                        activeTab === 'productos'
-                            ? 'bg-blue-500 text-white'
-                            : 'hover:bg-gray-100'
-                    }`}
-                >
-                    Productos
-                </button>
-                <button
-                    onClick={() => setActiveTab('ingredientes')}
-                    className={`flex-1 px-4 py-2 rounded-md transition-colors duration-200 ${
-                        activeTab === 'ingredientes'
-                            ? 'bg-blue-500 text-white'
-                            : 'hover:bg-gray-100'
-                    }`}
-                >
-                    Ingredientes
-                    {ingredientes.filter(ing => ing.StockIngrediente <= ing.StockMinimoIngrediente).length > 0 && (
-                        <span className="ml-2 bg-red-500 text-white text-xs px-2 py-1 rounded-full">
-                            !
-                        </span>
-                    )}
-                </button>
-                <button
-                    onClick={() => setActiveTab('ventas')}
-                    className={`flex-1 px-4 py-2 rounded-md transition-colors duration-200 ${
-                        activeTab === 'ventas'
-                            ? 'bg-blue-500 text-white'
-                            : 'hover:bg-gray-100'
-                    }`}
-                >
-                    Ventas
-                </button>
-                <button
-                    onClick={() => setActiveTab('secciones')}
-                    className={`flex-1 px-4 py-2 rounded-md transition-colors duration-200 ${
-                        activeTab === 'secciones'
-                            ? 'bg-blue-500 text-white'
-                            : 'hover:bg-gray-100'
-                    }`}
-                >
-                    Secciones
-                </button>
-            </div>
-
-            {/* Content Area */}
-            <div>
-                {activeTab === 'productos' && renderProductos()}
-                {activeTab === 'ingredientes' && renderIngredientes()}
-                {activeTab === 'ventas' && renderVentas()}
-                {activeTab === 'secciones' && renderSecciones()}
+                {/* Content Area */}
+                <div>
+                    {activeTab === 'productos' && renderProductos()}
+                    {activeTab === 'ingredientes' && renderIngredientes()}
+                    {activeTab === 'ventas' && renderVentas()}
+                    {activeTab === 'secciones' && renderSecciones()}
+                </div>
             </div>
         </div>
     );
-
-    return (
-        <AuthenticatedLayout
-            user={auth.user}
-        >
-            <Head title="Dashboard" />
-
-            <div className="max-w-7xl mx-auto p-4">
-                {/* Todo tu contenido actual del Dashboard */}
-                <h1 className="text-3xl font-bold mb-8">Dashboard</h1>
-                <StockAlert ingredientes={ingredientes} />
-                {/* etc... */}
-            </div>
-        </AuthenticatedLayout>
-    );
 };
+
 export default Dashboard;

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useForm } from '@inertiajs/react';
+import { useForm, router } from '@inertiajs/react';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head } from '@inertiajs/react';
 
@@ -109,15 +109,10 @@ const IngresoVentaAdministrador = ({ auth, productos }) => {
     const handleSubmit = (e) => {
         e.preventDefault();
 
-        // Depuración de productos seleccionados
-        console.log('Productos seleccionados antes de filtrar:', productosSeleccionados);
-
-        // Filtrar productos válidos y formatearlos correctamente
         const productosValidos = productosSeleccionados
             .filter(p => p.productoId !== '')
             .map(p => ({
                 Productos_idProducto: parseInt(p.productoId),
-                Venta_idVenta: null, // Este valor lo asignará el backend
                 cantidad: parseInt(p.cantidad)
             }));
 
@@ -125,8 +120,6 @@ const IngresoVentaAdministrador = ({ auth, productos }) => {
             setError('Debe seleccionar al menos un producto para la venta');
             return;
         }
-
-        console.log('Productos válidos formateados:', productosValidos);
 
         const formData = {
             NombreCliente: data.NombreCliente,
@@ -136,22 +129,17 @@ const IngresoVentaAdministrador = ({ auth, productos }) => {
             DireccionCliente: data.DireccionCliente,
             totalVenta: parseInt(data.totalVenta),
             metodoDePagoVenta: data.metodoDePagoVenta,
-            estadoPedido: 'En Proceso',
             Comentario: data.Comentario || 'Sin comentarios',
             productos: productosValidos
         };
 
-        console.log('Datos completos a enviar:', formData);
-
-        post('/ventas', formData, {
-            preserveScroll: true,
-            preserveState: true,
-            onSuccess: (response) => {
-                console.log('Respuesta exitosa:', response);
-                window.location.href = route('dashboard');
+        // Usar router.post en lugar de post
+        router.post('/ventas/store-admin', formData, {
+            onSuccess: () => {
+                window.location.href = '/dashboard';
             },
             onError: (errors) => {
-                console.error('Errores en la respuesta:', errors);
+                console.error('Errores:', errors);
                 setError(errors.error || 'Error al procesar la venta');
             }
         });

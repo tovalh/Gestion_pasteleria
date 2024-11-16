@@ -82,6 +82,71 @@ class VentaController extends Controller
         ]);
     }
 
+    public function storeVentaAdmin(Request $request)
+    {
+        try {
+            DB::beginTransaction();
+
+            // Validar los datos
+            $validatedData = $request->validate([
+                'NombreCliente' => 'required|string|max:100',
+                'CorreoCliente' => 'required|email|max:40',
+                'RutCliente' => 'required|string|max:40',
+                'NumeroCliente' => 'required|string|max:12',
+                'DireccionCliente' => 'required|string|max:200',
+                'totalVenta' => 'required|numeric',
+                'metodoDePagoVenta' => 'required|string|max:45',
+                'Comentario' => 'required|string|max:500',
+                'productos' => 'required|array|min:1',
+                'productos.*.Productos_idProducto' => 'required|exists:producto,idProducto',
+                'productos.*.cantidad' => 'required|integer|min:1'
+            ]);
+
+            // Crear o actualizar cliente
+            $cliente = Cliente::firstOrCreate(
+                ['RutCliente' => $validatedData['RutCliente']],
+                [
+                    'NombreCliente' => $validatedData['NombreCliente'],
+                    'CorreoCliente' => $validatedData['CorreoCliente'],
+                    'NumeroCliente' => $validatedData['NumeroCliente'],
+                    'DireccionCliente' => $validatedData['DireccionCliente']
+                ]
+            );
+
+            // Generar número de transacción único
+            $ultimaVenta = Venta::orderBy('NumeroTransaccionVenta', 'desc')->first();
+            $nuevoNumero = $ultimaVenta ? ($ultimaVenta->NumeroTransaccionVenta + 1) : 1000;
+
+            // Crear la venta
+            $venta = Venta::create([
+                'NumeroTransaccionVenta' => $nuevoNumero,
+                'totalVenta' => $validatedData['totalVenta'],
+                'metodoDePagoVenta' => $validatedData['metodoDePagoVenta'],
+                'Comentario' => $validatedData['Comentario'],
+                'estadoPedido' => 'En Proceso',
+                'Clientes_idCliente' => $cliente->idCliente
+            ]);
+
+            // Asociar productos a la venta
+            foreach ($validatedData['productos'] as $producto) {
+                DB::table('producto_has_venta')->insert([
+                    'Productos_idProducto' => $producto['Productos_idProducto'],
+                    'Venta_idVenta' => $venta->idVenta
+                ]);
+            }
+
+            DB::commit();
+
+            return redirect()->route('dashboard')->with('success', 'Venta registrada exitosamente');
+
+        } catch (\Exception $e) {
+            DB::rollback();
+            return redirect()->back()
+                ->withInput()
+                ->withErrors(['error' => 'Error al procesar la venta: ' . $e->getMessage()]);
+        }
+    }
+
     public function update(Request $request, $id)
     {
         try {

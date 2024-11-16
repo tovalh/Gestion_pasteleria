@@ -10,17 +10,13 @@ class AdminMiddleware
 {
     public function handle(Request $request, Closure $next)
     {
-
-        
         if (!auth()->check() || !auth()->user()->isAdmin()) {
             if ($request->wantsJson()) {
-                return response()->json(['error' => 'Unauthorized'], 403);
+                return response()->json(['error' => 'No autorizado'], 403);
             }
 
-            return Inertia::render('Errors/Unauthorized', [
-                'status' => 403,
-                'message' => 'No tienes permiso para acceder a esta página'
-            ]);
+            // Redirección directa al inicio
+            return redirect()->route('inicio');
         }
 
         return $next($request);

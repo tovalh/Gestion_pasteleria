@@ -2,12 +2,21 @@ import { useState } from 'react'
 import { ShoppingCart, Menu as MenuIcon, X, User } from 'lucide-react'
 import { useCart } from '../Context/CartContext'
 import CartComponent from './CartComponent'
+import { router } from '@inertiajs/react' // Añadir esta importación
 
 export default function Navbar({ user }) {
     const [isMenuOpen, setIsMenuOpen] = useState(false)
     const [isCartOpen, setIsCartOpen] = useState(false)
     const [isUserMenuOpen, setIsUserMenuOpen] = useState(false)
     const { cartItemsCount } = useCart()
+
+    const handleLogout = () => {
+        router.post(route('logout'), null, {
+            onSuccess: () => {
+                window.location.href = route('inicio');
+            },
+        });
+    };
 
     const toggleCart = () => {
         setIsCartOpen(!isCartOpen)
@@ -56,9 +65,12 @@ export default function Navbar({ user }) {
                                             <a href="/mis_pedidos" className="block px-4 py-2 text-pink-800 hover:bg-pink-100">
                                                 Mis Pedidos
                                             </a>
-                                            <a href="/logout" className="block px-4 py-2 text-pink-800 hover:bg-pink-100">
+                                            <button
+                                                onClick={handleLogout}
+                                                className="block w-full text-left px-4 py-2 text-pink-800 hover:bg-pink-100"
+                                            >
                                                 Cerrar Sesión
-                                            </a>
+                                            </button>
                                         </>
                                     ) : (
                                         <>

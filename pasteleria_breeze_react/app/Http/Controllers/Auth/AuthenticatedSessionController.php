@@ -4,9 +4,12 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\LoginRequest;
+use App\Models\Administrador;
+use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -29,11 +32,32 @@ class AuthenticatedSessionController extends Controller
      */
     public function store(LoginRequest $request): RedirectResponse
     {
-        $request->authenticate();
+        // Verificar si existe un administrador con ese email
+        $admin = Administrador::where('email', $request->email)
+            ->where('ClaveUsuario', $request->password)
+            ->first();
 
+        if ($admin) {
+            // Buscar o crear el usuario correspondiente
+            $user = User::firstOrCreate(
+                ['email' => $admin->email],
+                [
+                    'name' => $admin->NombreUsuario,
+                    'password' => Hash::make($admin->ClaveUsuario),
+                ]
+            );
+
+            Auth::login($user);
+            $request->session()->regenerate();
+
+            return redirect()->intended(route('dashboard'));
+        }
+
+        // Si no es un administrador, continuar con la autenticación normal
+        $request->authenticate();
         $request->session()->regenerate();
 
-        return redirect()->intended(route('dashboard', absolute: false));
+        return redirect()->intended(route('inicio'));
     }
 
     /**
