@@ -33,10 +33,11 @@ class VentaController extends Controller
             'productos' => $productos
         ]);
     }
-    public function show($id) {
+    public function show($numeroTransaccion) {
         try {
             $venta = Venta::with(['productos', 'cliente'])
-                ->findOrFail($id);
+                ->where('NumeroTransaccionVenta', $numeroTransaccion)
+                ->firstOrFail();
 
             $ventaFormateada = [
                 'idVenta' => $venta->idVenta,

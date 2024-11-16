@@ -1,30 +1,29 @@
 import React, { useState, useEffect } from 'react';
 import { usePage, router } from '@inertiajs/react';
+
 const VentaAdmin = () => {
     const { venta } = usePage().props;
+
     const [NumeroTransaccionVenta, setNumeroTransaccionVenta] = useState(venta.NumeroTransaccionVenta);
     const [totalVenta, setTotalVenta] = useState(venta.totalVenta);
     const [metodoDePagoVenta, setMetodoDePagoVenta] = useState(venta.metodoDePagoVenta);
     const [estadoPedido, setEstadoPedido] = useState(venta.estadoPedido);
     const [Comentario, setComentario] = useState(venta.Comentario);
+    const [productos, setProductos] = useState(venta.productos || []);
     const [errors, setErrors] = useState({});
 
     const handleSubmit = (event) => {
         event.preventDefault();
         const data = {
-            NumeroTransaccionVenta: NumeroTransaccionVenta,
-            totalVenta: venta.totalVenta,
-            metodoDePagoVenta: venta.metodoDePagoVenta,
-            estadoPedido: venta.estadoPedido,
-            Comentario: Comentario
+            Comentario,
         };
 
         router.put(`/ventas/${venta.idVenta}`, data, {
             onSuccess: () => {
-                router.visit('dashboard'); // o simplemente redirigir después de un éxito
+                router.visit('dashboard'); // Redirigir al dashboard después del éxito
             },
             onError: (errors) => {
-                setErrors(errors); // manejar errores
+                setErrors(errors); // Manejar errores de validación
             },
         });
     };
@@ -35,6 +34,7 @@ const VentaAdmin = () => {
         setMetodoDePagoVenta(venta.metodoDePagoVenta);
         setEstadoPedido(venta.estadoPedido);
         setComentario(venta.Comentario);
+        setProductos(venta.productos || []);
     }, [venta]);
 
     return (
@@ -51,12 +51,8 @@ const VentaAdmin = () => {
                         type="text"
                         id="NumeroTransaccionVenta"
                         value={NumeroTransaccionVenta}
-                        onChange={(e) => setNumeroTransaccionVenta(e.target.value)}
                         className="border border-gray-300 rounded-md px-3 py-2 w-full"
                     />
-                    {errors.NumeroTransaccionVenta && (
-                        <p className="text-red-500 text-sm mt-1">Este campo es requerido.</p>
-                    )}
                 </div>
 
                 {/* Total */}
@@ -69,14 +65,8 @@ const VentaAdmin = () => {
                         type="number"
                         id="totalVenta"
                         value={totalVenta}
-                        onChange={(e) => setTotalVenta(e.target.value)}
                         className="border border-gray-300 rounded-md px-3 py-2 w-full"
                     />
-                    {errors.totalVenta && (
-                        <p className="text-red-500 text-sm mt-1">
-                            Este campo es requerido y debe ser un número mayor o igual a 0.
-                        </p>
-                    )}
                 </div>
 
                 {/* Método de Pago */}
@@ -89,14 +79,8 @@ const VentaAdmin = () => {
                         type="text"
                         id="metodoDePagoVenta"
                         value={metodoDePagoVenta}
-                        onChange={(e) => setMetodoDePagoVenta(e.target.value)}
                         className="border border-gray-300 rounded-md px-3 py-2 w-full"
                     />
-                    {errors.metodoDePagoVenta && (
-                        <p className="text-red-500 text-sm mt-1">
-                            Este campo es requerido y no puede tener más de 45 caracteres.
-                        </p>
-                    )}
                 </div>
 
                 {/* Estado del Pedido */}
@@ -104,21 +88,25 @@ const VentaAdmin = () => {
                     <label htmlFor="estadoPedido" className="block font-medium mb-1">
                         Estado del Pedido
                     </label>
-                    <select
-                        disabled={true}
+                    <input
+                        readOnly={true}
+                        type="text"
                         id="estadoPedido"
                         value={estadoPedido}
-                        onChange={(e) => setEstadoPedido(e.target.value)}
                         className="border border-gray-300 rounded-md px-3 py-2 w-full"
-                    >
-                        <option value="En Proceso">En Proceso</option>
-                        <option value="Disponible">Disponible</option>
-                        <option value="Entregado">Entregado</option>
-                        <option value="Cancelado">Cancelado</option>
-                    </select>
-                    {errors.estadoPedido && (
-                        <p className="text-red-500 text-sm mt-1">Este campo es requerido.</p>
-                    )}
+                    />
+                </div>
+
+                {/* Lista de Productos */}
+                <div>
+                    <h2 className="block font-medium mb-1">Productos</h2>
+                    {productos.map((producto) => (
+                        <div key={producto.id} className="border border-gray-300 rounded-md p-4 mb-4">
+                            <p><strong>Nombre:</strong> {producto.NombreProducto}</p>
+                            <p><strong>Precio:</strong> ${producto.PrecioProducto}</p>
+                            <p><strong>Cantidad:</strong> {producto.cantidad}</p>
+                        </div>
+                    ))}
                 </div>
 
                 {/* Comentarios */}
@@ -127,7 +115,6 @@ const VentaAdmin = () => {
                         Comentarios
                     </label>
                     <textarea
-
                         id="Comentario"
                         value={Comentario}
                         onChange={(e) => setComentario(e.target.value)}

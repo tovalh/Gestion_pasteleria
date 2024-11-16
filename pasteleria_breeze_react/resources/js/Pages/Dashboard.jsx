@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { Head, Link } from '@inertiajs/react';
 import { router } from '@inertiajs/react';
 import StockAlert from '../Components/StockAlert.jsx';
-import axios from 'axios';
 
 // Componente Navbar para el Dashboard
 const DashboardNavbar = () => {
@@ -43,8 +42,6 @@ const DashboardNavbar = () => {
 const Dashboard = ({ auth, productos, ingredientes, secciones, ventas: initialVentas, message }) => {
     const [activeTab, setActiveTab] = useState('productos');
     const [ventas, setVentas] = useState(initialVentas);
-    const [loading, setLoading] = useState(false);
-    const [error, setError] = useState(null);
 
     const handleDeleteProducto = (id) => {
         if (confirm('¿Estás seguro de eliminar este producto?')) {

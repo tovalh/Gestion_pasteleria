@@ -28,7 +28,7 @@ const Seguimiento = () => {
         setLoading(true);
         setError('');
 
-        router.visit(`/ventas/${orderNumber}`, {
+        router.visit(`/seguimiento-pedido/${orderNumber}`, {
             preserveState: true,
             preserveScroll: true,
             onError: (errors) => {

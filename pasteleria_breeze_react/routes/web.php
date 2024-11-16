@@ -34,7 +34,8 @@ Route::get('/checkout', function () {
 // Rutas de seguimiento
 Route::get('/seguimiento', function () {
     return Inertia::render('Seguimiento');
-})->name('seguimiento');
+    })->name('seguimiento');
+Route::get('/seguimiento-pedido/{numeroTransaccion}', [VentaController::class, 'show'])->name('seguimiento.show');
 
 // Rutas de WebPay
 Route::post('/venta/preparar-checkout', [VentaController::class, 'prepararCheckout'])->name('venta.prepararCheckout');
