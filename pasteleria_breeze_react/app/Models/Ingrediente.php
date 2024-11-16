@@ -23,9 +23,12 @@ class Ingrediente extends Model
 
     public function productos()
     {
-        return $this->belongsToMany(Producto::class, 'producto_has_ingrediente',
-            'Ingrediente_idIngrediente', 'Producto_idProducto')
-            ->withPivot('cantidad');
+        return $this->belongsToMany(
+            Producto::class,
+            'producto_has_ingrediente',
+            'Ingrediente_idIngrediente',
+            'Producto_idProducto'
+        )->withPivot('cantidad');
     }
 
     // Método para obtener el stock actual

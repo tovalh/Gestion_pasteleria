@@ -103,6 +103,23 @@ class VentaController extends Controller
                 'productos.*.cantidad' => 'required|integer|min:1'
             ]);
 
+            // Verificar stock de todos los productos antes de proceder
+            foreach ($validatedData['productos'] as $producto) {
+                $productoObj = Producto::findOrFail($producto['Productos_idProducto']);
+                $tieneIngredientes = $productoObj->ingredientes()->count() > 0;
+
+                if ($tieneIngredientes) {
+                    // Verificar y actualizar stock para cada unidad del producto
+                    for ($i = 0; $i < $producto['cantidad']; $i++) {
+                        try {
+                            $this->stockService->actualizarStockPorVenta($productoObj);
+                        } catch (\Exception $e) {
+                            throw new \Exception("Stock insuficiente para {$productoObj->NombreProducto}: " . $e->getMessage());
+                        }
+                    }
+                }
+            }
+
             // Crear o actualizar cliente
             $cliente = Cliente::firstOrCreate(
                 ['RutCliente' => $validatedData['RutCliente']],
@@ -137,14 +154,17 @@ class VentaController extends Controller
             }
 
             DB::commit();
-
             return redirect()->route('dashboard')->with('success', 'Venta registrada exitosamente');
 
         } catch (\Exception $e) {
             DB::rollback();
+            Log::error('Error en storeVentaAdmin:', [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
             return redirect()->back()
                 ->withInput()
-                ->withErrors(['error' => 'Error al procesar la venta: ' . $e->getMessage()]);
+                ->withErrors(['error' => $e->getMessage()]);
         }
     }
 
@@ -358,6 +378,20 @@ class VentaController extends Controller
 
             DB::beginTransaction();
 
+            // Verificar y actualizar stock antes de crear la venta
+            foreach ($ventaPendiente['productos'] as $productoId) {
+                $producto = Producto::findOrFail($productoId);
+                $tieneIngredientes = $producto->ingredientes()->count() > 0;
+
+                if ($tieneIngredientes) {
+                    try {
+                        $this->stockService->actualizarStockPorVenta($producto);
+                    } catch (\Exception $e) {
+                        throw new \Exception("Stock insuficiente para {$producto->NombreProducto}: " . $e->getMessage());
+                    }
+                }
+            }
+
             // Generar número de transacción
             $ultimaVenta = Venta::orderBy('NumeroTransaccionVenta', 'desc')->first();
             $nuevoNumero = $ultimaVenta ? ($ultimaVenta->NumeroTransaccionVenta + 1) : 1000;
@@ -375,7 +409,7 @@ class VentaController extends Controller
             // Crear la venta
             $datosVenta = [
                 'totalVenta' => $ventaPendiente['total'],
-                'metodoDePagoVenta' => $ventaPendiente['metodoDePagoVenta'], // Usar el valor guardado
+                'metodoDePagoVenta' => $ventaPendiente['metodoDePagoVenta'],
                 'Comentario' => $ventaPendiente['comentario'],
                 'Clientes_idCliente' => $ventaPendiente['Clientes_idCliente'],
                 'estadoPedido' => 'En Proceso',
@@ -386,30 +420,12 @@ class VentaController extends Controller
 
             $venta = Venta::create($datosVenta);
 
-            // Asociar productos y actualizar stock
+            // Asociar productos a la venta
             foreach ($ventaPendiente['productos'] as $productoId) {
-                try {
-                    $producto = Producto::findOrFail($productoId);
-                    $venta->productos()->attach($productoId);
-
-                    if (isset($this->stockService)) {
-                        $tieneIngredientes = $producto->ingredientes()->count() > 0;
-                        if ($tieneIngredientes) {
-                            $this->stockService->actualizarStockPorVenta($producto);
-                        } else {
-                            Log::info('Producto sin ingredientes:', [
-                                'producto_id' => $productoId,
-                                'nombre_producto' => $producto->NombreProducto
-                            ]);
-                        }
-                    }
-                } catch (\Exception $e) {
-                    Log::error('Error procesando producto:', [
-                        'producto_id' => $productoId,
-                        'error' => $e->getMessage()
-                    ]);
-                    throw $e;
-                }
+                DB::table('producto_has_venta')->insert([
+                    'Productos_idProducto' => $productoId,
+                    'Venta_idVenta' => $venta->idVenta
+                ]);
             }
 
             DB::commit();

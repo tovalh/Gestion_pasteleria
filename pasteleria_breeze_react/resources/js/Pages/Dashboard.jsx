@@ -137,6 +137,12 @@ const Dashboard = ({ auth, productos, ingredientes, secciones, ventas: initialVe
                                 >
                                     Editar
                                 </Link>
+                                <Link
+                                    href={`/productos/${producto.idProducto}/receta`}
+                                    className="text-green-600 hover:text-green-800"
+                                >
+                                    Agregar Receta
+                                </Link>
                                 <button
                                     onClick={() => handleDeleteProducto(producto.idProducto)}
                                     className="text-red-600 hover:text-red-800"

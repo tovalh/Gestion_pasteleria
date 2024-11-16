@@ -1,5 +1,5 @@
 <?php
-
+use App\Http\Controllers\RecetaController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\IngredienteController;
@@ -74,7 +74,24 @@ Route::middleware(['auth', 'admin'])->group(function () {
 
     // Rutas adicionales de sección
     Route::get('/seccion/token', [SeccionController::class, 'token'])->name('seccion.token');
+
+    // Rutas para recetas (agregar aquí)
+    Route::prefix('productos')->group(function () {
+        Route::get('/{producto}/receta', [RecetaController::class, 'edit'])
+            ->name('productos.receta');
+        Route::get('/{producto}/ingredientes', [RecetaController::class, 'getIngredientes'])
+            ->name('api.recetas.ingredientes');
+        Route::post('/{producto}/actualizar-receta', [RecetaController::class, 'actualizarReceta'])
+            ->name('api.recetas.actualizar');
+    });
 });
+// Rutas para recetas
+Route::get('/productos/{producto}/receta', [RecetaController::class, 'edit'])->name('productos.receta');
+Route::get('/api/recetas/{producto}/ingredientes', [RecetaController::class, 'getIngredientes'])->name('api.recetas.ingredientes');
+Route::post('/api/recetas/{producto}/actualizar', [RecetaController::class, 'actualizarReceta'])->name('api.recetas.actualizar');
+Route::get('/productos/{producto}/receta', [RecetaController::class, 'edit'])->name('productos.receta');
+Route::get('/api/recetas/{producto}/ingredientes', [RecetaController::class, 'getIngredientes']);
+Route::post('/api/recetas/{producto}/actualizar', [RecetaController::class, 'actualizarReceta']);
 
 // Rutas de prueba
 Route::get('/ventas/test-page', function () {
