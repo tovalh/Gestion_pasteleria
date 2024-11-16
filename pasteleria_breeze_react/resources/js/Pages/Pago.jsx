@@ -18,7 +18,12 @@ export default function Pago() {
         deliveryOption: 'asap',
         paymentMethod: 'credit'
     });
-
+    const formatPrice = (price) => {
+        return (parseFloat(price)).toLocaleString('es-CL', {
+            style: 'currency',
+            currency: 'CLP'
+        })
+    };
     // Calculate cart totals
     const subtotal = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
     const deliveryFee = 2500;
@@ -89,7 +94,7 @@ export default function Pago() {
                             onClick={() => setIsMenuOpen(!isMenuOpen)}
                             aria-label="Menu"
                         >
-                            {isMenuOpen ? <X size={24} /> : <MenuIcon size={24} />}
+                            {isMenuOpen ? <X size={24}/> : <MenuIcon size={24}/>}
                         </button>
                     </div>
 
@@ -313,14 +318,13 @@ export default function Pago() {
                         <div className="bg-gray-50 p-6 rounded-lg sticky top-6">
                             <h2 className="text-lg font-medium mb-4">Resumen del Pedido</h2>
 
-                            {/* Items del carrito */}
                             <div className="space-y-4 mb-6">
                                 {cart.map((item) => (
                                     <div key={item.id} className="flex justify-between">
-                                        <span className="text-gray-600">
-                                            {item.name} x {item.quantity}
-                                        </span>
-                                        <span>${(item.price * item.quantity).toFixed(2)}</span>
+                                       <span className="text-gray-600">
+                                           {item.name} x {item.quantity}
+                                       </span>
+                                        <span>{formatPrice(item.price * item.quantity)}</span>
                                     </div>
                                 ))}
                             </div>
@@ -328,16 +332,16 @@ export default function Pago() {
                             <div className="space-y-4">
                                 <div className="flex justify-between">
                                     <span className="text-gray-600">Subtotal</span>
-                                    <span>${subtotal.toFixed(2)}</span>
+                                    <span>{formatPrice(subtotal)}</span>
                                 </div>
                                 <div className="flex justify-between">
                                     <span className="text-gray-600">Costo de envío</span>
-                                    <span>${deliveryFee.toFixed(2)}</span>
+                                    <span>{formatPrice(deliveryFee)}</span>
                                 </div>
                                 <div className="pt-4 border-t">
                                     <div className="flex justify-between font-medium">
                                         <span>Total a pagar:</span>
-                                        <span>${total.toFixed(2)}</span>
+                                        <span>{formatPrice(total)}</span>
                                     </div>
                                 </div>
                             </div>

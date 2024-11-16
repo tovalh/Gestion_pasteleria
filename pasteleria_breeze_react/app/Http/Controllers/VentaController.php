@@ -26,6 +26,13 @@ class VentaController extends Controller
         $ventas = Venta::all();
         return Inertia::render('Checkout', ['ventas' => $ventas]);
     }
+    public function create()
+    {
+        $productos = Producto::all();
+        return Inertia::render('Ventas/ingresoVentaAdministrador', [
+            'productos' => $productos
+        ]);
+    }
     public function show($id) {
         try {
             $venta = Venta::with(['productos', 'cliente'])
@@ -80,35 +87,21 @@ class VentaController extends Controller
         try {
             $venta = Venta::findOrFail($id);
 
-            // Si estamos actualizando el estado del pedido
-            if ($request->has('estadoPedido')) {
-                $venta->estadoPedido = $request->estadoPedido;
-                $venta->save();
-
-                return response()->json([
-                    'success' => true,
-                    'message' => 'Estado actualizado correctamente',
-                    'venta' => $venta
-                ]);
-            }
-
-            // Para otras actualizaciones...
             $validatedData = $request->validate([
-                'NumeroTransaccionVenta' => 'required|numeric',
-                'totalVenta' => 'required|numeric',
-                'metodoDePagoVenta' => 'required|max:45',
-                'Clientes_idCliente' => 'required|integer|exists:cliente,idCliente',
+                'NumeroTransaccionVenta' => 'sometimes|numeric',
+                'totalVenta' => 'sometimes|numeric',
+                'metodoDePagoVenta' => 'sometimes|max:45',
+                'estadoPedido' => 'sometimes|string',
+                'Comentario' => 'sometimes|max:500',
             ]);
 
             $venta->update($validatedData);
 
-            return redirect()->back();
+            return redirect()->route('dashboard')->with('success', 'Estado actualizado correctamente.');
         } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Error al actualizar el estado del pedido',
-                'error' => $e->getMessage()
-            ], 500);
+            return redirect()->route('dashboard')->withErrors([
+                'error' => 'Error al actualizar el estado del pedido: ' . $e->getMessage()
+            ]);
         }
     }
 
@@ -119,6 +112,45 @@ class VentaController extends Controller
 
         return redirect()->back();
     }
+    public function showAdmin($id)
+    {
+        try {
+            $venta = Venta::with(['productos', 'cliente'])
+                ->findOrFail($id);
+
+            $ventaFormateada = [
+                'idVenta' => $venta->idVenta,
+                'NumeroTransaccionVenta' => $venta->NumeroTransaccionVenta,
+                'totalVenta' => $venta->totalVenta,
+                'metodoDePagoVenta' => $venta->metodoDePagoVenta,
+                'estadoPedido' => $venta->estadoPedido,
+                'Comentario' => $venta->Comentario,
+                'productos' => $venta->productos->map(function($producto) {
+                    return [
+                        'id' => $producto->id,
+                        'NombreProducto' => $producto->NombreProducto,
+                        'PrecioProducto' => $producto->PrecioProducto,
+                        'cantidad' => $producto->pivot->cantidad ?? 1
+                    ];
+                }),
+                'cliente' => $venta->cliente ? [
+                    'id' => $venta->cliente->idCliente,
+                    'nombre' => $venta->cliente->NombreCliente,
+                    'email' => $venta->cliente->EmailCliente
+                ] : null
+            ];
+
+            return Inertia::render('VentaAdmin', [
+                'venta' => $ventaFormateada
+            ]);
+
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            return to_route('seguimiento')->withErrors([
+                'message' => 'No se encontró el pedido. Por favor verifique el número.'
+            ]);
+        }
+    }
+
 
     public function hardDelete($id)
     {

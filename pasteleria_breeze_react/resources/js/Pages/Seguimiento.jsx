@@ -1,21 +1,17 @@
 import React, { useState } from 'react';
 import { router } from '@inertiajs/react';
-import { ShoppingCart, Menu as MenuIcon, X } from 'lucide-react';
+import { X } from 'lucide-react';
 import { useCart } from '../Context/CartContext';
 import CartComponent from '../Components/CartComponent';
 import { Head } from "@inertiajs/react";
+import Navbar from '../Components/Navbar';
+import Footer from '../Components/Footer';
 
 const Seguimiento = () => {
     const [orderNumber, setOrderNumber] = useState('');
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
-    const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [isCartOpen, setIsCartOpen] = useState(false);
-    const { cartItemsCount } = useCart();
-
-    const toggleMenu = () => {
-        setIsMenuOpen(!isMenuOpen);
-    };
 
     const toggleCart = () => {
         setIsCartOpen(!isCartOpen);
@@ -55,53 +51,7 @@ const Seguimiento = () => {
                 <meta name="description" content="Seguimiento de pedidos de Dolci Mimi" />
             </Head>
             <div className="bg-[#F7F0E9] min-h-screen flex flex-col">
-                {/* Header */}
-                <header className="bg-pink-500 text-pink-50 p-4">
-                    <div className="container mx-auto flex justify-between items-center">
-                        <a href="\inicio" className="text-2xl font-bold">Dolci Mimi</a>
-                        <nav className="hidden md:flex space-x-6 items-center">
-                            <a href="\inicio" className="hover:text-pink-200">Inicio</a>
-                            <a href="\menu" className="hover:text-pink-200">Productos</a>
-                            <a href="\seguimiento" className="hover:text-pink-200">Seguimiento</a>
-                            <a href="\aboutUs" className="hover:text-pink-200">Nosotros</a>
-                            <button onClick={toggleCart} className="relative">
-                                <ShoppingCart className="text-pink-50"/>
-                                {cartItemsCount > 0 && (
-                                    <span className="absolute -top-2 -right-2 bg-white text-pink-500 rounded-full w-5 h-5 flex items-center justify-center text-xs font-bold">
-                                        {cartItemsCount}
-                                    </span>
-                                )}
-                            </button>
-                        </nav>
-
-                        {/* Mobile menu and cart */}
-                        <div className="md:hidden flex items-center">
-                            <button onClick={toggleMenu} className="mr-4">
-                                {isMenuOpen ? <X/> : <MenuIcon/>}
-                            </button>
-                            <button onClick={toggleCart} className="relative">
-                                <ShoppingCart className="text-pink-50"/>
-                                {cartItemsCount > 0 && (
-                                    <span className="absolute -top-2 -right-2 bg-white text-pink-500 rounded-full w-5 h-5 flex items-center justify-center text-xs font-bold">
-                                        {cartItemsCount}
-                                    </span>
-                                )}
-                            </button>
-                        </div>
-                    </div>
-                </header>
-
-                {/* Mobile menu */}
-                {isMenuOpen && (
-                    <div className="md:hidden bg-pink-600 text-pink-50 p-4">
-                        <nav className="flex flex-col space-y-2">
-                            <a href="\inicio" className="hover:text-pink-200">Inicio</a>
-                            <a href="\menu" className="hover:text-pink-200">Menu</a>
-                            <a href="\seguimiento" className="hover:text-pink-200">Seguimiento</a>
-                            <a href="\aboutUs" className="hover:text-pink-200">About</a>
-                        </nav>
-                    </div>
-                )}
+                <Navbar />
 
                 {/* Main Content - Centered with improved spacing */}
                 <main className="flex-grow container mx-auto py-12 px-4 flex items-center justify-center">
@@ -179,16 +129,7 @@ const Seguimiento = () => {
                     </div>
                 </main>
 
-                {/* Footer */}
-                <footer className="bg-pink-500 text-pink-50 py-8">
-                    <div className="container mx-auto text-center">
-                        <p>&copy; 2023 Sweet Delights Bakery. All rights reserved.</p>
-                        <div className="mt-4">
-                            <a href="#" className="text-pink-200 hover:text-white mx-2">Privacy Policy</a>
-                            <a href="#" className="text-pink-200 hover:text-white mx-2">Terms of Service</a>
-                        </div>
-                    </div>
-                </footer>
+                <Footer />
 
                 {/* Cart Sidebar */}
                 {isCartOpen && (

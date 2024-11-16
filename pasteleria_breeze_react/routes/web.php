@@ -44,7 +44,7 @@ Route::get('/seguimiento', function () {
 Route::put('/ventas/{id}', [VentaController::class, 'update'])->name('ventas.update');
 
 // Ruta para ver el pedido
-Route::get('/ventas/{id}', [VentaController::class, 'show'])->name('ventas.show');
+Route::get('/ventas/VentaAdmin/{id}', [VentaController::class, 'showAdmin'])->name('ventas.showAdmin');
 
 //WebPay
 
@@ -73,10 +73,10 @@ Route::get('/administracion', function () {
     return Inertia::render('Administracion');
 })->name('administracion');
 
-// Ruta del Dashboard
-
+// Rutas Administrativas
 Route::middleware(['auth', 'admin'])->group(function () {
-Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+    Route::get('/ventaAdmin', [VentaController::class, 'create'])->name('venta.admin');
 });
 
 //Route::get('/dashboard', [\App\Http\Controllers\DashboardController::class, 'index'])->name('dashboard');

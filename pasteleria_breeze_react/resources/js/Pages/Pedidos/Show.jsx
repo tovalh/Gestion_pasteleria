@@ -29,6 +29,13 @@ const PedidoShow = () => {
         return statusColors[status?.toLowerCase()] || 'text-gray-600 bg-gray-50 border border-gray-200';
     };
 
+    const navLinks = [
+        { key: 'inicio', href: '/inicio', label: 'Inicio' },
+        { key: 'menu', href: '/menu', label: 'Productos' },
+        { key: 'seguimiento', href: '/seguimiento', label: 'Seguimiento' },
+        { key: 'about', href: '/aboutUs', label: 'Nosotros' }
+    ];
+
     return (
         <>
             <Head>
@@ -39,17 +46,21 @@ const PedidoShow = () => {
                 {/* Header */}
                 <header className="bg-pink-500 text-pink-50 p-4 shadow-md">
                     <div className="container mx-auto flex justify-between items-center">
-                        <a href="\inicio" className="text-2xl font-bold">Dolci Mimi</a>
+                        <a href="/inicio" className="text-2xl font-bold">Dolci Mimi</a>
                         <nav className="hidden md:flex space-x-6 items-center">
-                            <a href="\inicio" className="hover:text-pink-200">Inicio</a>
-                            <a href="\menu" className="hover:text-pink-200">Productos</a>
-                            <a href="\seguimiento" className="hover:text-pink-200">Seguimiento</a>
-                            <a href="\aboutUs" className="hover:text-pink-200">Nosotros</a>
+                            {navLinks.map(link => (
+                                <a
+                                    key={`desktop-${link.key}`}
+                                    href={link.href}
+                                    className="hover:text-pink-200"
+                                >
+                                    {link.label}
+                                </a>
+                            ))}
                             <button onClick={toggleCart} className="relative">
                                 <ShoppingCart className="text-pink-50"/>
                                 {cartItemsCount > 0 && (
-                                    <span
-                                        className="absolute -top-2 -right-2 bg-white text-pink-500 rounded-full w-5 h-5 flex items-center justify-center text-xs font-bold">
+                                    <span className="absolute -top-2 -right-2 bg-white text-pink-500 rounded-full w-5 h-5 flex items-center justify-center text-xs font-bold">
                                         {cartItemsCount}
                                     </span>
                                 )}
@@ -64,8 +75,7 @@ const PedidoShow = () => {
                             <button onClick={toggleCart} className="relative">
                                 <ShoppingCart className="text-pink-50"/>
                                 {cartItemsCount > 0 && (
-                                    <span
-                                        className="absolute -top-2 -right-2 bg-white text-pink-500 rounded-full w-5 h-5 flex items-center justify-center text-xs font-bold">
+                                    <span className="absolute -top-2 -right-2 bg-white text-pink-500 rounded-full w-5 h-5 flex items-center justify-center text-xs font-bold">
                                         {cartItemsCount}
                                     </span>
                                 )}
@@ -78,10 +88,15 @@ const PedidoShow = () => {
                 {isMenuOpen && (
                     <div className="md:hidden bg-pink-600 text-pink-50 p-4 shadow-md">
                         <nav className="flex flex-col space-y-2">
-                            <a href="\inicio" className="hover:text-pink-200">Inicio</a>
-                            <a href="\menu" className="hover:text-pink-200">Menu</a>
-                            <a href="\seguimiento" className="hover:text-pink-200">Seguimiento</a>
-                            <a href="\aboutUs" className="hover:text-pink-200">About</a>
+                            {navLinks.map(link => (
+                                <a
+                                    key={`mobile-${link.key}`}
+                                    href={link.href}
+                                    className="hover:text-pink-200"
+                                >
+                                    {link.label}
+                                </a>
+                            ))}
                         </nav>
                     </div>
                 )}
@@ -113,8 +128,7 @@ const PedidoShow = () => {
                                     </div>
                                     <div className="bg-pink-50 p-2 rounded-lg">
                                         <p className="text-sm text-pink-700">Estado del Pedido</p>
-                                        <span
-                                            className={`inline-block px-2 py-1 rounded-full text-sm ${getStatusColor(venta.estadoPedido)}`}>
+                                        <span className={`inline-block px-2 py-1 rounded-full text-sm ${getStatusColor(venta.estadoPedido)}`}>
                                             {venta.estadoPedido}
                                         </span>
                                     </div>
@@ -132,16 +146,21 @@ const PedidoShow = () => {
                                         <p className="text-sm text-pink-700">Productos</p>
                                         <div className="space-y-2">
                                             {venta.productos.map((producto) => (
-                                                <div key={producto.id}
-                                                     className="flex justify-between items-center bg-pink-50 p-2 rounded-lg">
+                                                <div
+                                                    key={`producto-${producto.id || Math.random()}`}
+                                                    className="flex justify-between items-center bg-pink-50 p-2 rounded-lg"
+                                                >
                                                     <div>
-                                                        <span
-                                                            className="font-medium text-gray-800">{producto.NombreProducto}</span>
-                                                        <span
-                                                            className="text-sm text-pink-600 ml-2">x{producto.cantidad}</span>
+                                                        <span className="font-medium text-gray-800">
+                                                            {producto.NombreProducto}
+                                                        </span>
+                                                        <span className="text-sm text-pink-600 ml-2">
+                                                            x{producto.cantidad}
+                                                        </span>
                                                     </div>
-                                                    <span
-                                                        className="font-semibold text-gray-800">${producto.PrecioProducto.toLocaleString()}</span>
+                                                    <span className="font-semibold text-gray-800">
+                                                        ${producto.PrecioProducto.toLocaleString()}
+                                                    </span>
                                                 </div>
                                             ))}
                                         </div>
@@ -169,8 +188,8 @@ const PedidoShow = () => {
                     <div className="container mx-auto text-center">
                         <p>&copy; 2023 Sweet Delights Bakery. All rights reserved.</p>
                         <div className="mt-4">
-                            <a href="#" className="text-pink-200 hover:text-white mx-2">Privacy Policy</a>
-                            <a href="#" className="text-pink-200 hover:text-white mx-2">Terms of Service</a>
+                            <a key="privacy" href="#" className="text-pink-200 hover:text-white mx-2">Privacy Policy</a>
+                            <a key="terms" href="#" className="text-pink-200 hover:text-white mx-2">Terms of Service</a>
                         </div>
                     </div>
                 </footer>
