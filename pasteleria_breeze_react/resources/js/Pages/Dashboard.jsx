@@ -9,6 +9,8 @@ import Authenticated from "@/Layouts/AuthenticatedLayout.jsx";
 const Dashboard = ({ auth, productos, ingredientes, secciones, ventas: initialVentas, message }) => {
     const [activeTab, setActiveTab] = useState('productos');
     const [ventas, setVentas] = useState(initialVentas);
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState(null);
 
     const handleDeleteProducto = (id) => {
         if (confirm('¿Estás seguro de eliminar este producto?')) {
@@ -29,23 +31,34 @@ const Dashboard = ({ auth, productos, ingredientes, secciones, ventas: initialVe
     };
     const handleUpdateEstadoPedido = async (idVenta, nuevoEstado) => {
         try {
-            await axios.put(`/ventas/${idVenta}`, { estadoPedido: nuevoEstado });
-            // Actualizar el estado local inmediatamente
-            setVentas(prevVentas =>
-                prevVentas.map(venta =>
-                    venta.idVenta === idVenta
-                        ? { ...venta, estadoPedido: nuevoEstado }
-                        : venta
-                )
-            );
+            // Usar router.put de Inertia en lugar de axios
+            await router.put(`/ventas/${idVenta}`, {
+                estadoPedido: nuevoEstado
+            }, {
+                preserveScroll: true,
+                onSuccess: () => {
+                    // Actualizar el estado local
+                    setVentas(prevVentas =>
+                        prevVentas.map(venta =>
+                            venta.idVenta === idVenta
+                                ? { ...venta, estadoPedido: nuevoEstado }
+                                : venta
+                        )
+                    );
+                },
+                onError: () => {
+                    alert('Error al actualizar el estado del pedido');
+                }
+            });
+
         } catch (error) {
             console.error('Error al actualizar el estado del pedido:', error);
-            // Opcional: Mostrar un mensaje de error al usuario
+            alert('Error al actualizar el estado del pedido');
         }
     };
     const handleVerDetalles = (idVenta) => {
-        router.visit(`/ventas/${idVenta}`, {
-            preserveState: true,
+        router.visit(route('ventas.showAdmin', idVenta), {
+            preserveState: false,
             preserveScroll: true,
             onError: (errors) => {
                 setError('No se encontró el pedido. Por favor verifique el número.');
@@ -203,10 +216,10 @@ const Dashboard = ({ auth, productos, ingredientes, secciones, ventas: initialVe
                                         onChange={(e) => handleUpdateEstadoPedido(venta.idVenta, e.target.value)}
                                         className="px-8 py-1 rounded bg-gray-200"
                                     >
-                                        <option value={venta.ESTADO_EN_PROCESO}>En Proceso</option>
-                                        <option value={venta.ESTADO_DISPONIBLE}>Disponible</option>
-                                        <option value={venta.ESTADO_ENTREGADO}>Entregado</option>
-                                        <option value={venta.ESTADO_CANCELADO}>Cancelado</option>
+                                        <option value="En Proceso">En Proceso</option>
+                                        <option value="Disponible">Disponible</option>
+                                        <option value="Entregado">Entregado</option>
+                                        <option value="Cancelado">Cancelado</option>
                                     </select>
                                 </td>
                                 <td className="px-10 py-4 space-x-2">
@@ -358,7 +371,4 @@ const Dashboard = ({ auth, productos, ingredientes, secciones, ventas: initialVe
         </AuthenticatedLayout>
     );
 };
-
-
-
 export default Dashboard;

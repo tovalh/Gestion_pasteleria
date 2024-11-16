@@ -44,7 +44,7 @@ Route::get('/seguimiento', function () {
 Route::put('/ventas/{id}', [VentaController::class, 'update'])->name('ventas.update');
 
 // Ruta para ver el pedido
-Route::get('/ventas/{id}', [VentaController::class, 'show'])->name('ventas.show');
+Route::get('/ventas/VentaAdmin/{id}', [VentaController::class, 'showAdmin'])->name('ventas.showAdmin');
 
 //WebPay
 
@@ -76,7 +76,6 @@ Route::get('/administracion', function () {
 // Rutas Administrativas
 Route::middleware(['auth', 'admin'])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
-    // Nueva ruta para ingreso de ventas del administrador
     Route::get('/ventaAdmin', [VentaController::class, 'create'])->name('venta.admin');
 });
 
@@ -99,3 +98,4 @@ Route::middleware('auth')->group(function () {
 Route::get('/componentePrueba', [ProductoController::class, 'index'])->name('componentePrueba');
 
 require __DIR__.'/auth.php';
+
