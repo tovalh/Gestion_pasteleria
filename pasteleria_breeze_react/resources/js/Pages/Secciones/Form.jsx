@@ -3,16 +3,16 @@ import { useForm } from '@inertiajs/react';
 
 const Form = ({ seccion = null, isEditing = false }) => {
     const { data, setData, post, put, processing, errors, reset } = useForm({
-        NombreSeccion: ''
+        NombreSeccion: seccion?.NombreSeccion || ''
     });
 
     useEffect(() => {
         if (isEditing && seccion) {
-            reset({
+            setData({
                 NombreSeccion: seccion.NombreSeccion
             });
         }
-    }, [seccion]);
+    }, [seccion, isEditing]);
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -26,7 +26,7 @@ const Form = ({ seccion = null, isEditing = false }) => {
     return (
         <div className="max-w-2xl mx-auto p-4">
             <h1 className="text-2xl font-bold mb-6">
-                {isEditing ? 'Editar Seccion' : 'Nueva Seccion'}
+                {isEditing ? 'Editar Sección' : 'Nueva Sección'}
             </h1>
 
             <form onSubmit={handleSubmit} className="space-y-4">
@@ -36,7 +36,7 @@ const Form = ({ seccion = null, isEditing = false }) => {
                         type="text"
                         value={data.NombreSeccion}
                         onChange={e => setData('NombreSeccion', e.target.value)}
-                        className="w-full border rounded px-3 py-2"
+                        className="w-full border rounded px-3 py-2 bg-white/10 text-white"
                         required
                     />
                     {errors.NombreSeccion && (
@@ -48,7 +48,7 @@ const Form = ({ seccion = null, isEditing = false }) => {
                     <button
                         type="button"
                         onClick={() => window.history.back()}
-                        className="px-4 py-2 border rounded text-gray-600 hover:bg-gray-100"
+                        className="px-4 py-2 border rounded text-gray-300 hover:bg-gray-700"
                     >
                         Cancelar
                     </button>

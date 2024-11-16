@@ -3,24 +3,24 @@ import { useForm } from '@inertiajs/react';
 
 const Form = ({ producto = null, isEditing = false }) => {
     const { data, setData, post, put, processing, errors, reset } = useForm({
-        NombreProducto: '',
-        DescripcionProducto: '',
-        PrecioProducto: '',
-        Seccion_idSeccion: '',
-        RutaImagen: ''
+        NombreProducto: producto?.NombreProducto || '',
+        DescripcionProducto: producto?.DescripcionProducto || '',
+        PrecioProducto: producto?.PrecioProducto?.toString() || '',
+        Seccion_idSeccion: producto?.Seccion_idSeccion?.toString() || '',
+        RutaImagen: producto?.RutaImagen || ''
     });
 
     useEffect(() => {
         if (isEditing && producto) {
-            reset({
+            setData({
                 NombreProducto: producto.NombreProducto,
                 DescripcionProducto: producto.DescripcionProducto,
-                PrecioProducto: producto.PrecioProducto,
-                Seccion_idSeccion: producto.Seccion_idSeccion,
+                PrecioProducto: producto.PrecioProducto.toString(),
+                Seccion_idSeccion: producto.Seccion_idSeccion.toString(),
                 RutaImagen: producto.RutaImagen || ''
             });
         }
-    }, [producto]);
+    }, [producto, isEditing]);
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -44,7 +44,7 @@ const Form = ({ producto = null, isEditing = false }) => {
                         type="text"
                         value={data.NombreProducto}
                         onChange={e => setData('NombreProducto', e.target.value)}
-                        className="w-full border rounded px-3 py-2"
+                        className="w-full border rounded px-3 py-2 bg-white/10 text-white"
                         required
                     />
                     {errors.NombreProducto && (
@@ -57,7 +57,7 @@ const Form = ({ producto = null, isEditing = false }) => {
                     <textarea
                         value={data.DescripcionProducto}
                         onChange={e => setData('DescripcionProducto', e.target.value)}
-                        className="w-full border rounded px-3 py-2"
+                        className="w-full border rounded px-3 py-2 bg-white/10 text-white"
                         required
                     />
                     {errors.DescripcionProducto && (
@@ -72,7 +72,7 @@ const Form = ({ producto = null, isEditing = false }) => {
                         step="0.01"
                         value={data.PrecioProducto}
                         onChange={e => setData('PrecioProducto', e.target.value)}
-                        className="w-full border rounded px-3 py-2"
+                        className="w-full border rounded px-3 py-2 bg-white/10 text-white"
                         required
                     />
                     {errors.PrecioProducto && (
@@ -86,7 +86,7 @@ const Form = ({ producto = null, isEditing = false }) => {
                         type="number"
                         value={data.Seccion_idSeccion}
                         onChange={e => setData('Seccion_idSeccion', e.target.value)}
-                        className="w-full border rounded px-3 py-2"
+                        className="w-full border rounded px-3 py-2 bg-white/10 text-white"
                         required
                     />
                     {errors.Seccion_idSeccion && (
@@ -94,15 +94,13 @@ const Form = ({ producto = null, isEditing = false }) => {
                     )}
                 </div>
 
-                {/* Campo para la ruta de la imagen */}
                 <div>
                     <label className="block mb-1">Ruta de la Imagen</label>
                     <input
                         type="text"
                         value={data.RutaImagen}
                         onChange={e => setData('RutaImagen', e.target.value)}
-                        className="w-full border rounded px-3 py-2"
-                        placeholder="Ingrese la ruta de la imagen"
+                        className="w-full border rounded px-3 py-2 bg-white/10 text-white"
                     />
                     {errors.RutaImagen && (
                         <div className="text-red-500 text-sm">{errors.RutaImagen}</div>
@@ -111,7 +109,7 @@ const Form = ({ producto = null, isEditing = false }) => {
 
                 {isEditing && data.RutaImagen && (
                     <div className="mt-2">
-                        <p className="text-sm text-gray-600">Vista previa de la imagen:</p>
+                        <p className="text-sm text-gray-400">Vista previa de la imagen:</p>
                         <img
                             src={data.RutaImagen}
                             alt="Vista previa del producto"
@@ -128,7 +126,7 @@ const Form = ({ producto = null, isEditing = false }) => {
                     <button
                         type="button"
                         onClick={() => window.history.back()}
-                        className="px-4 py-2 border rounded text-gray-600 hover:bg-gray-100"
+                        className="px-4 py-2 border rounded text-gray-300 hover:bg-gray-700"
                     >
                         Cancelar
                     </button>

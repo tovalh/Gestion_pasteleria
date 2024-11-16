@@ -3,23 +3,22 @@ import { useForm } from '@inertiajs/react';
 
 const Form = ({ ingrediente = null, isEditing = false }) => {
     const { data, setData, post, put, processing, errors, reset } = useForm({
-        NombreIngrediente: '',
-        StockIngrediente: '0',
-        StockMinimoIngrediente: '0',
-        UnidadDeMedidaIngrediente: '',
+        NombreIngrediente: ingrediente?.NombreIngrediente || '',
+        StockIngrediente: ingrediente?.StockIngrediente?.toString() || '0',
+        StockMinimoIngrediente: ingrediente?.StockMinimoIngrediente?.toString() || '0',
+        UnidadDeMedidaIngrediente: ingrediente?.UnidadDeMedidaIngrediente || '',
     });
 
-    // Establecer los valores iniciales cuando el componente se monta
     useEffect(() => {
         if (isEditing && ingrediente) {
-            reset({
+            setData({
                 NombreIngrediente: ingrediente.NombreIngrediente,
                 StockIngrediente: ingrediente.StockIngrediente.toString(),
                 StockMinimoIngrediente: ingrediente.StockMinimoIngrediente.toString(),
                 UnidadDeMedidaIngrediente: ingrediente.UnidadDeMedidaIngrediente,
             });
         }
-    }, [ingrediente]);
+    }, [ingrediente, isEditing]);
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -43,7 +42,7 @@ const Form = ({ ingrediente = null, isEditing = false }) => {
                         type="text"
                         value={data.NombreIngrediente}
                         onChange={e => setData('NombreIngrediente', e.target.value)}
-                        className="w-full border rounded px-3 py-2"
+                        className="w-full border rounded px-3 py-2 bg-white/10 text-white"
                         required
                     />
                     {errors.NombreIngrediente && (
@@ -59,7 +58,7 @@ const Form = ({ ingrediente = null, isEditing = false }) => {
                         step="0.01"
                         value={data.StockIngrediente}
                         onChange={e => setData('StockIngrediente', e.target.value)}
-                        className="w-full border rounded px-3 py-2"
+                        className="w-full border rounded px-3 py-2 bg-white/10 text-white"
                         required
                     />
                     {errors.StockIngrediente && (
@@ -75,7 +74,7 @@ const Form = ({ ingrediente = null, isEditing = false }) => {
                         step="0.01"
                         value={data.StockMinimoIngrediente}
                         onChange={e => setData('StockMinimoIngrediente', e.target.value)}
-                        className="w-full border rounded px-3 py-2"
+                        className="w-full border rounded px-3 py-2 bg-white/10 text-white"
                         required
                     />
                     {errors.StockMinimoIngrediente && (
@@ -88,15 +87,13 @@ const Form = ({ ingrediente = null, isEditing = false }) => {
                     <select
                         value={data.UnidadDeMedidaIngrediente}
                         onChange={e => setData('UnidadDeMedidaIngrediente', e.target.value)}
-                        className="w-full border rounded px-3 py-2"
+                        className="w-full border rounded px-3 py-2 bg-white/10 text-white"
                         required
                     >
-                        <option value="">Seleccione una unidad</option>
-                        <option value="kg">Kilogramos (kg)</option>
-                        <option value="g">Gramos (g)</option>
-                        <option value="l">Litros (l)</option>
+                        <option value="" disabled>Seleccione una unidad</option>
+                        <option value="und">Unidad (und)</option>
+                        <option value="gr">Gramos (gr)</option>
                         <option value="ml">Mililitros (ml)</option>
-                        <option value="unidad">Unidad</option>
                     </select>
                     {errors.UnidadDeMedidaIngrediente && (
                         <div className="text-red-500 text-sm">{errors.UnidadDeMedidaIngrediente}</div>
@@ -107,7 +104,7 @@ const Form = ({ ingrediente = null, isEditing = false }) => {
                     <button
                         type="button"
                         onClick={() => window.history.back()}
-                        className="px-4 py-2 border rounded text-gray-600 hover:bg-gray-100"
+                        className="px-4 py-2 border rounded text-gray-300 hover:bg-gray-700"
                     >
                         Cancelar
                     </button>

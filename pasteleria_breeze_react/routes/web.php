@@ -70,6 +70,8 @@ Route::middleware(['auth', 'admin'])->group(function () {
     Route::resource('seccion', SeccionController::class);
     Route::resource('secciones', SeccionController::class);
     Route::resource('ingredientes', IngredienteController::class);
+    Route::resource('producto', ProductoController::class);
+    Route::resource('productos', ProductoController::class);
     Route::resource('ventas', VentaController::class);
 
     // Rutas adicionales de sección

@@ -88,7 +88,7 @@ class ProductoController extends Controller
     public function edit($id)
     {
         $producto = Producto::findOrFail($id);
-        return Inertia::render('Productos/Edit', ['productos' => $producto]);
+        return Inertia::render('Productos/Edit', ['producto' => $producto]);
     }
     public function update(Request $request, $id)
     {
@@ -103,7 +103,7 @@ class ProductoController extends Controller
         $producto = Producto::findOrFail($id);
         $producto->update($validatedData);
 
-        return redirect()->route('productos.index')
+        return redirect()->route('dashboard')
             ->with('message', 'Producto actualizado exitosamente');
     }
     //Borrado Logico
