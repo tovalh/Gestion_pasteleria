@@ -49,11 +49,19 @@ const WebPayButton = ({ total, className, formData }) => {
                 }
             };
 
-            console.log('Enviando datos:', payloadData); // Para debugging
+            console.log('Enviando datos:', payloadData);
 
-            const response1 = await axios.post('/venta/preparar-checkout', payloadData);
+            const response = await axios.post('/venta/preparar-checkout', payloadData);
 
-            if (response1.data.checkoutUrl) {
+            // Si es pago en efectivo
+            if (payloadData.metodoPago === 'Efectivo') {
+                if (response.data.success && response.data.redirect) {
+                    window.location.href = response.data.redirect;
+                    return;
+                }
+            }
+            // Si es WebPay
+            else if (response.data.checkoutUrl) {
                 const response2 = await axios.post('/webpay/create', {
                     amount: total
                 });
@@ -100,7 +108,7 @@ const WebPayButton = ({ total, className, formData }) => {
             type="button"
             disabled={loading || !cart || cart.length === 0}
         >
-            {loading ? 'Procesando...' : 'Pagar con Webpay'}
+            {loading ? 'Procesando...' : formData.paymentMethod === 'cash' ? 'Confirmar Pedido' : 'Pagar con Webpay'}
         </button>
     );
 };

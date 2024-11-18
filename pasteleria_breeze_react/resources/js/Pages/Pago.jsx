@@ -284,7 +284,6 @@ export default function Pago() {
                                             className="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-pink-500"
                                         >
                                             <option value="asap">Lo antes posible</option>
-                                            <option value="scheduled">Programar entrega</option>
                                         </select>
                                     </div>
                                     <div>

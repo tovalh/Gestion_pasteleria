@@ -278,7 +278,6 @@ class VentaController extends Controller
         try {
             Log::info('Iniciando prepararCheckout');
 
-            // Verificar que la clase Cliente existe
             if (!class_exists(\App\Models\Cliente::class)) {
                 Log::error('La clase Cliente no existe');
                 throw new \Exception('La clase Cliente no existe');
@@ -303,10 +302,13 @@ class VentaController extends Controller
                 'datosCliente.opcionEntrega' => 'nullable|string'
             ]);
 
-            Log::info('Datos validados correctamente');
 
-            // Intentar usar la clase Cliente con namespace completo
-            Log::info('Intentando crear cliente');
+            // Si es pago en efectivo
+            if ($validatedData['metodoPago'] === 'Efectivo') {
+                return $this->procesarPagoEfectivo($validatedData);
+            }
+
+            // Si no es efectivo, crear cliente y guardar en sesión para WebPay
             try {
                 $cliente = Cliente::firstOrCreate(
                     ['RutCliente' => $validatedData['datosCliente']['RutCliente']],
@@ -315,23 +317,18 @@ class VentaController extends Controller
                         'CorreoCliente' => $validatedData['datosCliente']['CorreoCliente'],
                         'NumeroCliente' => $validatedData['datosCliente']['NumeroCliente'],
                         'DireccionCliente' => $validatedData['datosCliente']['DireccionCliente'],
-                        'user_id' => auth()->id() // Esto asociará el cliente con el usuario si está autenticado
+                        'user_id' => auth()->id()
                     ]
                 );
 
                 if (auth()->check() && !$cliente->user_id) {
                     $cliente->update(['user_id' => auth()->id()]);
                 }
-                Log::info('Cliente creado exitosamente', ['cliente_id' => $cliente->idCliente]);
             } catch (\Exception $e) {
-                Log::error('Error al crear cliente:', [
-                    'error' => $e->getMessage(),
-                    'trace' => $e->getTraceAsString()
-                ]);
+                Log::error('Error al crear cliente:', ['error' => $e->getMessage()]);
                 throw $e;
             }
 
-            // Guardar datos en sesión
             session(['venta_pendiente' => [
                 'productos' => $validatedData['productos'],
                 'Clientes_idCliente' => $cliente->idCliente,
@@ -341,8 +338,6 @@ class VentaController extends Controller
                 'datosCliente' => $validatedData['datosCliente']
             ]]);
 
-            Log::info('Venta pendiente guardada en sesión');
-
             return response()->json([
                 'checkoutUrl' => route('webpay.create')
             ]);
@@ -350,19 +345,97 @@ class VentaController extends Controller
         } catch (\Exception $e) {
             Log::error('Error en prepararCheckout:', [
                 'message' => $e->getMessage(),
-                'class' => get_class($e),
-                'trace' => $e->getTraceAsString(),
-                'file' => $e->getFile(),
-                'line' => $e->getLine()
+                'trace' => $e->getTraceAsString()
             ]);
 
             return response()->json([
                 'error' => 'Error al preparar la venta',
-                'message' => $e->getMessage(),
-                'debug_info' => [
-                    'file' => $e->getFile(),
-                    'line' => $e->getLine()
+                'message' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    protected function procesarPagoEfectivo($validatedData)
+    {
+        try {
+            DB::beginTransaction();
+
+            // Crear o actualizar cliente
+            $cliente = Cliente::firstOrCreate(
+                ['RutCliente' => $validatedData['datosCliente']['RutCliente']],
+                [
+                    'NombreCliente' => $validatedData['datosCliente']['NombreCliente'],
+                    'CorreoCliente' => $validatedData['datosCliente']['CorreoCliente'],
+                    'NumeroCliente' => $validatedData['datosCliente']['NumeroCliente'],
+                    'DireccionCliente' => $validatedData['datosCliente']['DireccionCliente'],
+                    'user_id' => auth()->id()
                 ]
+            );
+
+            // Verificar stock de productos
+            foreach ($validatedData['productos'] as $productoId) {
+                $producto = Producto::findOrFail($productoId);
+                $tieneIngredientes = $producto->ingredientes()->count() > 0;
+
+                if ($tieneIngredientes) {
+                    try {
+                        $this->stockService->actualizarStockPorVenta($producto);
+                    } catch (\Exception $e) {
+                        throw new \Exception("Stock insuficiente para {$producto->NombreProducto}: " . $e->getMessage());
+                    }
+                }
+            }
+
+            // Generar número de transacción
+            $ultimaVenta = Venta::orderBy('NumeroTransaccionVenta', 'desc')->first();
+            $nuevoNumero = $ultimaVenta ? ($ultimaVenta->NumeroTransaccionVenta + 1) : 1000;
+
+            if ($nuevoNumero > 9999) {
+                $nuevoNumero = 1000;
+                while (Venta::where('NumeroTransaccionVenta', $nuevoNumero)->exists()) {
+                    $nuevoNumero++;
+                    if ($nuevoNumero > 9999) {
+                        throw new \Exception('No hay números de transacción disponibles');
+                    }
+                }
+            }
+
+            // Crear la venta
+            $venta = Venta::create([
+                'NumeroTransaccionVenta' => $nuevoNumero,
+                'totalVenta' => $validatedData['total'],
+                'metodoDePagoVenta' => 'Efectivo',
+                'Comentario' => $validatedData['comentario'] ?? '',
+                'estadoPedido' => 'En Proceso',
+                'Clientes_idCliente' => $cliente->idCliente
+            ]);
+
+            // Asociar productos
+            foreach ($validatedData['productos'] as $productoId) {
+                DB::table('producto_has_venta')->insert([
+                    'Productos_idProducto' => $productoId,
+                    'Venta_idVenta' => $venta->idVenta
+                ]);
+            }
+
+            DB::commit();
+
+            return response()->json([
+                'success' => true,
+                'codigoSeguimiento' => $nuevoNumero,
+                'redirect' => route('seguimiento.show', ['numeroTransaccion' => $nuevoNumero]) // Corregido aquí con la ruta correcta
+            ]);
+
+        } catch (\Exception $e) {
+            DB::rollback();
+            Log::error('Error en procesarPagoEfectivo:', [
+                'message' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+
+            return response()->json([
+                'error' => 'Error al procesar el pago en efectivo',
+                'message' => $e->getMessage()
             ], 500);
         }
     }
