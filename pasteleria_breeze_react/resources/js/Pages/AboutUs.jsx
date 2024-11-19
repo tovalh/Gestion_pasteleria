@@ -79,12 +79,12 @@ export default function AboutUs() {
                     </div>
 
                     <div className="bg-pink-100 rounded-lg p-8 text-center">
-                        <h2 className="text-2xl font-semibold text-pink-700 mb-4">Visit Us Today!</h2>
+                        <h2 className="text-2xl font-semibold text-pink-700 mb-4">Visitanos!</h2>
                         <p className="text-gray-700 mb-4">
-                            Come experience the sweet delights for yourself. We're open Monday through Saturday, 7am to 7pm.
+                            Ven a experimentar las dulces delicias por ti mismo. Estamos abiertos de lunes a sábado, de 7 a. m. a 7 p. m.
                         </p>
                         <button className="bg-pink-500 hover:bg-pink-600 text-white font-bold py-2 px-4 rounded">
-                            Contact Us
+                            Contactanos
                         </button>
                     </div>
                 </main>

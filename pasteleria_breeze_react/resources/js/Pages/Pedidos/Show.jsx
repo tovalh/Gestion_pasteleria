@@ -4,6 +4,8 @@ import { ShoppingCart, Menu as MenuIcon, X } from 'lucide-react';
 import { useCart } from '@/Context/CartContext';
 import CartComponent from '@/Components/CartComponent';
 import { Head } from "@inertiajs/react";
+import Navbar from '@/Components/Navbar';
+import Footer from '@/Components/Footer';
 
 const PedidoShow = () => {
     const { venta } = usePage().props;
@@ -37,69 +39,9 @@ const PedidoShow = () => {
     ];
 
     return (
-        <>
-            <Head>
-                <title>Detalles del Pedido - Dolci Mimi</title>
-                <meta name="description" content="Detalles de tu pedido en Dolci Mimi" />
-            </Head>
-            <div className="bg-gradient-to-b from-pink-50 to-[#F7F0E9] min-h-screen flex flex-col">
-                {/* Header */}
-                <header className="bg-pink-500 text-pink-50 p-4 shadow-md">
-                    <div className="container mx-auto flex justify-between items-center">
-                        <a href="/inicio" className="text-2xl font-bold">Dolci Mimi</a>
-                        <nav className="hidden md:flex space-x-6 items-center">
-                            {navLinks.map(link => (
-                                <a
-                                    key={`desktop-${link.key}`}
-                                    href={link.href}
-                                    className="hover:text-pink-200"
-                                >
-                                    {link.label}
-                                </a>
-                            ))}
-                            <button onClick={toggleCart} className="relative">
-                                <ShoppingCart className="text-pink-50"/>
-                                {cartItemsCount > 0 && (
-                                    <span className="absolute -top-2 -right-2 bg-white text-pink-500 rounded-full w-5 h-5 flex items-center justify-center text-xs font-bold">
-                                        {cartItemsCount}
-                                    </span>
-                                )}
-                            </button>
-                        </nav>
 
-                        {/* Mobile menu and cart */}
-                        <div className="md:hidden flex items-center">
-                            <button onClick={toggleMenu} className="mr-4">
-                                {isMenuOpen ? <X/> : <MenuIcon/>}
-                            </button>
-                            <button onClick={toggleCart} className="relative">
-                                <ShoppingCart className="text-pink-50"/>
-                                {cartItemsCount > 0 && (
-                                    <span className="absolute -top-2 -right-2 bg-white text-pink-500 rounded-full w-5 h-5 flex items-center justify-center text-xs font-bold">
-                                        {cartItemsCount}
-                                    </span>
-                                )}
-                            </button>
-                        </div>
-                    </div>
-                </header>
-
-                {/* Mobile menu */}
-                {isMenuOpen && (
-                    <div className="md:hidden bg-pink-600 text-pink-50 p-4 shadow-md">
-                        <nav className="flex flex-col space-y-2">
-                            {navLinks.map(link => (
-                                <a
-                                    key={`mobile-${link.key}`}
-                                    href={link.href}
-                                    className="hover:text-pink-200"
-                                >
-                                    {link.label}
-                                </a>
-                            ))}
-                        </nav>
-                    </div>
-                )}
+            <div className="flex flex-col min-h-screen bg-gradient-to-b from-pink-50 to-[#F7F0E9]">
+                <Navbar toggleCart={toggleCart}/>
 
                 <main className="flex-grow py-4 px-2">
                     <div className="max-w-2xl mx-auto">
@@ -128,7 +70,8 @@ const PedidoShow = () => {
                                     </div>
                                     <div className="bg-pink-50 p-2 rounded-lg">
                                         <p className="text-sm text-pink-700">Estado del Pedido</p>
-                                        <span className={`inline-block px-2 py-1 rounded-full text-sm ${getStatusColor(venta.estadoPedido)}`}>
+                                        <span
+                                            className={`inline-block px-2 py-1 rounded-full text-sm ${getStatusColor(venta.estadoPedido)}`}>
                                             {venta.estadoPedido}
                                         </span>
                                     </div>
@@ -184,32 +127,10 @@ const PedidoShow = () => {
                 </main>
 
                 {/* Footer */}
-                <footer className="bg-pink-500 text-pink-50 py-8 mt-auto shadow-inner">
-                    <div className="container mx-auto text-center">
-                        <p>&copy; 2023 Sweet Delights Bakery. All rights reserved.</p>
-                        <div className="mt-4">
-                            <a key="privacy" href="#" className="text-pink-200 hover:text-white mx-2">Privacy Policy</a>
-                            <a key="terms" href="#" className="text-pink-200 hover:text-white mx-2">Terms of Service</a>
-                        </div>
-                    </div>
-                </footer>
 
-                {/* Cart Sidebar */}
-                {isCartOpen && (
-                    <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex justify-end">
-                        <div className="bg-white w-full max-w-md h-full overflow-y-auto">
-                            <div className="p-4">
-                                <button onClick={toggleCart} className="mb-4">
-                                    <X/>
-                                </button>
-                                <CartComponent/>
-                            </div>
-                        </div>
-                    </div>
-                )}
+                <Footer />
             </div>
-        </>
     );
 };
 
-export default PedidoShow;
+            export default PedidoShow;

@@ -41,6 +41,10 @@ Route::get('/seguimiento-pedido/{numeroTransaccion}', [VentaController::class, '
 Route::post('/venta/preparar-checkout', [VentaController::class, 'prepararCheckout'])->name('venta.prepararCheckout');
 Route::post('/webpay/create', [WebpayController::class, 'initTransaction'])->name('webpay.create');
 Route::get('/webpay/return', [WebpayController::class, 'returnUrl'])->name('webpay.return');
+//pago sin necesidad de iniciar sesion
+Route::get('/pago', function () {
+    return Inertia::render('Pago');
+})->name('pago');
 
 // Rutas protegidas por autenticación normal
 Route::middleware('auth')->group(function () {
@@ -48,9 +52,7 @@ Route::middleware('auth')->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
     Route::get('/mis_pedidos', [OrderHistoryController::class, 'index'])->name('order.history');
-    Route::get('/pago', function () {
-        return Inertia::render('Pago');
-    })->name('pago');
+
 });
 
 // Rutas Administrativas (protegidas por auth y admin middleware)

@@ -1,46 +1,24 @@
 import React from 'react';
 import { Link } from '@inertiajs/react';
-import { ShoppingCart, Menu as MenuIcon, X } from 'lucide-react';
+import Navbar from '@/Components/Navbar';
+import Footer from '@/Components/Footer';
 
 export default function OrderHistory({ pedidos }) {
-    const [isMenuOpen, setIsMenuOpen] = React.useState(false);
-
-    const toggleMenu = () => {
-        setIsMenuOpen(!isMenuOpen);
+    // Format price in Chilean pesos
+    const formatPrice = (price) => {
+        return new Intl.NumberFormat('es-CL', {
+            style: 'currency',
+            currency: 'CLP',
+            minimumFractionDigits: 0,
+            maximumFractionDigits: 0
+        }).format(price);
     };
 
     return (
-        <div className="bg-[#F7F0E9] min-h-screen">
-            <header className="bg-pink-500 text-pink-50 p-4">
-                <div className="container mx-auto flex justify-between items-center">
-                    <a href="/inicio" className="text-2xl font-bold">Dolci Mimi</a>
-                    <nav className="hidden md:flex space-x-6">
-                        <Link href="/inicio" className="hover:text-pink-200">Inicio</Link>
-                        <Link href="/menu" className="hover:text-pink-200">Productos</Link>
-                        <Link href="/seguimiento" className="hover:text-pink-200">Seguimiento</Link>
-                        <Link href="/aboutUs" className="hover:text-pink-200">Nosotros</Link>
-                        <Link href="/mis-pedidos" className="hover:text-pink-200">Mis Pedidos</Link>
-                    </nav>
+        <div className="bg-[#F7F0E9] min-h-screen flex flex-col">
+            <Navbar/>
 
-                    <button className="md:hidden" onClick={toggleMenu}>
-                        {isMenuOpen ? <X /> : <MenuIcon />}
-                    </button>
-                </div>
-            </header>
-
-            {isMenuOpen && (
-                <div className="md:hidden bg-pink-600 text-pink-50 p-4">
-                    <nav className="flex flex-col space-y-2">
-                        <Link href="/inicio" className="hover:text-pink-200">Inicio</Link>
-                        <Link href="/menu" className="hover:text-pink-200">Productos</Link>
-                        <Link href="/seguimiento" className="hover:text-pink-200">Seguimiento</Link>
-                        <Link href="/aboutUs" className="hover:text-pink-200">Nosotros</Link>
-                        <Link href="/mis-pedidos" className="hover:text-pink-200">Mis Pedidos</Link>
-                    </nav>
-                </div>
-            )}
-
-            <main className="container mx-auto p-6">
+            <main className="container mx-auto p-6 flex-grow">
                 <h1 className="text-2xl font-bold text-pink-800 mb-6">Mi Historial de Pedidos</h1>
 
                 {pedidos.length === 0 ? (
@@ -80,7 +58,7 @@ export default function OrderHistory({ pedidos }) {
                                             {pedido.productos.map((producto, index) => (
                                                 <li key={index} className="flex justify-between">
                                                     <span>{producto.nombre}</span>
-                                                    <span className="font-medium">${producto.precio}</span>
+                                                    <span className="font-medium">{formatPrice(producto.precio)}</span>
                                                 </li>
                                             ))}
                                         </ul>
@@ -88,7 +66,7 @@ export default function OrderHistory({ pedidos }) {
 
                                     <div className="mt-4 pt-4 border-t">
                                         <p className="text-xl font-bold text-pink-800">
-                                            Total: ${pedido.total}
+                                            Total: {formatPrice(pedido.total)}
                                         </p>
                                     </div>
                                 </div>
@@ -98,11 +76,7 @@ export default function OrderHistory({ pedidos }) {
                 )}
             </main>
 
-            <footer className="bg-pink-500 text-pink-50 py-8 mt-12">
-                <div className="container mx-auto text-center">
-                    <p>&copy; {new Date().getFullYear()} Dolci Mimi. Todos los derechos reservados.</p>
-                </div>
-            </footer>
+            <Footer/>
         </div>
     );
 }
