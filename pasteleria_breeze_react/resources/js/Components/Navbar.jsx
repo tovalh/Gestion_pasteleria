@@ -2,13 +2,17 @@ import { useState } from 'react'
 import { ShoppingCart, Menu as MenuIcon, X, User } from 'lucide-react'
 import { useCart } from '../Context/CartContext'
 import CartComponent from './CartComponent'
-import { router } from '@inertiajs/react' // Añadir esta importación
+import { router, usePage } from '@inertiajs/react'
 
-export default function Navbar({ user }) {
+export default function Navbar() {
     const [isMenuOpen, setIsMenuOpen] = useState(false)
     const [isCartOpen, setIsCartOpen] = useState(false)
     const [isUserMenuOpen, setIsUserMenuOpen] = useState(false)
     const { cartItemsCount } = useCart()
+
+    // Obtener el usuario desde los datos compartidos
+    const { auth } = usePage().props
+    const user = auth.user
 
     const handleLogout = () => {
         router.post(route('logout'), null, {
@@ -34,12 +38,12 @@ export default function Navbar({ user }) {
         <>
             <header className="bg-pink-500 text-pink-50 p-4">
                 <div className="container mx-auto flex justify-between items-center">
-                    <a href="\inicio" className="text-2xl font-bold">Dolci Mimi</a>
+                    <a href="/inicio" className="text-2xl font-bold">Dolci Mimi</a>
                     <nav className="hidden md:flex space-x-6 items-center">
-                        <a href="\inicio" className="hover:text-pink-200">Inicio</a>
-                        <a href="\menu" className="hover:text-pink-200">Productos</a>
-                        <a href="\seguimiento" className="hover:text-pink-200">Seguimiento</a>
-                        <a href="\aboutUs" className="hover:text-pink-200">Nosotros</a>
+                        <a href="/inicio" className="hover:text-pink-200">Inicio</a>
+                        <a href="/menu" className="hover:text-pink-200">Productos</a>
+                        <a href="/seguimiento" className="hover:text-pink-200">Seguimiento</a>
+                        <a href="/aboutUs" className="hover:text-pink-200">Nosotros</a>
                         <button className="md:hidden" onClick={toggleMenu}>
                             {isMenuOpen ? <X/> : <MenuIcon/>}
                         </button>
@@ -65,6 +69,11 @@ export default function Navbar({ user }) {
                                             <a href="/mis_pedidos" className="block px-4 py-2 text-pink-800 hover:bg-pink-100">
                                                 Mis Pedidos
                                             </a>
+                                            {user.isAdmin && (
+                                                <a href="/administracion" className="block px-4 py-2 text-pink-800 hover:bg-pink-100">
+                                                    Administración
+                                                </a>
+                                            )}
                                             <button
                                                 onClick={handleLogout}
                                                 className="block w-full text-left px-4 py-2 text-pink-800 hover:bg-pink-100"
@@ -87,7 +96,7 @@ export default function Navbar({ user }) {
                         </div>
                     </nav>
 
-                    {/* Versión móvil del carrito */}
+                    {/* Versión móvil */}
                     <div className="md:hidden flex items-center">
                         <button onClick={toggleMenu} className="mr-4">
                             {isMenuOpen ? <X/> : <MenuIcon/>}
@@ -107,10 +116,13 @@ export default function Navbar({ user }) {
             {isMenuOpen && (
                 <div className="md:hidden bg-pink-600 text-pink-50 p-4">
                     <nav className="flex flex-col space-y-2">
-                        <a href="\inicio" className="hover:text-pink-200">Inicio</a>
-                        <a href="\menu" className="hover:text-pink-200">Menu</a>
-                        <a href="\seguimiento" className="hover:text-pink-200">Seguimiento</a>
-                        <a href="\aboutUs" className="hover:text-pink-200">About</a>
+                        <a href="/inicio" className="hover:text-pink-200">Inicio</a>
+                        <a href="/menu" className="hover:text-pink-200">Menu</a>
+                        <a href="/seguimiento" className="hover:text-pink-200">Seguimiento</a>
+                        <a href="/aboutUs" className="hover:text-pink-200">About</a>
+                        {user?.isAdmin && (
+                            <a href="/administracion" className="hover:text-pink-200">Administración</a>
+                        )}
                     </nav>
                 </div>
             )}

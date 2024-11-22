@@ -1,16 +1,17 @@
 import React from 'react';
 import { useCart } from '../Context/CartContext.jsx';
-import { router } from '@inertiajs/react';
+import { router, usePage } from '@inertiajs/react';
 import { X, Plus, Minus } from 'lucide-react';
 
 export default function CartComponent() {
-    const { cart, removeFromCart, clearCart, updateQuantity, cartTotal } = useCart();
+    const { cart, removeFromCart, clearCart, updateQuantity, cartTotal, isAuthenticated } = useCart();
+    const { auth } = usePage().props;
 
     const formatPrice = (price) => {
         return (parseFloat(price)).toLocaleString('es-CL', {
             style: 'currency',
             currency: 'CLP'
-        })
+        });
     };
 
     const handleQuantityChange = (itemId, currentQuantity, increment) => {
@@ -19,10 +20,32 @@ export default function CartComponent() {
     };
 
     const handleCheckout = () => {
+        if (!auth.user) {
+            router.visit('/login');
+            return;
+        }
+
         if (cart.length > 0) {
             router.visit('/pago');
         }
     };
+
+    if (!isAuthenticated) {
+        return (
+            <div className="bg-white p-4 rounded-lg shadow-md">
+                <h2 className="text-2xl font-bold text-pink-800 mb-4">Tu carrito</h2>
+                <div className="text-center">
+                    <p className="text-pink-600 mb-4">Por favor, inicia sesión para usar el carrito</p>
+                    <a
+                        href="/login"
+                        className="inline-block bg-pink-500 text-white px-6 py-2 rounded hover:bg-pink-600 transition duration-300"
+                    >
+                        Iniciar Sesión
+                    </a>
+                </div>
+            </div>
+        );
+    }
 
     return (
         <div className="bg-white p-4 rounded-lg shadow-md">

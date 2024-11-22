@@ -1,7 +1,16 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { CheckCircle } from 'lucide-react';
+import {useCart} from "@/Context/CartContext.jsx";
+
 
 export default function Exitosa({ mensaje, detalles, codigoSeguimiento }) {
+    const { clearCart } = useCart();
+
+    // Limpiar el carrito cuando el componente se monte
+    useEffect(() => {
+        clearCart();
+    }, []);
+
     return (
         <div className="min-h-screen bg-gray-100 flex flex-col items-center justify-center p-4">
             <div className="bg-white p-8 rounded-lg shadow-md max-w-md w-full text-center">

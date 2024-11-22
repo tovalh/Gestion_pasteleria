@@ -3,24 +3,37 @@ import { router } from '@inertiajs/react';
 
 const CartContext = createContext();
 
-const CART_STORAGE_KEY = 'dolciMimiCart';
+export function CartProvider({ children, user }) {
+    const userId = user?.id;
+    const CART_STORAGE_KEY = userId ? `cart_${userId}` : null;
 
-export function CartProvider({ children }) {
     // Inicializamos el estado del carrito con los datos guardados o un array vacío
     const [cart, setCart] = useState(() => {
-        if (typeof window !== 'undefined') {
+        if (typeof window !== 'undefined' && CART_STORAGE_KEY) {
             const savedCart = localStorage.getItem(CART_STORAGE_KEY);
             return savedCart ? JSON.parse(savedCart) : [];
         }
         return [];
     });
 
-    // Guardar el carrito en localStorage y sincronizar entre pestañas
+    // Limpiar o cargar el carrito cuando cambia el usuario
     useEffect(() => {
         if (typeof window !== 'undefined') {
+            if (CART_STORAGE_KEY) {
+                const savedCart = localStorage.getItem(CART_STORAGE_KEY);
+                setCart(savedCart ? JSON.parse(savedCart) : []);
+            } else {
+                setCart([]);
+            }
+        }
+    }, [userId]);
+
+    // Guardar el carrito en localStorage y sincronizar entre pestañas
+    useEffect(() => {
+        if (typeof window !== 'undefined' && CART_STORAGE_KEY) {
             localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(cart));
         }
-    }, [cart]);
+    }, [cart, CART_STORAGE_KEY]);
 
     // Escuchar cambios en localStorage de otras pestañas
     useEffect(() => {
@@ -31,11 +44,18 @@ export function CartProvider({ children }) {
             }
         };
 
-        window.addEventListener('storage', handleStorageChange);
-        return () => window.removeEventListener('storage', handleStorageChange);
-    }, []);
+        if (typeof window !== 'undefined') {
+            window.addEventListener('storage', handleStorageChange);
+            return () => window.removeEventListener('storage', handleStorageChange);
+        }
+    }, [CART_STORAGE_KEY]);
 
     const addToCart = (item) => {
+        if (!user) {
+            router.visit('/login');
+            return;
+        }
+
         setCart((currentCart) => {
             const existingItem = currentCart.find((cartItem) => cartItem.id === item.id);
             if (existingItem) {
@@ -50,10 +70,12 @@ export function CartProvider({ children }) {
     };
 
     const removeFromCart = (itemId) => {
+        if (!user) return;
         setCart((currentCart) => currentCart.filter((item) => item.id !== itemId));
     };
 
     const updateQuantity = (itemId, newQuantity) => {
+        if (!user) return;
         setCart((currentCart) => {
             if (newQuantity <= 0) {
                 return currentCart.filter((item) => item.id !== itemId);
@@ -65,44 +87,16 @@ export function CartProvider({ children }) {
     };
 
     const clearCart = () => {
+        if (!user) return;
         setCart([]);
-        localStorage.removeItem(CART_STORAGE_KEY);
-    };
-
-    const proceedToCheckout = () => {
-        // Usa Inertia para navegar al checkout con los datos del carrito
-        router.post('/checkout', {
-            items: cart,
-            total: cartTotal,
-        }, {
-            preserveState: true,
-            preserveScroll: true,
-        });
+        if (CART_STORAGE_KEY) {
+            localStorage.removeItem(CART_STORAGE_KEY);
+        }
     };
 
     const cartItemsCount = cart.reduce((total, item) => total + item.quantity, 0);
 
     const cartTotal = cart.reduce((total, item) => total + (item.price * item.quantity), 0);
-
-    // Función para restaurar el carrito desde el servidor si es necesario
-    const syncWithServer = async () => {
-        try {
-            const response = await fetch('/api/cart/sync', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content,
-                },
-                body: JSON.stringify({ cart }),
-            });
-            const data = await response.json();
-            if (data.cart) {
-                setCart(data.cart);
-            }
-        } catch (error) {
-            console.error('Error syncing cart with server:', error);
-        }
-    };
 
     return (
         <CartContext.Provider value={{
@@ -113,8 +107,7 @@ export function CartProvider({ children }) {
             cartItemsCount,
             cartTotal,
             updateQuantity,
-            proceedToCheckout,
-            syncWithServer
+            isAuthenticated: !!user
         }}>
             {children}
         </CartContext.Provider>

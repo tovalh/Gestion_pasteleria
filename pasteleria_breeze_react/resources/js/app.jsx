@@ -8,6 +8,15 @@ import { CartProvider } from './Context/CartContext';
 
 const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
 
+// Creamos un componente wrapper para manejar el CartProvider
+function AppWrapper({ children, auth }) {
+    return (
+        <CartProvider user={auth.user}>
+            {children}
+        </CartProvider>
+    );
+}
+
 createInertiaApp({
     title: (title) => `${title} - ${appName}`,
     resolve: (name) =>
@@ -19,9 +28,13 @@ createInertiaApp({
         const root = createRoot(el);
 
         root.render(
-            <CartProvider>
-                <App {...props} />
-            </CartProvider>
+            <App {...props}>
+                {({ Component, props }) => (
+                    <AppWrapper auth={props.auth}>
+                        <Component {...props} />
+                    </AppWrapper>
+                )}
+            </App>
         );
     },
     progress: {
