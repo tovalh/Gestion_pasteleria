@@ -30,15 +30,22 @@ const WebPayButton = ({ total, className, formData }) => {
             return;
         }
 
+        if (!formData.deliveryDate) {
+            alert('La fecha de entrega es obligatoria');
+            return;
+        }
+
         setLoading(true);
         try {
-            const productIds = cart.map(item => item.id);
-
             const payloadData = {
-                productos: productIds,
+                productos: cart.map(item => ({
+                    id: item.id,
+                    cantidad: item.quantity
+                })),
                 comentario: formData.specialInstructions || 'Sin instrucciones especiales',
                 total: total,
                 metodoPago: getMetodoPago(formData.paymentMethod),
+                fechaEntrega: formData.deliveryDate,
                 datosCliente: {
                     NombreCliente: `${formData.firstName} ${formData.lastName}`.trim(),
                     CorreoCliente: formData.email,
@@ -101,12 +108,26 @@ const WebPayButton = ({ total, className, formData }) => {
         }
     };
 
+    // Validar si todos los campos requeridos están llenos
+    const isFormValid = () => {
+        return formData.firstName &&
+            formData.lastName &&
+            formData.email &&
+            formData.phone &&
+            formData.rut &&
+            formData.address &&
+            formData.city &&
+            formData.deliveryDate && // Incluir validación de fecha
+            cart &&
+            cart.length > 0;
+    };
+
     return (
         <button
             onClick={handlePayment}
             className={className}
             type="button"
-            disabled={loading || !cart || cart.length === 0}
+            disabled={loading || !isFormValid()}
         >
             {loading ? 'Procesando...' : formData.paymentMethod === 'cash' ? 'Confirmar Pedido' : 'Pagar con Webpay'}
         </button>

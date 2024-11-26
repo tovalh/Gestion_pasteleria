@@ -46,6 +46,7 @@ class VentaController extends Controller
                 'metodoDePagoVenta' => $venta->metodoDePagoVenta,
                 'estadoPedido' => $venta->estadoPedido,
                 'Comentario' => $venta->Comentario,
+                'fechaEntrega' => $venta->fechaEntrega, // Añadida fecha de entrega
                 'productos' => $venta->productos->map(function($producto) {
                     return [
                         'id' => $producto->id,
@@ -211,9 +212,10 @@ class VentaController extends Controller
                 'metodoDePagoVenta' => $venta->metodoDePagoVenta,
                 'estadoPedido' => $venta->estadoPedido,
                 'Comentario' => $venta->Comentario,
+                'fechaEntrega' => $venta->fechaEntrega,
                 'productos' => $venta->productos->map(function($producto) {
                     return [
-                        'id' => $producto->id,
+                        'id' => $producto->idProducto,
                         'NombreProducto' => $producto->NombreProducto,
                         'PrecioProducto' => $producto->PrecioProducto,
                         'cantidad' => $producto->pivot->cantidad ?? 1
@@ -222,7 +224,10 @@ class VentaController extends Controller
                 'cliente' => $venta->cliente ? [
                     'id' => $venta->cliente->idCliente,
                     'nombre' => $venta->cliente->NombreCliente,
-                    'email' => $venta->cliente->EmailCliente
+                    'email' => $venta->cliente->CorreoCliente,
+                    'rut' => $venta->cliente->RutCliente,
+                    'telefono' => $venta->cliente->NumeroCliente,
+                    'direccion' => $venta->cliente->DireccionCliente
                 ] : null
             ];
 
@@ -231,8 +236,8 @@ class VentaController extends Controller
             ]);
 
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-            return to_route('seguimiento')->withErrors([
-                'message' => 'No se encontró el pedido. Por favor verifique el número.'
+            return to_route('dashboard')->withErrors([
+                'message' => 'No se encontró el pedido.'
             ]);
         }
     }
@@ -289,10 +294,12 @@ class VentaController extends Controller
 
             $validatedData = $request->validate([
                 'productos' => 'required|array|min:1',
-                'productos.*' => 'required|integer|exists:producto,idProducto',
+                'productos.*.id' => 'required|integer|exists:producto,idProducto',
+                'productos.*.cantidad' => 'required|integer|min:1',
                 'comentario' => 'nullable|string|max:500',
                 'total' => 'required|numeric|min:0',
                 'metodoPago' => 'required|string',
+                'fechaEntrega' => 'required|date|after:today',
                 'datosCliente' => 'required|array',
                 'datosCliente.NombreCliente' => 'required|string|max:100',
                 'datosCliente.CorreoCliente' => 'required|email|max:100',
@@ -335,7 +342,8 @@ class VentaController extends Controller
                 'comentario' => $validatedData['comentario'],
                 'total' => $validatedData['total'],
                 'metodoDePagoVenta' => $validatedData['metodoPago'],
-                'datosCliente' => $validatedData['datosCliente']
+                'datosCliente' => $validatedData['datosCliente'],
+                'fechaEntrega' => $validatedData['fechaEntrega'] // Añadido aquí también
             ]]);
 
             return response()->json([
@@ -355,6 +363,7 @@ class VentaController extends Controller
         }
     }
 
+    // En VentaController.php
     protected function procesarPagoEfectivo($validatedData)
     {
         try {
@@ -373,15 +382,17 @@ class VentaController extends Controller
             );
 
             // Verificar stock de productos
-            foreach ($validatedData['productos'] as $productoId) {
-                $producto = Producto::findOrFail($productoId);
-                $tieneIngredientes = $producto->ingredientes()->count() > 0;
+            foreach ($validatedData['productos'] as $productoData) {
+                $producto = Producto::with('ingredientes')->find($productoData['id']);
 
-                if ($tieneIngredientes) {
-                    try {
-                        $this->stockService->actualizarStockPorVenta($producto);
-                    } catch (\Exception $e) {
-                        throw new \Exception("Stock insuficiente para {$producto->NombreProducto}: " . $e->getMessage());
+                // Si el producto existe y tiene ingredientes
+                if ($producto && $producto->ingredientes()->exists()) {
+                    for ($i = 0; $i < $productoData['cantidad']; $i++) {
+                        try {
+                            $this->stockService->actualizarStockPorVenta($producto);
+                        } catch (\Exception $e) {
+                            throw new \Exception("Stock insuficiente para {$producto->NombreProducto}: " . $e->getMessage());
+                        }
                     }
                 }
             }
@@ -407,14 +418,16 @@ class VentaController extends Controller
                 'metodoDePagoVenta' => 'Efectivo',
                 'Comentario' => $validatedData['comentario'] ?? '',
                 'estadoPedido' => 'En Proceso',
-                'Clientes_idCliente' => $cliente->idCliente
+                'Clientes_idCliente' => $cliente->idCliente,
+                'fechaEntrega' => $validatedData['fechaEntrega']
             ]);
 
-            // Asociar productos
-            foreach ($validatedData['productos'] as $productoId) {
+            // Asociar productos con sus cantidades
+            foreach ($validatedData['productos'] as $productoData) {
                 DB::table('producto_has_venta')->insert([
-                    'Productos_idProducto' => $productoId,
-                    'Venta_idVenta' => $venta->idVenta
+                    'Productos_idProducto' => $productoData['id'],
+                    'Venta_idVenta' => $venta->idVenta,
+                    'cantidad' => $productoData['cantidad']
                 ]);
             }
 
@@ -423,7 +436,7 @@ class VentaController extends Controller
             return response()->json([
                 'success' => true,
                 'codigoSeguimiento' => $nuevoNumero,
-                'redirect' => route('seguimiento.show', ['numeroTransaccion' => $nuevoNumero]) // Corregido aquí con la ruta correcta
+                'redirect' => route('seguimiento.show', ['numeroTransaccion' => $nuevoNumero])
             ]);
 
         } catch (\Exception $e) {
@@ -486,7 +499,8 @@ class VentaController extends Controller
                 'Comentario' => $ventaPendiente['comentario'],
                 'Clientes_idCliente' => $ventaPendiente['Clientes_idCliente'],
                 'estadoPedido' => 'En Proceso',
-                'NumeroTransaccionVenta' => $nuevoNumero
+                'NumeroTransaccionVenta' => $nuevoNumero,
+                'fechaEntrega' => $ventaPendiente['fechaEntrega'] // Cambiado para coincidir con la nueva estructura
             ];
 
             Log::info('Intentando crear venta con datos:', $datosVenta);

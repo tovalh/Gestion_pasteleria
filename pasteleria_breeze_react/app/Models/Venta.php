@@ -17,8 +17,13 @@ class Venta extends Model
         'totalVenta',
         'metodoDePagoVenta',
         'estadoPedido',
+        'fechaEntrega',
         'Comentario',
         'Clientes_idCliente'
+    ];
+
+    protected $casts = [
+        'fechaEntrega' => 'date'
     ];
 
     // Constantes para los estados y métodos de pago
@@ -37,13 +42,14 @@ class Venta extends Model
             'producto_has_venta',
             'Venta_idVenta',
             'Productos_idProducto'
-        );
+        )->withPivot('cantidad');
     }
 
     public function cliente()
     {
         return $this->belongsTo(Cliente::class, 'Clientes_idCliente', 'idCliente');
     }
+
     public function user()
     {
         return $this->belongsTo(User::class, 'Clientes_idCliente', 'id');

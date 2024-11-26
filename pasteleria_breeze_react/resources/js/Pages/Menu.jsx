@@ -91,16 +91,7 @@ export default function ProductsSection({ productos }) {
                         <option value="price-asc">Precio: Menor a Mayor</option>
                         <option value="price-desc">Precio: Mayor a Menor</option>
                     </select>
-                    <div className="flex items-center">
-                        <input
-                            type="checkbox"
-                            id="vegan"
-                            checked={showVegan}
-                            onChange={(e) => setShowVegan(e.target.checked)}
-                            className="mr-2"
-                        />
-                        <label htmlFor="vegan" className="text-pink-800">Opciones Veganas</label>
-                    </div>
+
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

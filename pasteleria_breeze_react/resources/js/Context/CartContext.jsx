@@ -5,37 +5,62 @@ const CartContext = createContext();
 
 export function CartProvider({ children, user }) {
     const userId = user?.id;
-    const CART_STORAGE_KEY = userId ? `cart_${userId}` : null;
+    // Use a generic key for anonymous users
+    const CART_STORAGE_KEY = userId ? `cart_${userId}` : 'cart_anonymous';
 
-    // Inicializamos el estado del carrito con los datos guardados o un array vacío
+    // Initialize cart state with saved data or empty array
     const [cart, setCart] = useState(() => {
-        if (typeof window !== 'undefined' && CART_STORAGE_KEY) {
+        if (typeof window !== 'undefined') {
             const savedCart = localStorage.getItem(CART_STORAGE_KEY);
             return savedCart ? JSON.parse(savedCart) : [];
         }
         return [];
     });
 
-    // Limpiar o cargar el carrito cuando cambia el usuario
+    // Handle cart data when user authentication status changes
     useEffect(() => {
         if (typeof window !== 'undefined') {
-            if (CART_STORAGE_KEY) {
-                const savedCart = localStorage.getItem(CART_STORAGE_KEY);
-                setCart(savedCart ? JSON.parse(savedCart) : []);
+            if (userId) {
+                // If user just logged in, try to merge anonymous cart with user cart
+                const anonymousCart = localStorage.getItem('cart_anonymous');
+                const userCart = localStorage.getItem(`cart_${userId}`);
+
+                if (anonymousCart) {
+                    const parsedAnonymousCart = JSON.parse(anonymousCart);
+                    const parsedUserCart = userCart ? JSON.parse(userCart) : [];
+
+                    // Merge carts, combining quantities for duplicate items
+                    const mergedCart = parsedAnonymousCart.reduce((acc, anonItem) => {
+                        const existingItem = acc.find(item => item.id === anonItem.id);
+                        if (existingItem) {
+                            existingItem.quantity += anonItem.quantity;
+                            return acc;
+                        }
+                        return [...acc, anonItem];
+                    }, [...parsedUserCart]);
+
+                    setCart(mergedCart);
+                    // Clear anonymous cart after merging
+                    localStorage.removeItem('cart_anonymous');
+                } else if (userCart) {
+                    setCart(JSON.parse(userCart));
+                }
             } else {
-                setCart([]);
+                // If user logged out, load anonymous cart
+                const anonymousCart = localStorage.getItem('cart_anonymous');
+                setCart(anonymousCart ? JSON.parse(anonymousCart) : []);
             }
         }
     }, [userId]);
 
-    // Guardar el carrito en localStorage y sincronizar entre pestañas
+    // Save cart to localStorage and sync between tabs
     useEffect(() => {
-        if (typeof window !== 'undefined' && CART_STORAGE_KEY) {
+        if (typeof window !== 'undefined') {
             localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(cart));
         }
     }, [cart, CART_STORAGE_KEY]);
 
-    // Escuchar cambios en localStorage de otras pestañas
+    // Listen for storage changes in other tabs
     useEffect(() => {
         const handleStorageChange = (e) => {
             if (e.key === CART_STORAGE_KEY) {
@@ -51,11 +76,6 @@ export function CartProvider({ children, user }) {
     }, [CART_STORAGE_KEY]);
 
     const addToCart = (item) => {
-        if (!user) {
-            router.visit('/login');
-            return;
-        }
-
         setCart((currentCart) => {
             const existingItem = currentCart.find((cartItem) => cartItem.id === item.id);
             if (existingItem) {
@@ -70,12 +90,10 @@ export function CartProvider({ children, user }) {
     };
 
     const removeFromCart = (itemId) => {
-        if (!user) return;
         setCart((currentCart) => currentCart.filter((item) => item.id !== itemId));
     };
 
     const updateQuantity = (itemId, newQuantity) => {
-        if (!user) return;
         setCart((currentCart) => {
             if (newQuantity <= 0) {
                 return currentCart.filter((item) => item.id !== itemId);
@@ -87,15 +105,11 @@ export function CartProvider({ children, user }) {
     };
 
     const clearCart = () => {
-        if (!user) return;
         setCart([]);
-        if (CART_STORAGE_KEY) {
-            localStorage.removeItem(CART_STORAGE_KEY);
-        }
+        localStorage.setItem(CART_STORAGE_KEY, JSON.stringify([]));
     };
 
     const cartItemsCount = cart.reduce((total, item) => total + item.quantity, 0);
-
     const cartTotal = cart.reduce((total, item) => total + (item.price * item.quantity), 0);
 
     return (
