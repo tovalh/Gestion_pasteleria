@@ -70,7 +70,7 @@ export default function Navbar() {
                                                 Mis Pedidos
                                             </a>
                                             {user.isAdmin && (
-                                                <a href="/administracion" className="block px-4 py-2 text-pink-800 hover:bg-pink-100">
+                                                <a href="/dashboard" className="block px-4 py-2 text-pink-800 hover:bg-pink-100">
                                                     Administración
                                                 </a>
                                             )}
@@ -121,7 +121,7 @@ export default function Navbar() {
                         <a href="/seguimiento" className="hover:text-pink-200">Seguimiento</a>
                         <a href="/aboutUs" className="hover:text-pink-200">About</a>
                         {user?.isAdmin && (
-                            <a href="/administracion" className="hover:text-pink-200">Administración</a>
+                            <a href="/dashboard" className="hover:text-pink-200">Administración</a>
                         )}
                     </nav>
                 </div>
