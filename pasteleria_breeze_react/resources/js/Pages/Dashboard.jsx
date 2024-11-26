@@ -1,8 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Head, Link } from '@inertiajs/react';
 import { router } from '@inertiajs/react';
 import StockAlert from '../Components/StockAlert.jsx';
-
 // Componente Navbar para el Dashboard
 const DashboardNavbar = () => {
     const handleLogout = () => {
@@ -42,6 +41,58 @@ const DashboardNavbar = () => {
 const Dashboard = ({ auth, productos, ingredientes, secciones, ventas: initialVentas, message }) => {
     const [activeTab, setActiveTab] = useState('productos');
     const [ventas, setVentas] = useState(initialVentas);
+
+    // Agregar estos nuevos estados
+    const [filteredVentas, setFilteredVentas] = useState(initialVentas);
+    const [fechaInicio, setFechaInicio] = useState('');
+    const [fechaFin, setFechaFin] = useState('');
+    const [precioMinimo, setPrecioMinimo] = useState('');
+    const [precioMaximo, setPrecioMaximo] = useState('');
+    const [estadoFiltro, setEstadoFiltro] = useState('');
+
+    useEffect(() => {
+        let resultado = ventas;
+
+        // Filtro por fecha
+        if (fechaInicio && fechaFin) {
+            resultado = resultado.filter(venta => {
+                const fechaVenta = new Date(venta.created_at);
+                const inicio = new Date(fechaInicio);
+                const fin = new Date(fechaFin);
+                fin.setHours(23, 59, 59);
+                return fechaVenta >= inicio && fechaVenta <= fin;
+            });
+        }
+
+        // Filtro por precio
+        if (precioMinimo !== '') {
+            resultado = resultado.filter(venta =>
+                venta.totalVenta >= parseFloat(precioMinimo)
+            );
+        }
+        if (precioMaximo !== '') {
+            resultado = resultado.filter(venta =>
+                venta.totalVenta <= parseFloat(precioMaximo)
+            );
+        }
+
+        // Filtro por estado
+        if (estadoFiltro) {
+            resultado = resultado.filter(venta =>
+                venta.estadoPedido === estadoFiltro
+            );
+        }
+
+        setFilteredVentas(resultado);
+    }, [fechaInicio, fechaFin, precioMinimo, precioMaximo, estadoFiltro, ventas]);
+
+    const resetFiltros = () => {
+        setFechaInicio('');
+        setFechaFin('');
+        setPrecioMinimo('');
+        setPrecioMaximo('');
+        setEstadoFiltro('');
+    };
 
     const handleDeleteProducto = (id) => {
         if (confirm('¿Estás seguro de eliminar este producto?')) {
@@ -221,20 +272,91 @@ const Dashboard = ({ auth, productos, ingredientes, secciones, ventas: initialVe
     const renderVentas = () => {
         return (
             <div className="bg-white shadow-md rounded-lg overflow-hidden">
-                <div className="p-4 bg-gray-50 border-b flex justify-between items-center">
-                    <h2 className="text-xl font-semibold">Ventas</h2>
-                    <Link
-                        href="/ventaAdmin"
-                        className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
-                    >
-                        Nueva Venta
-                    </Link>
+                <div className="p-4 bg-gray-50 border-b">
+                    <div className="flex justify-between items-center mb-4">
+                        <h2 className="text-xl font-semibold">Ventas</h2>
+                        <Link
+                            href="/ventaAdmin"
+                            className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+                        >
+                            Nueva Venta
+                        </Link>
+                    </div>
+
+                    {/* Filtros */}
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4 bg-white p-4 rounded-lg">
+                        <div className="space-y-2">
+                            <h3 className="font-medium text-gray-700">Filtrar por Fecha</h3>
+                            <div className="flex gap-2">
+                                <input
+                                    type="date"
+                                    value={fechaInicio}
+                                    onChange={(e) => setFechaInicio(e.target.value)}
+                                    className="w-full rounded border-gray-300"
+                                    placeholder="Fecha inicio"
+                                />
+                                <input
+                                    type="date"
+                                    value={fechaFin}
+                                    onChange={(e) => setFechaFin(e.target.value)}
+                                    className="w-full rounded border-gray-300"
+                                    placeholder="Fecha fin"
+                                />
+                            </div>
+                        </div>
+
+                        <div className="space-y-2">
+                            <h3 className="font-medium text-gray-700">Filtrar por Precio</h3>
+                            <div className="flex gap-2">
+                                <input
+                                    type="number"
+                                    placeholder="Mínimo"
+                                    value={precioMinimo}
+                                    onChange={(e) => setPrecioMinimo(e.target.value)}
+                                    className="w-full rounded border-gray-300"
+                                />
+                                <input
+                                    type="number"
+                                    placeholder="Máximo"
+                                    value={precioMaximo}
+                                    onChange={(e) => setPrecioMaximo(e.target.value)}
+                                    className="w-full rounded border-gray-300"
+                                />
+                            </div>
+                        </div>
+
+                        <div className="space-y-2">
+                            <h3 className="font-medium text-gray-700">Filtrar por Estado</h3>
+                            <select
+                                value={estadoFiltro}
+                                onChange={(e) => setEstadoFiltro(e.target.value)}
+                                className="w-full rounded border-gray-300"
+                            >
+                                <option value="">Todos</option>
+                                <option value="En Proceso">En Proceso</option>
+                                <option value="Disponible">Disponible</option>
+                                <option value="Entregado">Entregado</option>
+                                <option value="Cancelado">Cancelado</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div className="flex justify-end mb-4">
+                        <button
+                            onClick={resetFiltros}
+                            className="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600"
+                        >
+                            Limpiar Filtros
+                        </button>
+                    </div>
                 </div>
+
                 <div className="overflow-x-auto">
                     <table className="min-w-full">
                         <thead className="bg-gray-50">
                         <tr>
                             <th className="px-6 py-3 text-left">ID Venta</th>
+                            <th className="px-6 py-3 text-left">Fecha</th>
                             <th className="px-6 py-3 text-left">Comentario</th>
                             <th className="px-6 py-3 text-left">Total</th>
                             <th className="px-6 py-3 text-left">Estado</th>
@@ -242,11 +364,14 @@ const Dashboard = ({ auth, productos, ingredientes, secciones, ventas: initialVe
                         </tr>
                         </thead>
                         <tbody className="divide-y divide-gray-200">
-                        {ventas.map((venta) => (
+                        {filteredVentas.map((venta) => (
                             <tr key={venta.idVenta}>
                                 <td className="px-6 py-4">{venta.idVenta}</td>
+                                <td className="px-6 py-4">
+                                    {new Date(venta.created_at).toLocaleDateString()}
+                                </td>
                                 <td className="px-6 py-4">{venta.Comentario}</td>
-                                <td className="px-6 py-4">${venta.totalVenta}</td>
+                                <td className="px-6 py-4">${venta.totalVenta.toLocaleString()}</td>
                                 <td className="px-6 py-4">
                                     <select
                                         value={venta.estadoPedido}
