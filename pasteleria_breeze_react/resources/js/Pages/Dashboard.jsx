@@ -224,7 +224,7 @@ const Dashboard = ({ auth, productos, ingredientes, secciones, ventas: initialVe
                 <div className="p-4 bg-gray-50 border-b flex justify-between items-center">
                     <h2 className="text-xl font-semibold">Ventas</h2>
                     <Link
-                        href="/ventaAdmin"
+                        href={route('ventas.create')} // Cambiado a la ruta correcta
                         className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
                     >
                         Nueva Venta
