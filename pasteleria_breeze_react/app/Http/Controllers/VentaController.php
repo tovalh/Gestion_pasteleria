@@ -107,16 +107,13 @@ class VentaController extends Controller
             // Verificar stock de todos los productos antes de proceder
             foreach ($validatedData['productos'] as $producto) {
                 $productoObj = Producto::findOrFail($producto['Productos_idProducto']);
-                $tieneIngredientes = $productoObj->ingredientes()->count() > 0;
 
-                if ($tieneIngredientes) {
-                    // Verificar y actualizar stock para cada unidad del producto
-                    for ($i = 0; $i < $producto['cantidad']; $i++) {
-                        try {
-                            $this->stockService->actualizarStockPorVenta($productoObj);
-                        } catch (\Exception $e) {
-                            throw new \Exception("Stock insuficiente para {$productoObj->NombreProducto}: " . $e->getMessage());
-                        }
+                // Verificar y actualizar stock para cada unidad del producto
+                for ($i = 0; $i < $producto['cantidad']; $i++) {
+                    try {
+                        $this->stockService->actualizarStockPorVenta($productoObj);
+                    } catch (\Exception $e) {
+                        throw new \Exception("Stock insuficiente para {$productoObj->NombreProducto}: " . $e->getMessage());
                     }
                 }
             }
@@ -146,11 +143,12 @@ class VentaController extends Controller
                 'Clientes_idCliente' => $cliente->idCliente
             ]);
 
-            // Asociar productos a la venta
+            // Asociar productos a la venta CON sus cantidades
             foreach ($validatedData['productos'] as $producto) {
                 DB::table('producto_has_venta')->insert([
                     'Productos_idProducto' => $producto['Productos_idProducto'],
-                    'Venta_idVenta' => $venta->idVenta
+                    'Venta_idVenta' => $venta->idVenta,
+                    'cantidad' => $producto['cantidad']  // Agregamos la cantidad específica
                 ]);
             }
 
