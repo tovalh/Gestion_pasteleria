@@ -1,5 +1,6 @@
 import React from 'react';
 import { XCircle } from 'lucide-react';
+import { Link } from '@inertiajs/react';
 
 export default function Fallida({ error }) {
     return (
@@ -9,20 +10,20 @@ export default function Fallida({ error }) {
                 <h1 className="text-2xl font-bold text-gray-800 mb-2">
                     Error en la Compra
                 </h1>
-                <p className="text-gray-600 mb-6">{error}</p>
-                <div className="space-y-4">
-                    <a
+                <p className="text-gray-600 mb-6">{error || 'Ha ocurrido un error al procesar tu compra. Por favor, intenta nuevamente.'}</p>
+                <div className="flex justify-center gap-4">
+                    <Link
+                        href="/inicio"
+                        className="flex-1 bg-pink-500 text-white px-6 py-2 rounded-md hover:bg-pink-600 transition-colors text-center"
+                    >
+                        Volver al Inicio
+                    </Link>
+                    <Link
                         href="/menu"
-                        className="inline-block bg-gray-500 text-white px-6 py-2 rounded-md hover:bg-gray-600 transition-colors"
+                        className="flex-1 bg-gray-500 text-white px-6 py-2 rounded-md hover:bg-gray-600 transition-colors text-center"
                     >
-                        Volver al Menú
-                    </a>
-                    <a
-                        href="/carrito"
-                        className="block text-pink-500 hover:text-pink-600 transition-colors"
-                    >
-                        Revisar Carrito
-                    </a>
+                        Ir al Menú
+                    </Link>
                 </div>
             </div>
         </div>
