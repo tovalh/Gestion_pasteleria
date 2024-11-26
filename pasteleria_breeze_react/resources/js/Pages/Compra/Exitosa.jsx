@@ -10,6 +10,12 @@ export default function Exitosa({ mensaje, detalles, codigoSeguimiento }) {
     useEffect(() => {
         clearCart();
     }, []);
+    const formatearMonto = (monto) => {
+        return new Intl.NumberFormat('es-CL', {
+            style: 'currency',
+            currency: 'CLP',
+        }).format(monto);
+    };
 
     return (
         <div className="min-h-screen bg-gray-100 flex flex-col items-center justify-center p-4">
@@ -29,7 +35,7 @@ export default function Exitosa({ mensaje, detalles, codigoSeguimiento }) {
                     <div className="space-y-2 mb-6 text-left">
                         <div className="grid grid-cols-2 gap-2">
                             <p className="text-sm text-gray-500">Monto:</p>
-                            <p className="text-sm font-medium text-gray-800">${detalles.monto}</p>
+                            <p className="text-sm font-medium text-gray-800">{formatearMonto(detalles.monto)}</p>
 
                             <p className="text-sm text-gray-500">Estado:</p>
                             <p className="text-sm font-medium text-gray-800">{detalles.estado}</p>

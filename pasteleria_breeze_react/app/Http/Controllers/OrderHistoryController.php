@@ -13,38 +13,35 @@ class OrderHistoryController extends Controller
     {
         $user = $request->user();
 
-        // Buscar el cliente asociado al usuario
-        $cliente = Cliente::where('user_id', $user->id)
+        // Fetch all the customers associated with the user
+        $customers = Cliente::where('user_id', $user->id)
             ->orWhere('CorreoCliente', $user->email)
-            ->first();
+            ->get();
 
-        if ($cliente) {
-            $pedidos = Venta::where('Clientes_idCliente', $cliente->idCliente)
-                ->with(['productos'])
-                ->orderBy('created_at', 'desc')
-                ->get()
-                ->map(function ($venta) {
-                    return [
-                        'id' => $venta->idVenta,
-                        'numeroTransaccion' => $venta->NumeroTransaccionVenta,
-                        'total' => $venta->totalVenta,
-                        'estado' => $venta->estadoPedido,
-                        'fecha' => $venta->created_at ? $venta->created_at->format('d/m/Y H:i') : 'N/A',
-                        'metodoPago' => $venta->metodoDePagoVenta,
-                        'productos' => $venta->productos->map(function ($producto) {
-                            return [
-                                'nombre' => $producto->NombreProducto,
-                                'precio' => $producto->PrecioProducto
-                            ];
-                        })
-                    ];
-                });
-        } else {
-            $pedidos = [];
-        }
+        // Fetch all the orders for the associated customers
+        $orders = Venta::whereIn('Clientes_idCliente', $customers->pluck('idCliente'))
+            ->with(['productos'])
+            ->orderBy('created_at', 'desc')
+            ->get()
+            ->map(function ($order) {
+                return [
+                    'id' => $order->idVenta,
+                    'numeroTransaccion' => $order->NumeroTransaccionVenta,
+                    'total' => $order->totalVenta,
+                    'estado' => $order->estadoPedido,
+                    'fecha' => $order->created_at ? $order->created_at->format('d/m/Y H:i') : 'N/A',
+                    'metodoPago' => $order->metodoDePagoVenta,
+                    'productos' => $order->productos->map(function ($product) {
+                        return [
+                            'nombre' => $product->NombreProducto,
+                            'precio' => $product->PrecioProducto
+                        ];
+                    })
+                ];
+            });
 
         return Inertia::render('OrderHistory', [
-            'pedidos' => $pedidos
+            'pedidos' => $orders
         ]);
     }
 }
