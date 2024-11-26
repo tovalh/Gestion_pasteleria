@@ -39,6 +39,13 @@ const DashboardNavbar = () => {
     );
 };
 
+const formatPrice = (price) => {
+    return new Intl.NumberFormat('es-CL', {
+        style: 'currency',
+        currency: 'CLP'
+    }).format(price);
+};
+
 const Dashboard = ({ auth, productos, ingredientes, secciones, ventas: initialVentas, message }) => {
     const [activeTab, setActiveTab] = useState('productos');
     const [ventas, setVentas] = useState(initialVentas);
@@ -180,7 +187,7 @@ const Dashboard = ({ auth, productos, ingredientes, secciones, ventas: initialVe
                         <tr key={producto.idProducto}>
                             <td className="px-6 py-4">{producto.NombreProducto}</td>
                             <td className="px-6 py-4">{producto.DescripcionProducto}</td>
-                            <td className="px-6 py-4">${producto.PrecioProducto}</td>
+                            <td className="px-6 py-4">{formatPrice(producto.PrecioProducto)}</td>
                             <td className="px-6 py-4 space-x-2">
                                 <Link
                                     href={`/productos/${producto.idProducto}/edit`}
@@ -293,14 +300,12 @@ const Dashboard = ({ auth, productos, ingredientes, secciones, ventas: initialVe
                                     value={fechaInicio}
                                     onChange={(e) => setFechaInicio(e.target.value)}
                                     className="w-full rounded border-gray-300"
-                                    placeholder="Fecha inicio"
                                 />
                                 <input
                                     type="date"
                                     value={fechaFin}
                                     onChange={(e) => setFechaFin(e.target.value)}
                                     className="w-full rounded border-gray-300"
-                                    placeholder="Fecha fin"
                                 />
                             </div>
                         </div>
@@ -310,14 +315,14 @@ const Dashboard = ({ auth, productos, ingredientes, secciones, ventas: initialVe
                             <div className="flex gap-2">
                                 <input
                                     type="number"
-                                    placeholder="Mínimo"
+                                    placeholder="Precio mínimo (CLP)"
                                     value={precioMinimo}
                                     onChange={(e) => setPrecioMinimo(e.target.value)}
                                     className="w-full rounded border-gray-300"
                                 />
                                 <input
                                     type="number"
-                                    placeholder="Máximo"
+                                    placeholder="Precio máximo (CLP)"
                                     value={precioMaximo}
                                     onChange={(e) => setPrecioMaximo(e.target.value)}
                                     className="w-full rounded border-gray-300"
@@ -371,7 +376,7 @@ const Dashboard = ({ auth, productos, ingredientes, secciones, ventas: initialVe
                                     {new Date(venta.created_at).toLocaleDateString()}
                                 </td>
                                 <td className="px-6 py-4">{venta.Comentario}</td>
-                                <td className="px-6 py-4">${venta.totalVenta.toLocaleString()}</td>
+                                <td className="px-6 py-4">{formatPrice(venta.totalVenta)}</td>
                                 <td className="px-6 py-4">
                                     <select
                                         value={venta.estadoPedido}
