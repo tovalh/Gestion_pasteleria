@@ -37,11 +37,16 @@ const WebPayButton = ({ total, className, formData }) => {
 
         setLoading(true);
         try {
+            // Asegurarnos de que cada producto tenga su cantidad
+            const productosConCantidad = cart.map(item => ({
+                id: item.id,
+                cantidad: parseInt(item.quantity) // Asegurar que la cantidad sea un número
+            }));
+
+            console.log('Productos a enviar:', productosConCantidad); // Para debug
+
             const payloadData = {
-                productos: cart.map(item => ({
-                    id: item.id,
-                    cantidad: item.quantity
-                })),
+                productos: productosConCantidad,
                 comentario: formData.specialInstructions || 'Sin instrucciones especiales',
                 total: total,
                 metodoPago: getMetodoPago(formData.paymentMethod),

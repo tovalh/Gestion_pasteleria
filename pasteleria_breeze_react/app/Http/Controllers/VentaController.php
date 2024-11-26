@@ -213,12 +213,18 @@ class VentaController extends Controller
                 'estadoPedido' => $venta->estadoPedido,
                 'Comentario' => $venta->Comentario,
                 'fechaEntrega' => $venta->fechaEntrega,
-                'productos' => $venta->productos->map(function($producto) {
+                'productos' => $venta->productos->map(function($producto) use ($venta) {
+                    // Obtener la cantidad directamente de la tabla pivot
+                    $cantidad = DB::table('producto_has_venta')
+                        ->where('Venta_idVenta', $venta->idVenta)
+                        ->where('Productos_idProducto', $producto->idProducto)
+                        ->value('cantidad') ?? 1;
+
                     return [
                         'id' => $producto->idProducto,
                         'NombreProducto' => $producto->NombreProducto,
                         'PrecioProducto' => $producto->PrecioProducto,
-                        'cantidad' => $producto->pivot->cantidad ?? 1
+                        'cantidad' => $cantidad
                     ];
                 }),
                 'cliente' => $venta->cliente ? [
@@ -383,16 +389,14 @@ class VentaController extends Controller
 
             // Verificar stock de productos
             foreach ($validatedData['productos'] as $productoData) {
-                $producto = Producto::with('ingredientes')->find($productoData['id']);
+                $producto = Producto::findOrFail($productoData['id']);
 
-                // Si el producto existe y tiene ingredientes
-                if ($producto && $producto->ingredientes()->exists()) {
-                    for ($i = 0; $i < $productoData['cantidad']; $i++) {
-                        try {
-                            $this->stockService->actualizarStockPorVenta($producto);
-                        } catch (\Exception $e) {
-                            throw new \Exception("Stock insuficiente para {$producto->NombreProducto}: " . $e->getMessage());
-                        }
+                // Verificar y actualizar stock para la cantidad especificada
+                for ($i = 0; $i < $productoData['cantidad']; $i++) {
+                    try {
+                        $this->stockService->actualizarStockPorVenta($producto);
+                    } catch (\Exception $e) {
+                        throw new \Exception("Stock insuficiente para {$producto->NombreProducto}: " . $e->getMessage());
                     }
                 }
             }
@@ -465,11 +469,11 @@ class VentaController extends Controller
             DB::beginTransaction();
 
             // Verificar y actualizar stock antes de crear la venta
-            foreach ($ventaPendiente['productos'] as $productoId) {
-                $producto = Producto::findOrFail($productoId);
-                $tieneIngredientes = $producto->ingredientes()->count() > 0;
+            foreach ($ventaPendiente['productos'] as $productoData) {
+                $producto = Producto::findOrFail($productoData['id']);
 
-                if ($tieneIngredientes) {
+                // Verificar y actualizar stock para la cantidad especificada
+                for ($i = 0; $i < $productoData['cantidad']; $i++) {
                     try {
                         $this->stockService->actualizarStockPorVenta($producto);
                     } catch (\Exception $e) {
@@ -500,18 +504,19 @@ class VentaController extends Controller
                 'Clientes_idCliente' => $ventaPendiente['Clientes_idCliente'],
                 'estadoPedido' => 'En Proceso',
                 'NumeroTransaccionVenta' => $nuevoNumero,
-                'fechaEntrega' => $ventaPendiente['fechaEntrega'] // Cambiado para coincidir con la nueva estructura
+                'fechaEntrega' => $ventaPendiente['fechaEntrega']
             ];
 
             Log::info('Intentando crear venta con datos:', $datosVenta);
 
             $venta = Venta::create($datosVenta);
 
-            // Asociar productos a la venta
-            foreach ($ventaPendiente['productos'] as $productoId) {
+            // Asociar productos a la venta con sus cantidades
+            foreach ($ventaPendiente['productos'] as $productoData) {
                 DB::table('producto_has_venta')->insert([
-                    'Productos_idProducto' => $productoId,
-                    'Venta_idVenta' => $venta->idVenta
+                    'Productos_idProducto' => $productoData['id'],
+                    'Venta_idVenta' => $venta->idVenta,
+                    'cantidad' => $productoData['cantidad']
                 ]);
             }
 
