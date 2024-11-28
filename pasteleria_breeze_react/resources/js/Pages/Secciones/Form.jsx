@@ -36,7 +36,7 @@ const Form = ({ seccion = null, isEditing = false }) => {
                         type="text"
                         value={data.NombreSeccion}
                         onChange={e => setData('NombreSeccion', e.target.value)}
-                        className="w-full border rounded px-3 py-2 bg-white/10 text-white"
+                        className="w-full border rounded px-3 py-2 bg-white text-black"
                         required
                     />
                     {errors.NombreSeccion && (

@@ -44,7 +44,7 @@ const Form = ({ producto = null, isEditing = false }) => {
                         type="text"
                         value={data.NombreProducto}
                         onChange={e => setData('NombreProducto', e.target.value)}
-                        className="w-full border rounded px-3 py-2 bg-white/10 text-white"
+                        className="w-full border rounded px-3 py-2 bg-white text-black"
                         required
                     />
                     {errors.NombreProducto && (
@@ -57,7 +57,7 @@ const Form = ({ producto = null, isEditing = false }) => {
                     <textarea
                         value={data.DescripcionProducto}
                         onChange={e => setData('DescripcionProducto', e.target.value)}
-                        className="w-full border rounded px-3 py-2 bg-white/10 text-white"
+                        className="w-full border rounded px-3 py-2 bg-white text-black"
                         required
                     />
                     {errors.DescripcionProducto && (
@@ -72,7 +72,7 @@ const Form = ({ producto = null, isEditing = false }) => {
                         step="0.01"
                         value={data.PrecioProducto}
                         onChange={e => setData('PrecioProducto', e.target.value)}
-                        className="w-full border rounded px-3 py-2 bg-white/10 text-white"
+                        className="w-full border rounded px-3 py-2 bg-white text-black"
                         required
                     />
                     {errors.PrecioProducto && (
@@ -86,7 +86,7 @@ const Form = ({ producto = null, isEditing = false }) => {
                         type="number"
                         value={data.Seccion_idSeccion}
                         onChange={e => setData('Seccion_idSeccion', e.target.value)}
-                        className="w-full border rounded px-3 py-2 bg-white/10 text-white"
+                        className="w-full border rounded px-3 py-2 bg-white text-black"
                         required
                     />
                     {errors.Seccion_idSeccion && (
@@ -100,7 +100,7 @@ const Form = ({ producto = null, isEditing = false }) => {
                         type="text"
                         value={data.RutaImagen}
                         onChange={e => setData('RutaImagen', e.target.value)}
-                        className="w-full border rounded px-3 py-2 bg-white/10 text-white"
+                        className="w-full border rounded px-3 py-2 bg-white text-black"
                     />
                     {errors.RutaImagen && (
                         <div className="text-red-500 text-sm">{errors.RutaImagen}</div>

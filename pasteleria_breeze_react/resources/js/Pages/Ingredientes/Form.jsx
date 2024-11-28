@@ -42,7 +42,7 @@ const Form = ({ ingrediente = null, isEditing = false }) => {
                         type="text"
                         value={data.NombreIngrediente}
                         onChange={e => setData('NombreIngrediente', e.target.value)}
-                        className="w-full border rounded px-3 py-2 bg-white/10 text-white"
+                        className="w-full border rounded px-3 py-2 bg-white/10 text-black"
                         required
                     />
                     {errors.NombreIngrediente && (
@@ -58,7 +58,7 @@ const Form = ({ ingrediente = null, isEditing = false }) => {
                         step="0.01"
                         value={data.StockIngrediente}
                         onChange={e => setData('StockIngrediente', e.target.value)}
-                        className="w-full border rounded px-3 py-2 bg-white/10 text-white"
+                        className="w-full border rounded px-3 py-2 bg-white/10 text-black"
                         required
                     />
                     {errors.StockIngrediente && (
@@ -74,7 +74,7 @@ const Form = ({ ingrediente = null, isEditing = false }) => {
                         step="0.01"
                         value={data.StockMinimoIngrediente}
                         onChange={e => setData('StockMinimoIngrediente', e.target.value)}
-                        className="w-full border rounded px-3 py-2 bg-white/10 text-white"
+                        className="w-full border rounded px-3 py-2 bg-white/10 text-black"
                         required
                     />
                     {errors.StockMinimoIngrediente && (
@@ -87,7 +87,7 @@ const Form = ({ ingrediente = null, isEditing = false }) => {
                     <select
                         value={data.UnidadDeMedidaIngrediente}
                         onChange={e => setData('UnidadDeMedidaIngrediente', e.target.value)}
-                        className="w-full border rounded px-3 py-2 bg-white/10 text-white"
+                        className="w-full border rounded px-3 py-2 bg-white/10 text-black"
                         required
                     >
                         <option value="" disabled>Seleccione una unidad</option>
@@ -111,7 +111,7 @@ const Form = ({ ingrediente = null, isEditing = false }) => {
                     <button
                         type="submit"
                         disabled={processing}
-                        className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+                        className="px-4 py-2 bg-blue-500 text.black rounded hover:bg-blue-600"
                     >
                         {processing ? 'Guardando...' : 'Guardar'}
                     </button>

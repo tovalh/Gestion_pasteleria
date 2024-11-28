@@ -15,7 +15,7 @@ const Index = ({ ingredientes, message }) => {
                 <h1 className="text-2xl font-bold">Lista de Ingredientes</h1>
                 <Link
                     href="/ingredientes/create"
-                    className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+                    className="bg-blue-500 text-black px-4 py-2 rounded hover:bg-blue-600"
                 >
                     Nuevo Ingrediente
                 </Link>

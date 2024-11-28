@@ -69,6 +69,7 @@ Route::middleware(['auth', 'admin'])->group(function () {
         Route::get('/admin/{id}', [VentaController::class, 'showAdmin'])->name('ventas.showAdmin');
         Route::get('/por-periodo', [VentaController::class, 'obtenerVentasPorPeriodo'])->name('ventas.periodo');
         Route::put('/{id}', [VentaController::class, 'update'])->name('ventas.update');
+        Route::get('/ventaAdmin', [VentaController::class, 'create'])->name('venta.admin');
     });
 
     // Gestión de Recursos

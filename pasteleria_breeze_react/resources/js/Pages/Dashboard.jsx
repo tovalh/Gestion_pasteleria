@@ -283,7 +283,7 @@ const Dashboard = ({ auth, productos, ingredientes, secciones, ventas: initialVe
                     <div className="flex justify-between items-center mb-4">
                         <h2 className="text-xl font-semibold">Ventas</h2>
                         <Link
-                            href="/ventaAdmin"
+                            href={route('venta.admin')}
                             className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
                         >
                             Nueva Venta
