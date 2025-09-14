@@ -20,7 +20,8 @@ return new class extends Migration
             $table->softDeletes();
             $table->integer('Seccion_idSeccion')->index('fk_productos_seccion1');
 
-            $table->primary(['idProducto', 'Seccion_idSeccion']);
+            $table->unique(['idProducto', 'Seccion_idSeccion']);
+            $table->primary(['idProducto']);
         });
     }
 

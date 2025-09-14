@@ -135,6 +135,9 @@
       <excludeFolder url="file://$MODULE_DIR$/pasteleria_breeze_react/vendor/webmozart/assert" />
       <excludeFolder url="file://$MODULE_DIR$/pasteleria_breeze_react/vendor/kitloong/laravel-migrations-generator" />
       <excludeFolder url="file://$MODULE_DIR$/pasteleria_breeze_react/vendor/transbank/transbank-sdk" />
+      <excludeFolder url="file://$MODULE_DIR$/pasteleria_breeze_react/vendor/league/uri" />
+      <excludeFolder url="file://$MODULE_DIR$/pasteleria_breeze_react/vendor/league/uri-interfaces" />
+      <excludeFolder url="file://$MODULE_DIR$/pasteleria_breeze_react/vendor/staabm/side-effects-detector" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
