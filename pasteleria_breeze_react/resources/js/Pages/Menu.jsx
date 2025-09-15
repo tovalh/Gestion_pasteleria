@@ -4,6 +4,7 @@ import { useCart } from '../Context/CartContext'
 import CartComponent from '../Components/CartComponent'
 import Navbar from '../Components/Navbar'
 import Footer from '../Components/Footer'
+import ProductImage from '../Components/ProductImage'
 
 export default function ProductsSection({ productos }) {
     const [searchTerm, setSearchTerm] = useState('')
@@ -98,10 +99,11 @@ export default function ProductsSection({ productos }) {
                     {filteredProducts.map(product => (
                         <div key={product.idProducto} className="bg-white rounded-lg shadow-md overflow-hidden">
                             <a href={`/producto/${product.idProducto}`} className="block cursor-pointer">
-                                <img
+                                <ProductImage
                                     src={product.RutaImagen}
                                     alt={product.NombreProducto}
-                                    className="w-full h-48 object-cover transition-opacity duration-300 hover:opacity-80"
+                                    productName={product.NombreProducto}
+                                    className="w-full h-48"
                                 />
                                 <div className="p-4">
                                     <h2 className="text-xl font-semibold text-pink-800 mb-2 hover:text-pink-600 transition-colors duration-300">

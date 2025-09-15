@@ -3,6 +3,7 @@ import { Head } from "@inertiajs/react"
 import { useCart } from '../Context/CartContext'
 import Navbar from '../Components/Navbar'
 import Footer from '../Components/Footer'
+import ProductImage from '../Components/ProductImage'
 
 export default function Inicio({ productos, user }) {
     const { addToCart } = useCart()
@@ -66,10 +67,11 @@ export default function Inicio({ productos, user }) {
                                     <div key={product.idProducto} className="bg-white rounded-lg shadow-md overflow-hidden">
                                         <div>
                                             <a href={`/producto/${product.idProducto}`}>
-                                                <img
+                                                <ProductImage
                                                     src={product.RutaImagen}
                                                     alt={product.NombreProducto}
-                                                    className="w-full h-48 object-cover hover:opacity-80 transition-opacity duration-300"
+                                                    productName={product.NombreProducto}
+                                                    className="w-full h-48"
                                                 />
                                             </a>
                                         </div>

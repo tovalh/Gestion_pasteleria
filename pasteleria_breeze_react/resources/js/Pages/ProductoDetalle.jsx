@@ -5,6 +5,7 @@ import CartComponent from '../Components/CartComponent'
 import { Head } from "@inertiajs/react"
 import Header from '../Components/Navbar.jsx'  // Import your header component
 import Footer from '../Components/Footer'  // Import your footer component
+import ProductImage from '../Components/ProductImage'
 
 export default function ProductoDetalle({ producto, relatedProducts = [] }) {
     const [isCartOpen, setIsCartOpen] = useState(false)
@@ -49,10 +50,11 @@ export default function ProductoDetalle({ producto, relatedProducts = [] }) {
                             <div className="md:flex">
                                 <div className="md:w-1/2">
                                     <div className="h-full">
-                                        <img
+                                        <ProductImage
                                             src={producto.RutaImagen}
                                             alt={producto.NombreProducto}
-                                            className="w-full h-full object-cover"
+                                            productName={producto.NombreProducto}
+                                            className="w-full h-full"
                                             style={{ minHeight: '400px' }}
                                         />
                                     </div>
@@ -96,10 +98,11 @@ export default function ProductoDetalle({ producto, relatedProducts = [] }) {
                                     <div key={product.idProducto} className="bg-white rounded-lg shadow-md overflow-hidden">
                                         <div>
                                             <a href={`/producto/${product.idProducto}`}>
-                                                <img
+                                                <ProductImage
                                                     src={product.RutaImagen}
                                                     alt={product.NombreProducto}
-                                                    className="w-full h-48 object-cover hover:opacity-80 transition-opacity duration-300"
+                                                    productName={product.NombreProducto}
+                                                    className="w-full h-48"
                                                 />
                                             </a>
                                         </div>
